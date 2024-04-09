@@ -19,10 +19,16 @@ class GUI extends JFrame {
 
     public GUI(Main script) {
         setTitle("Bot Settings");
-        setSize(800, 600); // Adjust the size as needed
+        setSize(800, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
+        Font font = new Font("SansSerif", Font.PLAIN, 12);
+
+        Color backgroundColor = new Color(50, 50, 50);
+        Color primaryColor = new Color(30, 150, 160);
+        Color textColor = Color.WHITE;
+
 
         populateSkillOptions();
         populateSkillLocations();
@@ -31,53 +37,73 @@ class GUI extends JFrame {
         skillBox.setModel(new DefaultComboBoxModel<>(skillOptions.keySet().toArray(new String[0])));
         skillBox.setPreferredSize(new Dimension(150, 30));
         skillBox.addActionListener(e -> updateMethodAndLocationPanel((String) skillBox.getSelectedItem()));
+        skillBox.setFont(font);
+        skillBox.setForeground(textColor);
+        skillBox.setBackground(backgroundColor);
+        skillBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                c.setBackground(backgroundColor);
+                c.setForeground(isSelected ? primaryColor : textColor);
+                return c;
+            }
+        });
 
-        // com.Anomaly.AIO.Main panel setup
-        mainPanel.setBackground(Color.DARK_GRAY);
-        mainPanel.setPreferredSize(new Dimension(400, getHeight())); // Half the width of the frame
+        mainPanel.setBackground(backgroundColor);
+        mainPanel.setPreferredSize(new Dimension(400, getHeight()));
 
-        // Task panel setup for enabled tasks
-        taskPanel.setBackground(Color.DARK_GRAY);
-        taskPanel.setPreferredSize(new Dimension(400, getHeight())); // Half the width of the frame
+        taskPanel.setBackground(backgroundColor);
+        taskPanel.setPreferredSize(new Dimension(400, getHeight()));
 
         JList<String> trainingList = new JList<>(trainingListModel);
         trainingList.setCellRenderer(new TrainingListCellRenderer());
         JScrollPane trainingListScrollPane = new JScrollPane(trainingList);
         trainingListScrollPane.setPreferredSize(new Dimension(400, getHeight()));
+        trainingList.setFont(font);
+        trainingList.setForeground(textColor);
+        trainingList.setBackground(backgroundColor);
+        trainingList.setFixedCellHeight(30);
+        trainingList.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        // Control panel setup
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         controlPanel.setBackground(Color.DARK_GRAY);
         controlPanel.add(skillBox);
 
-        // Execute button setup
         JButton executeButton = new JButton("Execute Selected");
+        executeButton.setFont(font);
+        executeButton.setForeground(textColor);
+        executeButton.setBackground(primaryColor);
+        executeButton.setFocusPainted(false);
+        executeButton.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        executeButton.setBorderPainted(false);
+        executeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        executeButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                executeButton.setBackground(primaryColor.darker());
+            }
+            public void mouseExited(MouseEvent evt) {
+                executeButton.setBackground(primaryColor);
+            }
+        });
         executeButton.addActionListener(e -> {
             new Thread(() -> {
-                // Loop through the training list model elements
                 for (int i = 0; i < trainingListModel.size(); i++) {
-                    String taskDescription = trainingListModel.get(i); // Get the task string
-                    // You'll need to parse the taskDescription to get skill, method, and location.
-                    // This is just an example; adapt it to match how your tasks are formatted.
+                    String taskDescription = trainingListModel.get(i);
                     String[] parts = taskDescription.split(" - | @ ");
                     if (parts.length == 3) {
                         String skill = parts[0];
                         String method = parts[1];
                         String location = parts[2];
 
-                        // Create and execute the task on this separate thread, not on the EDT
                         Main.Task task = script.createTask(skill, method, location);
-                        script.setCurrentTask(task); // Assume this is a non-blocking call
+                        script.setCurrentTask(task);
                     } else {
-                        // Handle any parsing errors or unexpected task formats
                         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(GUI.this,
                                 "Error parsing task: " + taskDescription,
                                 "Task Execution Error", JOptionPane.ERROR_MESSAGE));
                     }
                 }
-                // After starting the tasks, you may want to clear the list or disable the button
-                // until the tasks are complete, depending on your bot's behavior.
-                // This should be done on the EDT
                 SwingUtilities.invokeLater(() -> {
                     trainingListModel.clear();
                     executeButton.setEnabled(false);
@@ -89,7 +115,6 @@ class GUI extends JFrame {
         mainPanel.add(cardsPanel, BorderLayout.CENTER);
         mainPanel.add(executeButton, BorderLayout.SOUTH);
 
-        // Adding main panel and training list to the frame
         add(mainPanel, BorderLayout.WEST);
         taskPanel.add(trainingListScrollPane, BorderLayout.CENTER);
         add(taskPanel, BorderLayout.EAST);
@@ -99,26 +124,22 @@ class GUI extends JFrame {
 
     private void updateMethodAndLocationPanel(String skill) {
         SwingUtilities.invokeLater(() -> {
-            cardsPanel.removeAll(); // Remove all components before updating
+            cardsPanel.removeAll();
 
             List<String> methods = skillOptions.get(skill);
             List<String> locations = skillLocations.get(skill);
 
-            // Create a list model from the methods for the current skill
             DefaultListModel<String> methodListModel = new DefaultListModel<>();
             methods.forEach(methodListModel::addElement);
             JList<String> methodList = new JList<>(methodListModel);
 
-            // Create a list model from the locations for the current skill
             DefaultListModel<String> locationListModel = new DefaultListModel<>();
             locations.forEach(locationListModel::addElement);
             JList<String> locationList = new JList<>(locationListModel);
 
-            // Set up the lists' visual appearance
             methodList.setBackground(Color.DARK_GRAY);
             locationList.setBackground(Color.DARK_GRAY);
 
-            // Add a mouse listener to the method list for double-click events
             methodList.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent evt) {
                     if (evt.getClickCount() == 2) {
@@ -132,12 +153,10 @@ class GUI extends JFrame {
                 }
             });
 
-            // Set up the cards panel with a new layout and add the method and location lists
-            cardsPanel.setLayout(new GridLayout(0, 2)); // 2 columns for methods and locations
+            cardsPanel.setLayout(new GridLayout(0, 2));
             cardsPanel.add(new JScrollPane(locationList));
             cardsPanel.add(new JScrollPane(methodList));
 
-            // Force the update of the UI components
             cardsPanel.revalidate();
             cardsPanel.repaint();
         });
