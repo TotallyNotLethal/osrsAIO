@@ -19,12 +19,12 @@ public class Main extends AbstractScript {
     private final List<Task> tasks = new ArrayList<>();
     private AtomicReference<Task> currentTask = new AtomicReference<>();
     public boolean taskStarted = false;
-    private GUI gui;
+    private NewGUI gui;
 
     @Override
     public void onStart() {
         SwingUtilities.invokeLater(() -> {
-            gui = new GUI(this);
+            gui = new NewGUI();
             Sleep.sleep(500);
             gui.setVisible(true);
         });

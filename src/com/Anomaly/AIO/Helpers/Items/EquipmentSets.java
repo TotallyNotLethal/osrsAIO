@@ -1,4 +1,4 @@
-package com.Anomaly.AIO.Helpers;
+package com.Anomaly.AIO.Helpers.Items;
 
 public class EquipmentSets {
     public static EquipmentSet GRACEFUL = new EquipmentSet()

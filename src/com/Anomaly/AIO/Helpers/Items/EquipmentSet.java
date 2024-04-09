@@ -1,4 +1,4 @@
-package com.Anomaly.AIO.Helpers;
+package com.Anomaly.AIO.Helpers.Items;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,6 +1,6 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
-import com.Anomaly.AIO.Helpers.EquipmentSets;
+import com.Anomaly.AIO.Helpers.Items.EquipmentSets;
 import com.Anomaly.AIO.Tasks.Banking.BankTask;
 import com.Anomaly.AIO.Main;
 import org.dreambot.api.methods.Calculations;
@@ -21,11 +21,11 @@ public class FishingTask implements Main.Task {
     private final Area fishingArea;
     private final int fishingSpotId;
     private final Map<String, Integer> requiredItems;
-    private final Map<String, Integer> optionalItems;
 
     public FishingTask(AbstractScript script, String method, String location) {
         this.script = script;
         requiredItems = new HashMap<>();
+        Map<String, Integer> optionalItems;
 
         switch (method) {
             case "Shrimps" -> {

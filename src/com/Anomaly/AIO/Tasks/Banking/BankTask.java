@@ -47,17 +47,7 @@ public class BankTask implements Main.Task {
             Sleep.sleepUntil(Bank::isOpen, 5000);
         }
         if (Bank.isOpen()) {
-            if (Inventory.all().size() > 0) {
-                List<Item> itemsToDeposit = Inventory.all().stream()
-                        .filter(item -> item != null && !itemsToKeep.contains(item.getName()) && !itemsToWithdraw.containsKey(item.getName()))
-                        .toList();
-
-                for (Item item : itemsToDeposit) {
-                    Logger.log("Depositing item:" + item);
-                    Bank.deposit(item.getName(), item.getAmount());
-                    Sleep.sleepUntil(() -> !Inventory.contains(item.getName()), 3000);
-                }
-            }
+            depositItems();
 
             withdrawItems(itemsToWithdraw, true);
             withdrawItems(optionalItemsToWithdraw, false);
@@ -67,6 +57,20 @@ public class BankTask implements Main.Task {
         }
 
         return Calculations.random(200, 300);
+    }
+
+    private void depositItems() {
+        if (Inventory.all().size() > 0) {
+            List<Item> itemsToDeposit = Inventory.all().stream()
+                    .filter(item -> item != null && !itemsToKeep.contains(item.getName()) && !itemsToWithdraw.containsKey(item.getName()))
+                    .toList();
+
+            for (Item item : itemsToDeposit) {
+                Logger.log("Depositing item:" + item);
+                Bank.deposit(item.getName(), item.getAmount());
+                Sleep.sleepUntil(() -> !Inventory.contains(item.getName()), 3000);
+            }
+        }
     }
 
     private void withdrawItems(Map<String, Integer> items, boolean isRequired) {
