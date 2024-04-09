@@ -54,6 +54,9 @@ public class Main extends AbstractScript {
             case "Fishing" -> {
                 return new FishingTask(this, method);
             }
+            case "Firemaking" -> {
+                return new FiremakingTask(this, method);
+            }
             //case "Woodcutting" -> {
                 //return new WoodcuttingTask(this, method);
             //}

@@ -9,7 +9,7 @@ class AdvancedGUI extends JFrame {
     private final DefaultListModel<String> trainingListModel = new DefaultListModel<>();
 
     public AdvancedGUI(Main script) {
-        setTitle("Complex AIO Bot Settings");
+        setTitle("Bot Settings");
         setSize(500, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -57,6 +57,7 @@ class AdvancedGUI extends JFrame {
     private void populateSkillOptions() {
         skillOptions.put("Woodcutting", List.of("Trees", "Oaks", "Willows"));
         skillOptions.put("Fishing", List.of("Shrimps", "Trout", "Salmon"));
+        skillOptions.put("Firemaking", List.of("Logs", "Oak", "Willow"));
     }
 
     private void updateMethodBox(JComboBox<String> methodBox, String skill) {
