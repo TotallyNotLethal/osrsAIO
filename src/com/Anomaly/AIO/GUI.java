@@ -1,4 +1,4 @@
-import org.dreambot.api.utilities.Sleep;
+package com.Anomaly.AIO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,7 +32,7 @@ class GUI extends JFrame {
         skillBox.setPreferredSize(new Dimension(150, 30));
         skillBox.addActionListener(e -> updateMethodAndLocationPanel((String) skillBox.getSelectedItem()));
 
-        // Main panel setup
+        // com.Anomaly.AIO.Main panel setup
         mainPanel.setBackground(Color.DARK_GRAY);
         mainPanel.setPreferredSize(new Dimension(400, getHeight())); // Half the width of the frame
 
@@ -53,27 +53,36 @@ class GUI extends JFrame {
         // Execute button setup
         JButton executeButton = new JButton("Execute Selected");
         executeButton.addActionListener(e -> {
-            // Loop through the training list model elements
-            for (int i = 0; i < trainingListModel.size(); i++) {
-                String taskDescription = trainingListModel.get(i); // Get the task string
-                // You'll need to parse the taskDescription to get skill, method, and location.
-                // This is just an example; adapt it to match how your tasks are formatted.
-                String[] parts = taskDescription.split(" - | @ ");
-                if (parts.length == 3) {
-                    String skill = parts[0];
-                    String method = parts[1];
-                    String location = parts[2];
+            new Thread(() -> {
+                // Loop through the training list model elements
+                for (int i = 0; i < trainingListModel.size(); i++) {
+                    String taskDescription = trainingListModel.get(i); // Get the task string
+                    // You'll need to parse the taskDescription to get skill, method, and location.
+                    // This is just an example; adapt it to match how your tasks are formatted.
+                    String[] parts = taskDescription.split(" - | @ ");
+                    if (parts.length == 3) {
+                        String skill = parts[0];
+                        String method = parts[1];
+                        String location = parts[2];
 
-                    Main.Task task = script.createTask(skill, method, location);
-                    script.setCurrentTask(task);
-                } else {
-                    // Handle any parsing errors or unexpected task formats
-                    JOptionPane.showMessageDialog(this, "Error parsing task: " + taskDescription,
-                            "Task Execution Error", JOptionPane.ERROR_MESSAGE);
+                        // Create and execute the task on this separate thread, not on the EDT
+                        Main.Task task = script.createTask(skill, method, location);
+                        script.setCurrentTask(task); // Assume this is a non-blocking call
+                    } else {
+                        // Handle any parsing errors or unexpected task formats
+                        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(GUI.this,
+                                "Error parsing task: " + taskDescription,
+                                "Task Execution Error", JOptionPane.ERROR_MESSAGE));
+                    }
                 }
-            }
-            // After starting the tasks, you may want to clear the list or disable the button
-            // until the tasks are complete, depending on your bot's behavior.
+                // After starting the tasks, you may want to clear the list or disable the button
+                // until the tasks are complete, depending on your bot's behavior.
+                // This should be done on the EDT
+                SwingUtilities.invokeLater(() -> {
+                    trainingListModel.clear();
+                    executeButton.setEnabled(false);
+                });
+            }).start();
         });
 
         mainPanel.add(controlPanel, BorderLayout.NORTH);

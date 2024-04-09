@@ -1,3 +1,7 @@
+package com.Anomaly.AIO;
+
+import com.Anomaly.AIO.Tasks.Skilling.FiremakingTask;
+import com.Anomaly.AIO.Tasks.Skilling.FishingTask;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
@@ -14,6 +18,7 @@ public class Main extends AbstractScript {
 
     private final List<Task> tasks = new ArrayList<>();
     private AtomicReference<Task> currentTask = new AtomicReference<>();
+    public boolean taskStarted = false;
     private GUI gui;
 
     @Override
@@ -29,9 +34,12 @@ public class Main extends AbstractScript {
 
     @Override
     public int onLoop() {
-        Task task = currentTask.get();
-        if (task != null) {
-            return task.execute();
+        if(!taskStarted) {
+            taskStarted = true;
+            Task task = currentTask.get();
+            if (task != null) {
+                return task.execute();
+            }
         }
         return Calculations.random(1000, 2000);
     }
@@ -63,7 +71,7 @@ public class Main extends AbstractScript {
                 return new FiremakingTask(this, method, location);
             }
             //case "Woodcutting" -> {
-                //return new WoodcuttingTask(this, method);
+                //return new com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask(this, method);
             //}
             default -> {
                 log("Unsupported skill/method: " + skill + "/" + method);

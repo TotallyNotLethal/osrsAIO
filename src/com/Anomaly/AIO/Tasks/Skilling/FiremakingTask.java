@@ -1,15 +1,14 @@
+package com.Anomaly.AIO.Tasks.Skilling;
+
+import com.Anomaly.AIO.Main;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
-import org.dreambot.api.methods.interactive.GameObjects;
-import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.utilities.Sleep;
-import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.interactive.Player;
-import org.dreambot.api.wrappers.items.Item;
 
 public class FiremakingTask implements Main.Task {
     private final AbstractScript script;
