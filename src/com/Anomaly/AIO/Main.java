@@ -19,12 +19,12 @@ public class Main extends AbstractScript {
     private final List<Task> tasks = new ArrayList<>();
     private AtomicReference<Task> currentTask = new AtomicReference<>();
     public boolean taskStarted = false;
-    private NewGUI gui;
+    private GUI gui;
 
     @Override
     public void onStart() {
         SwingUtilities.invokeLater(() -> {
-            gui = new NewGUI();
+            gui = new GUI(this);
             Sleep.sleep(500);
             gui.setVisible(true);
         });
@@ -70,9 +70,6 @@ public class Main extends AbstractScript {
             case "Firemaking" -> {
                 return new FiremakingTask(this, method, location);
             }
-            //case "Woodcutting" -> {
-                //return new com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask(this, method);
-            //}
             default -> {
                 log("Unsupported skill/method: " + skill + "/" + method);
                 return null;

@@ -12,6 +12,6 @@ public class EquipmentSet {
     }
 
     public Map<String, Integer> getItems() {
-        return new HashMap<>(items); // Return a copy to prevent modification
+        return new HashMap<>(items);
     }
 }
