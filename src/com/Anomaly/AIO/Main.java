@@ -29,7 +29,7 @@ public class Main extends AbstractScript {
             gui.setVisible(true);
         });
 
-        log("Complex AIO Script started!");
+        log("Anomaly AIO Script started!");
     }
 
     @Override
@@ -55,7 +55,7 @@ public class Main extends AbstractScript {
                 gui.dispose();
             }
         });
-        log("OSRS AIO Script stopped.");
+        log("Anomaly AIO Script stopped.");
     }
 
     public interface Task {

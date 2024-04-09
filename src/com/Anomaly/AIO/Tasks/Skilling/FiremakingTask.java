@@ -24,10 +24,10 @@ public class FiremakingTask implements Main.Task {
             case "Logs" -> {
                 requiredItems = new String[]{"Tinderbox", "Logs"};
             }
-            case "Oak" -> {
+            case "Oak Logs" -> {
                 requiredItems = new String[]{"Tinderbox", "Oak Logs"};
             }
-            case "Willow" -> {
+            case "Willow Logs" -> {
                 requiredItems = new String[]{"Tinderbox", "Willow Logs"};
             }
             default -> throw new IllegalArgumentException("Invalid fishing method");

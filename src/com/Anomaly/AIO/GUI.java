@@ -195,9 +195,9 @@ class GUI extends JFrame {
     }
 
     private void populateSkillOptions() {
-        skillOptions.put("Woodcutting", Arrays.asList("Trees", "Oaks", "Willows"));
+        skillOptions.put("Woodcutting", Arrays.asList("Trees", "Oak Tree", "Willow Tree"));
         skillOptions.put("Fishing", Arrays.asList("Shrimps", "Trout", "Salmon"));
-        skillOptions.put("Firemaking", Arrays.asList("Logs", "Oak", "Willow"));
+        skillOptions.put("Firemaking", Arrays.asList("Logs", "Oak Logs", "Willow Logs"));
     }
 
     private void populateSkillLocations() {
