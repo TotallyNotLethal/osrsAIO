@@ -1,13 +1,13 @@
-package com.Anomaly.AIO.Banking;
+package com.Anomaly.AIO.Tasks.Banking;
 
 import com.Anomaly.AIO.Main;
+import com.Anomaly.AIO.Tasks.Player.EquipTask;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.walking.impl.Walking;
-import org.dreambot.api.script.impl.TaskScript;
 import org.dreambot.api.utilities.Logger;
 import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.Player;
@@ -21,17 +21,18 @@ public class BankTask implements Main.Task {
     private final BankLocation bankLocation;
     private final List<String> itemsToKeep;
     private final Map<String, Integer> itemsToWithdraw;
+    private final Map<String, Integer> optionalItemsToWithdraw;
     private final Player player;
-    private final Main.Task taskToRun;
 
-    public BankTask(Main.Task task, Map<String, Integer> itemsToWithdraw, String... itemsToKeep) {
+    public BankTask(Main.Task task, Map<String, Integer> itemsToWithdraw, Map<String, Integer> optionalItemsToWithdraw, String... itemsToKeep) {
         this.bankLocation = Bank.getClosestBankLocation();
         this.itemsToKeep = Arrays.asList(itemsToKeep);
         this.itemsToWithdraw = itemsToWithdraw;
+        this.optionalItemsToWithdraw = optionalItemsToWithdraw;
         this.player = Players.getLocal();
-        this.taskToRun = task;
-        execute();
-        taskToRun.execute();
+        this.execute();
+        new EquipTask().execute();
+        task.execute();
     }
 
     @Override
@@ -58,28 +59,36 @@ public class BankTask implements Main.Task {
                 }
             }
 
-            for (Map.Entry<String, Integer> entry : itemsToWithdraw.entrySet()) {
-                String itemToWithdraw = entry.getKey();
-                int totalAmountNeeded = entry.getValue();
-                int amountInInventory = Inventory.count(itemToWithdraw);
-                int amountToWithdraw = totalAmountNeeded - amountInInventory;
-
-                if (amountToWithdraw > 0) {
-                    if (Bank.contains(itemToWithdraw)) {
-                        Logger.log(String.format("Withdrawing %d %s", amountToWithdraw, itemToWithdraw));
-                        Bank.withdraw(itemToWithdraw, amountToWithdraw);
-                        Sleep.sleepUntil(() -> Inventory.count(itemToWithdraw) >= totalAmountNeeded, 3000);
-                    } else {
-                        Logger.log("Bank does not have enough of: " + itemToWithdraw);
-                        return -1;
-                    }
-                }
-            }
+            withdrawItems(itemsToWithdraw, true);
+            withdrawItems(optionalItemsToWithdraw, false);
 
             Bank.close();
             Sleep.sleepUntil(() -> !Bank.isOpen(), 3000);
         }
 
         return Calculations.random(200, 300);
+    }
+
+    private void withdrawItems(Map<String, Integer> items, boolean isRequired) {
+        for (Map.Entry<String, Integer> entry : items.entrySet()) {
+            String itemToWithdraw = entry.getKey();
+            int totalAmountNeeded = entry.getValue();
+            int amountInInventory = Inventory.count(itemToWithdraw);
+            int amountToWithdraw = totalAmountNeeded - amountInInventory;
+
+            if (amountToWithdraw > 0) {
+                if (Bank.contains(itemToWithdraw)) {
+                    Logger.log(String.format("Withdrawing %d %s", amountToWithdraw, itemToWithdraw));
+                    Bank.withdraw(itemToWithdraw, amountToWithdraw);
+                    Sleep.sleepUntil(() -> Inventory.count(itemToWithdraw) >= totalAmountNeeded, 3000);
+                } else {
+                    Logger.log("Bank does not have enough of (or is missing): " + itemToWithdraw);
+                    if (isRequired) {
+                        // Fail the task for required items
+                        return;
+                    }
+                }
+            }
+        }
     }
 }

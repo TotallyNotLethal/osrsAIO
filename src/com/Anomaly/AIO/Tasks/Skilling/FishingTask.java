@@ -1,6 +1,7 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
-import com.Anomaly.AIO.Banking.BankTask;
+import com.Anomaly.AIO.Helpers.EquipmentSets;
+import com.Anomaly.AIO.Tasks.Banking.BankTask;
 import com.Anomaly.AIO.Main;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -20,6 +21,7 @@ public class FishingTask implements Main.Task {
     private final Area fishingArea;
     private final int fishingSpotId;
     private final Map<String, Integer> requiredItems;
+    private final Map<String, Integer> optionalItems;
 
     public FishingTask(AbstractScript script, String method, String location) {
         this.script = script;
@@ -30,16 +32,19 @@ public class FishingTask implements Main.Task {
                 fishingArea = new Area(3243, 3150, 3253, 3140);
                 fishingSpotId = 1526;
                 requiredItems.put("Small fishing net", 1);
+                optionalItems = EquipmentSets.GRACEFUL.getItems();
+                //optionalItems.put("Coins", 500); <- Example how to add items also
             }
             case "Trout", "Salmon" -> {
                 fishingArea = new Area(3100, 3425, 3107, 3435);
                 fishingSpotId = 1527;
                 requiredItems.put("Fly fishing rod", 1);
                 requiredItems.put("Feather", 5000);
+                optionalItems = EquipmentSets.GRACEFUL.getItems();
             }
             default -> throw new IllegalArgumentException("Invalid fishing method");
         }
-        new BankTask(this, requiredItems);
+        new BankTask(this, requiredItems, optionalItems);
     }
 
     @Override
