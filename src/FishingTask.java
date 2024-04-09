@@ -14,10 +14,10 @@ public class FishingTask implements Main.Task {
     private final int fishingSpotId;
     private final String[] requiredItems;
 
-    public FishingTask(AbstractScript script, String fishingMethod) {
+    public FishingTask(AbstractScript script, String method, String location) {
         this.script = script;
 
-        switch (fishingMethod) {
+        switch (method) {
             case "Shrimps" -> {
                 fishingArea = new Area(3243, 3150, 3253, 3140);
                 fishingSpotId = 1526;

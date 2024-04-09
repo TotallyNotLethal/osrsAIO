@@ -2,10 +2,9 @@ import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
-import org.dreambot.api.utilities.impl.Condition;
+import org.dreambot.api.utilities.Sleep;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,12 +14,16 @@ public class Main extends AbstractScript {
 
     private final List<Task> tasks = new ArrayList<>();
     private AtomicReference<Task> currentTask = new AtomicReference<>();
-    private AdvancedGUI gui;
+    private GUI gui;
 
     @Override
     public void onStart() {
-        gui = new AdvancedGUI(this);
-        SwingUtilities.invokeLater(() -> gui.setVisible(true));
+        SwingUtilities.invokeLater(() -> {
+            gui = new GUI(this);
+            Sleep.sleep(500);
+            gui.setVisible(true);
+        });
+
         log("Complex AIO Script started!");
     }
 
@@ -39,23 +42,25 @@ public class Main extends AbstractScript {
 
     @Override
     public void onExit() {
-        if (gui != null) {
-            gui.dispose();
-        }
-        log("Advanced AIO Script stopped.");
+        SwingUtilities.invokeLater(() -> {
+            if (gui != null) {
+                gui.dispose();
+            }
+        });
+        log("OSRS AIO Script stopped.");
     }
 
     public interface Task {
         int execute();
     }
 
-    public Task createTask(String skill, String method) {
+    public Task createTask(String skill, String method, String location) {
         switch (skill) {
             case "Fishing" -> {
-                return new FishingTask(this, method);
+                return new FishingTask(this, method, location);
             }
             case "Firemaking" -> {
-                return new FiremakingTask(this, method);
+                return new FiremakingTask(this, method, location);
             }
             //case "Woodcutting" -> {
                 //return new WoodcuttingTask(this, method);

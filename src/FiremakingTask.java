@@ -17,11 +17,11 @@ public class FiremakingTask implements Main.Task {
     private final String[] requiredItems;
     private final Player player;
 
-    public FiremakingTask(AbstractScript script, String firemakingMethod) {
+    public FiremakingTask(AbstractScript script, String method, String location) {
         this.script = script;
         player = Players.getLocal();
 
-        switch (firemakingMethod) {
+        switch (method) {
             case "Logs" -> {
                 requiredItems = new String[]{"Tinderbox", "Logs"};
             }
