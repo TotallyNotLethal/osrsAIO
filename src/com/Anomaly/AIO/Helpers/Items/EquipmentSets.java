@@ -29,7 +29,7 @@ public class EquipmentSets {
             .addItem("Graceful boots", 1)
             .addItem("Graceful cape", 1);
 
-    public static EquipmentSet ARMOR = new EquipmentSet()
+    public static EquipmentSet MELEE_ARMOR = new EquipmentSet()
             .addItem(ArmorType + " Full helm", 1)
             .addItem(ArmorType + " Platebody", 1)
             .addItem(ArmorType + " Platelegs", 1)
