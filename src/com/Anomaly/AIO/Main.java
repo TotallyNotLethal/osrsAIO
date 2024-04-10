@@ -2,6 +2,7 @@ package com.Anomaly.AIO;
 
 import com.Anomaly.AIO.Tasks.Skilling.FiremakingTask;
 import com.Anomaly.AIO.Tasks.Skilling.FishingTask;
+import com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
