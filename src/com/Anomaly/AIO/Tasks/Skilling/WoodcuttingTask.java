@@ -1,47 +1,57 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
-import com.Anomaly.AIO.Helpers.Items.EquipmentSets;
 import com.Anomaly.AIO.Helpers.Locations.WCLocations;
-import com.Anomaly.AIO.Tasks.Banking.BankTask;
+import com.Anomaly.AIO.Main;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.container.impl.equipment.Equipment;
 import org.dreambot.api.methods.depositbox.DepositBox;
-import org.dreambot.api.methods.input.Camera;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
-import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.Skills;
-import org.dreambot.api.methods.tabs.Tab;
-import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
-import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.utilities.Logger;
 import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 
 import java.util.*;
 
-public class WoodcuttingTask {
+public class WoodcuttingTask implements Main.Task {
+
+    private final Map<String, Integer> requiredItems;
 
     public static int wclvl = Skills.getRealLevel(Skill.WOODCUTTING);
     public static String[] axe = {"Bronze axe", "Iron axe", "Steel axe", "Mithril axe", "Adamant axe", "Rune axe"};
+
+    public WoodcuttingTask(Main main, String method, String location) {
+        execute();
+        requiredItems = new HashMap<>();
+
+    }
 
     public static void updateWoodcuttingLevel() {
         wclvl = Skills.getRealLevel(Skill.WOODCUTTING);
     }
 
-    public static GameObject findClosestTreeToChop() {
+    public GameObject findClosestTreeToChop() {
         String treeType;
         if (wclvl < 15) {
-            treeType = "Tree"; // Regular tree
+            treeType = "Tree";
+            requiredItems.put("Bronze axe", 1);
         } else if (wclvl < 30) {
             treeType = "Oak tree";
-        } else {
+            requiredItems.put("Steel axe", 1);
+        } else if (wclvl < 60) {
             treeType = "Willow tree";
+            if(wclvl >= 31 && wclvl < 41) {
+                requiredItems.put("Adamant axe", 1);
+            } else requiredItems.put("Rune axe", 1);
+        } else {
+             treeType = "Yew tree";
+             requiredItems.put("Rune axe", 1);
         }
 
         GameObject closestTree = null;
@@ -52,7 +62,7 @@ public class WoodcuttingTask {
         for (GameObject tree : trees) {
             if (tree.getName().equals(treeType)) {
                 double distance = Players.getLocal().distance(tree);
-                if (distance < closestDistance & WCLocations.wcArea().contains(tree)) {
+                if (distance < closestDistance && WCLocations.wcArea().contains(tree)) {
                     closestTree = tree;
                     closestDistance = distance;
                 }
@@ -61,7 +71,6 @@ public class WoodcuttingTask {
 
         return closestTree;
     }
-
 
     public static String toBank() {
         if (Inventory.contains("Logs")) {
@@ -76,7 +85,7 @@ public class WoodcuttingTask {
 
     }
     public static boolean nonTargetLog() {
-        updateWoodcuttingLevel();
+        updateWoodcuttingLevel(); // Make sure the dwhylinWood.woodcutting level is up-to-date
         boolean containsNonTargetLog = false;
 
         if (wclvl < 15) {
@@ -91,7 +100,7 @@ public class WoodcuttingTask {
     }
 
 
-    public static void chopTree() {
+    public void chopTree() {
         WCLocations.wcArea();
 
         if (!WCLocations.wcArea().contains(Players.getLocal()) && !Inventory.isFull() && !nonTargetLog()) {
@@ -113,27 +122,12 @@ public class WoodcuttingTask {
 
     }
 
-    private static GameObject findNextBestTree(GameObject currentTree) {
+    private GameObject findNextBestTree(GameObject currentTree) {
         String treeType = findClosestTreeToChop().getName();
         return GameObjects.all(tree -> tree != null && tree.getName().contains(treeType)  && !tree.getName().contains("stump") && WCLocations.wcArea().contains(tree) && !tree.equals(currentTree))
                 .stream()
                 .min(Comparator.comparingDouble(tree -> Players.getLocal().distance(tree)))
                 .orElse(null);
-    }
-
-    public String axeToUse() {
-
-        if (wclvl < 6) {
-            return "Bronze Axe";
-        } else if (wclvl < 21) {
-            return "Steel Axe";
-        } else if (wclvl < 31) {
-            return "Mithril Axe";
-        } else if (wclvl < 41) {
-            return "Adamant Axe";
-        } else {
-            return "Rune Axe";
-        }
     }
 
     public static void bankWood() {
@@ -157,12 +151,12 @@ public class WoodcuttingTask {
                 }
             }
             if(WCLocations.wcArea() != WCLocations.willowTreeArea){
-                if (!Bank.contains(Players.getLocal())) {
-                    Walking.walk(Bank.getClosestBankLocation());
-                    Sleep.sleepUntil(() -> Bank.contains(Players.getLocal()), Calculations.random(2550, 4550));
+                if (!WCLocations.wcBank.contains(Players.getLocal())) {
+                    Walking.walk(WCLocations.wcBank.getRandomTile());
+                    Sleep.sleepUntil(() -> WCLocations.wcBank.contains(Players.getLocal()), Calculations.random(2550, 4550));
                 }
 
-                if (!Bank.isOpen() && Bank.contains(Players.getLocal())) {
+                if (!Bank.isOpen() && WCLocations.wcBank.contains(Players.getLocal())) {
                     Bank.open();
                     Sleep.sleepUntil(Bank::isOpen, Calculations.random(1000, 2500));
                 }
@@ -181,15 +175,15 @@ public class WoodcuttingTask {
         }
     }
 
-    public static void execute() {
-        if (!Equipment.contains("axe")) {
-            if (Bank.contains(Players.getLocal())) {
-                Walking.walk(Bank.getClosestBankLocation());
+    public int execute() {
+        if (!Equipment.contains("Bronze axe")) {
+            if (!WCLocations.lumbridgeBank.contains(Players.getLocal())) {
+                Walking.walk(WCLocations.lumbridgeBank);
                 Sleep.sleep(1950, 3350);
             }
 
 
-            if (Bank.contains(Players.getLocal())) {
+            if (WCLocations.lumbridgeBank.contains(Players.getLocal())) {
                 if (!Bank.isOpen()) {
                     Bank.open();
                     Sleep.sleepUntil(() -> Bank.isOpen(), 5000);
@@ -218,11 +212,13 @@ public class WoodcuttingTask {
             }
         }
         Logger.log("Debug: Woodcutting task");
-        if (Equipment.contains("Bronze axe")) {
-            WoodcuttingTask.chopTree();
-            WoodcuttingTask.bankWood();
+        if (Equipment.contains(requiredItems) || Inventory.contains(requiredItems)) {
+            chopTree();
+            bankWood();
         }
-
+        return Calculations.random(200, 700);
     }
+
+
 
 }

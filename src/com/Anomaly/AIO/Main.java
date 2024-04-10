@@ -71,6 +71,9 @@ public class Main extends AbstractScript {
             case "Firemaking" -> {
                 return new FiremakingTask(this, method, location);
             }
+            case "Woodcutting" -> {
+                return new WoodcuttingTask(this, method, location);
+            }
             default -> {
                 log("Unsupported skill/method: " + skill + "/" + method);
                 return null;
