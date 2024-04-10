@@ -32,7 +32,7 @@ public class WoodcuttingTask implements Main.Task {
 
     }
 
-    public static void updateWoodcuttingLevel() {
+    public void updateWoodcuttingLevel() {
         wclvl = Skills.getRealLevel(Skill.WOODCUTTING);
     }
 
@@ -72,7 +72,7 @@ public class WoodcuttingTask implements Main.Task {
         return closestTree;
     }
 
-    public static String toBank() {
+    public String toBank() {
         if (Inventory.contains("Logs")) {
             return "Logs";
         }
@@ -84,8 +84,8 @@ public class WoodcuttingTask implements Main.Task {
 
 
     }
-    public static boolean nonTargetLog() {
-        updateWoodcuttingLevel(); // Make sure the dwhylinWood.woodcutting level is up-to-date
+    public boolean nonTargetLog() {
+        updateWoodcuttingLevel();
         boolean containsNonTargetLog = false;
 
         if (wclvl < 15) {
@@ -130,7 +130,7 @@ public class WoodcuttingTask implements Main.Task {
                 .orElse(null);
     }
 
-    public static void bankWood() {
+    public void bankWood() {
 
         if (Inventory.isFull() || !Inventory.contains(axe) && !Equipment.contains(axe) || nonTargetLog()) {
             if (WCLocations.wcArea() == WCLocations.willowTreeArea) {
@@ -186,7 +186,7 @@ public class WoodcuttingTask implements Main.Task {
             if (WCLocations.lumbridgeBank.contains(Players.getLocal())) {
                 if (!Bank.isOpen()) {
                     Bank.open();
-                    Sleep.sleepUntil(() -> Bank.isOpen(), 5000);
+                    Sleep.sleepUntil(Bank::isOpen, 5000);
                 } else if (Bank.isOpen()) {
                     if (!Inventory.onlyContains("Bronze axe")) {
                         Bank.depositAllItems();

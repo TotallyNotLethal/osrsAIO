@@ -1,5 +1,6 @@
 package com.Anomaly.AIO;
 
+import com.Anomaly.AIO.Tasks.Antiban.AntibanTask;
 import com.Anomaly.AIO.Tasks.Skilling.FiremakingTask;
 import com.Anomaly.AIO.Tasks.Skilling.FishingTask;
 import com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask;
@@ -35,6 +36,9 @@ public class Main extends AbstractScript {
 
     @Override
     public int onLoop() {
+        if(Calculations.random(1, 100) > 61) {
+            AntibanTask.execute();
+        }
         if(!taskStarted) {
             taskStarted = true;
             Task task = currentTask.get();
