@@ -47,6 +47,7 @@ public class FletchingTask implements ChatListener, Main.Task {
         switch(location) {
             case "Varrock" -> bankArea = new Area(new Tile(3250, 3420, 0), new Tile(3257, 3419, 0));
             case "Falador" -> bankArea = new Area(new Tile(2946, 3368, 0), new Tile(2943, 3369, 0));
+            case "GrandExchange" -> bankArea = new Area(new Tile(3159, 3493, 0), new Tile(3170, 3484, 0));
             default -> bankArea = new Area(new Tile(0, 0, 0), new Tile(0, 0, 0));
         }
     }
