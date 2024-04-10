@@ -202,6 +202,6 @@ class GUI extends JFrame {
     private void populateSkillLocations() {
         skillLocations.put("Woodcutting", Arrays.asList("Lumbridge", "Draynor Village"));
         skillLocations.put("Fishing", Arrays.asList("Lumbridge Swamp", "Barbarian Village"));
-        skillLocations.put("Firemaking", Arrays.asList("Grand Exchange", "Falador Park"));
+        skillLocations.put("Firemaking", Arrays.asList("Grand Exchange"));
     }
 }
