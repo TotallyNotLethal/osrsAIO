@@ -193,17 +193,17 @@ class GUI extends JFrame {
         locations.forEach(locationListModel::addElement);
     }
 
-    private void populateSkillOptions() {
-        skillOptions.put("Woodcutting", Arrays.asList("Trees", "Oak Tree", "Willow Tree"));
-        skillOptions.put("Fishing", Arrays.asList("Shrimps", "Trout", "Salmon"));
-        skillOptions.put("Firemaking", Arrays.asList("Logs", "Oak Logs", "Willow Logs"));
-        skillOptions.put("Agility", List.of("Go"));
-    }
-
     private void populateSkillLocations() {
         skillLocations.put("Woodcutting", Arrays.asList("Lumbridge", "Draynor Village"));
         skillLocations.put("Fishing", Arrays.asList("Lumbridge Swamp", "Barbarian Village"));
         skillLocations.put("Firemaking", Arrays.asList("Grand Exchange", "Falador Park"));
         skillLocations.put("Agility", List.of("Varrock"));
+    }
+
+    private void populateSkillOptions() {
+        skillOptions.put("Woodcutting", Arrays.asList("Trees", "Oak Tree", "Willow Tree"));
+        skillOptions.put("Fishing", Arrays.asList("Shrimps", "Trout", "Salmon"));
+        skillOptions.put("Firemaking", Arrays.asList("Logs", "Oak Logs", "Willow Logs"));
+        skillOptions.put("Agility", List.of("Run", "Walk"));
     }
 }

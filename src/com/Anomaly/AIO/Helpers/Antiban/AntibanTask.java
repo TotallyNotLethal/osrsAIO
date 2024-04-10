@@ -1,4 +1,4 @@
-package com.Anomaly.AIO.Tasks.Antiban;
+package com.Anomaly.AIO.Helpers.Antiban;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.input.Camera;
@@ -20,7 +20,7 @@ public class AntibanTask {
                 Camera.rotateTo(Calculations.random(0, 360), Calculations.random(200, 600));
                 Logger.log("AntiBan: Rotating camera");
                 Sleep.sleep(2000, 4000);
-            } else if (action <= 6) {
+            } else if (action <= 7) {
                 openRandomTab();
                 Sleep.sleep(3000, 5000);
             } else if (action <= 10) { // ~4% chance

@@ -59,8 +59,7 @@ public class FiremakingTask implements ChatListener, Main.Task {
                 && !Players.getLocal().isAnimating() && !Players.getLocal().isMoving()) {
             Logger.log("Fire is under player.");
             Sleep.sleep(1000);
-            if (fire != null && fire.getTile().equals(Players.getLocal().getTile())
-                    && !Players.getLocal().isAnimating() && !Players.getLocal().isMoving()) {
+            if (fire.getTile().equals(Players.getLocal().getTile()) && !Players.getLocal().isAnimating() && !Players.getLocal().isMoving()) {
                 Logger.log("Fire is under player.");
                 currentFmStartTile = null;
             }
@@ -106,12 +105,6 @@ public class FiremakingTask implements ChatListener, Main.Task {
             Walking.walk(FMLocations.FIRE_SPACE.getCenter());
             Sleep.sleepUntil(() -> FMLocations.FIRE_SPACE.contains(Players.getLocal()), 5000);
         }
-
-        /*if (!hasLogs() || !hasTinderbox()) {
-            if (!Bank.isOpen() && FMLocations.FIRE_SPACE.contains(Players.getLocal())) {
-                Bank.open();
-            }
-            */
 
         if (Bank.isOpen()) {
             currentFmStartTile = null;
