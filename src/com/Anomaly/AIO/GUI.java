@@ -121,7 +121,6 @@ class GUI extends JFrame {
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
 
-        // Task list goes here
         JList<String> taskList = new JList<>(trainingListModel);
         JScrollPane taskListScroll = new JScrollPane(taskList);
         rightPanel.add(taskListScroll, BorderLayout.CENTER);
