@@ -4,11 +4,14 @@ import com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask;
 import org.dreambot.api.methods.map.Area;
 
 public class WCLocations {
+    public static final Area wcBank = new Area(3182, 3445, 3185, 3436);
+
     public static Area regularTreeArea = new Area(3174, 3448, 3145, 3465);
     public static Area oakTreeArea = new Area(3169, 3422, 3161, 3411);
     public static Area willowTreeArea = new Area(3055, 3258, 3064, 3250);
     public static Area yewTreeArea = new Area(3201, 3506, 3225, 3498);
     public static Area wcDepositBox = new Area(3043, 3236, 3049, 3234);
+    public static Area lumbridgeBank = new Area(3207, 3222, 3210, 3218, 2);
 
 
     public static Area chosenArea;

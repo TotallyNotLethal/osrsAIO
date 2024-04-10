@@ -1,6 +1,5 @@
 package com.Anomaly.AIO;
 
-import com.Anomaly.AIO.Tasks.Skilling.AgilityTask;
 import com.Anomaly.AIO.Tasks.Skilling.FiremakingTask;
 import com.Anomaly.AIO.Tasks.Skilling.FishingTask;
 import com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask;
@@ -8,7 +7,6 @@ import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
-import org.dreambot.api.utilities.Logger;
 import org.dreambot.api.utilities.Sleep;
 
 import javax.swing.*;
@@ -21,7 +19,7 @@ public class Main extends AbstractScript {
 
     private final List<Task> tasks = new ArrayList<>();
     private AtomicReference<Task> currentTask = new AtomicReference<>();
-    public boolean taskRunning = false;
+    public boolean taskStarted = false;
     private GUI gui;
 
     @Override
@@ -37,16 +35,14 @@ public class Main extends AbstractScript {
 
     @Override
     public int onLoop() {
-        Task task = currentTask.get();
-        if (task != null) {
-            int delay = task.execute();
-            if (delay == 0) {
-                currentTask.set(null);
-                return Calculations.random(100, 200);
+        if(!taskStarted) {
+            taskStarted = true;
+            Task task = currentTask.get();
+            if (task != null) {
+                return task.execute();
             }
-            return delay;
         }
-        return Calculations.random(1000, 2000); // Idle time before trying again
+        return Calculations.random(1000, 2000);
     }
 
     public void updateTask(Task task) {
@@ -74,12 +70,6 @@ public class Main extends AbstractScript {
             }
             case "Firemaking" -> {
                 return new FiremakingTask(this, method, location);
-            }
-            case "Agility" -> {
-                return new AgilityTask(this, method, location);
-            }
-            case "Woodcutting" -> {
-                return new WoodcuttingTask(this, method, location);
             }
             default -> {
                 log("Unsupported skill/method: " + skill + "/" + method);
