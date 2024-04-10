@@ -21,6 +21,7 @@ public class FishingTask implements Main.Task {
     private final Area fishingArea;
     private final int fishingSpotId;
     private final Map<String, Integer> requiredItems;
+    private final Main mainScript = new Main();
 
     public FishingTask(AbstractScript script, String method, String location) {
         this.script = script;
@@ -64,7 +65,7 @@ public class FishingTask implements Main.Task {
         if (fishingSpot != null && fishingSpot.interact("Fish")) {
             Sleep.sleepUntil(() -> !Players.getLocal().isAnimating(), 15000);
         }
-
+        mainScript.taskRunning = false;
         return Calculations.random(1000, 2000);
     }
 }

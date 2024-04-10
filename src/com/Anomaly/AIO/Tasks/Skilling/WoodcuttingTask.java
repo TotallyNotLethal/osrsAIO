@@ -2,6 +2,7 @@ package com.Anomaly.AIO.Tasks.Skilling;
 
 import com.Anomaly.AIO.Helpers.Items.EquipmentSets;
 import com.Anomaly.AIO.Helpers.Locations.WCLocations;
+import com.Anomaly.AIO.Main;
 import com.Anomaly.AIO.Tasks.Banking.BankTask;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
@@ -25,7 +26,12 @@ import org.dreambot.api.wrappers.interactive.GameObject;
 
 import java.util.*;
 
-public class WoodcuttingTask {
+public class WoodcuttingTask implements Main.Task{
+    private final AbstractScript script;
+    public WoodcuttingTask(AbstractScript script, String method, String location){
+        this.script = script;
+        execute();
+    }
 
     public static int wclvl = Skills.getRealLevel(Skill.WOODCUTTING);
     public static String[] axe = {"Bronze axe", "Iron axe", "Steel axe", "Mithril axe", "Adamant axe", "Rune axe"};
@@ -181,7 +187,8 @@ public class WoodcuttingTask {
         }
     }
 
-    public static void execute() {
+    public int execute() {
+        Logger.log("Running");
         if (!Equipment.contains("axe")) {
             if (Bank.contains(Players.getLocal())) {
                 Walking.walk(Bank.getClosestBankLocation());
@@ -222,7 +229,7 @@ public class WoodcuttingTask {
             WoodcuttingTask.chopTree();
             WoodcuttingTask.bankWood();
         }
-
+    return Calculations.random(200, 700);
     }
 
 }
