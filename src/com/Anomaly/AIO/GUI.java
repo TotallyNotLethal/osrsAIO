@@ -28,7 +28,7 @@ class GUI extends JFrame {
         this.mainScript = script;
         setTitle("Bot Settings");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(800, 600);
+        setSize(600, 400);
         setLocationRelativeTo(null);
 
         populateSkillOptions();
@@ -113,7 +113,7 @@ class GUI extends JFrame {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setTopComponent(new JScrollPane(locationList));
         splitPane.setBottomComponent(new JScrollPane(methodList));
-        splitPane.setDividerLocation(300);
+        splitPane.setDividerLocation(this.getSize().height/2 - 50);
         return splitPane;
     }
 

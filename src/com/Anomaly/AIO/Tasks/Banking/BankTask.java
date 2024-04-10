@@ -1,5 +1,6 @@
 package com.Anomaly.AIO.Tasks.Banking;
 
+import com.Anomaly.AIO.Helpers.GrandExchange.BuyItems;
 import com.Anomaly.AIO.Main;
 import com.Anomaly.AIO.Tasks.Player.EquipTask;
 import org.dreambot.api.methods.Calculations;
@@ -14,6 +15,7 @@ import org.dreambot.api.wrappers.interactive.Player;
 import org.dreambot.api.wrappers.items.Item;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ public class BankTask implements Main.Task {
     private final Map<String, Integer> itemsToWithdraw;
     private final Map<String, Integer> optionalItemsToWithdraw;
     private final Player player;
+    private final Main.Task script;
 
     public BankTask(Main.Task task, Map<String, Integer> itemsToWithdraw, Map<String, Integer> optionalItemsToWithdraw, String... itemsToKeep) {
         this.bankLocation = Bank.getClosestBankLocation();
@@ -30,9 +33,10 @@ public class BankTask implements Main.Task {
         this.itemsToWithdraw = itemsToWithdraw;
         this.optionalItemsToWithdraw = optionalItemsToWithdraw;
         this.player = Players.getLocal();
+        this.script = task;
         this.execute();
         new EquipTask().execute();
-        task.execute();
+        script.execute();
     }
 
     @Override
@@ -74,6 +78,7 @@ public class BankTask implements Main.Task {
     }
 
     private void withdrawItems(Map<String, Integer> items, boolean isRequired) {
+        Map<String, Integer> itemsToBuy = new HashMap<>();;
         for (Map.Entry<String, Integer> entry : items.entrySet()) {
             String itemToWithdraw = entry.getKey();
             int totalAmountNeeded = entry.getValue();
@@ -88,11 +93,12 @@ public class BankTask implements Main.Task {
                 } else {
                     Logger.log("Bank does not have enough of (or is missing): " + itemToWithdraw);
                     if (isRequired) {
-                        // Fail the task for required items
-                        return;
+                        itemsToBuy.put(itemToWithdraw, totalAmountNeeded);
                     }
                 }
             }
+            if(itemsToBuy.size() > 0)
+                new BuyItems(script, itemsToBuy);
         }
     }
 }
