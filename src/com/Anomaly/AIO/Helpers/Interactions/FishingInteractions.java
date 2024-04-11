@@ -57,8 +57,14 @@ public class FishingInteractions {
 
     public static String getAction(FishType fish) {
         return switch (fish) {
-            case SHRIMP -> "Net";
-            case TROUT, TUNA -> "Bait";
+            case SHRIMP, KARAMBWANJI, ANCHOVIES, GUPPY, CAVEFISH, TETRA, MONKFISH, MINNOW, MACKEREL, FISH_SHOAL -> "Net";
+            case SARDINE, HERRING, PIKE, SLIMY_EEL, CAVE_EEL, ANGLERFISH, SACRED_EEL, LAVA_EEL, INFERNAL_EEL -> "Bait";
+            case TROUT, SALMON, RAINBOW_FISH -> "Lure";
+            case LEAPING_TROUT, LEAPING_SALMON, LEAPING_STURGEON -> "Rod";
+            case TUNA, SWORDFISH, SHARK -> "Harpoon";
+            case LOBSTER, DARK_CRAB -> "Cage";
+            case BLUEGILL, COMMON_TENCH, MOTTLED_EEL, GREATER_SIREN -> "Fishing spot";
+            case KARAMBWAN -> "Fish";
             default -> "Fish";
         };
     }

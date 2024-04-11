@@ -1,6 +1,7 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
 import com.Anomaly.AIO.Main;
+import com.Anomaly.AIO.Task;
 import org.dreambot.api.ClientSettings;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -19,7 +20,7 @@ import org.dreambot.api.wrappers.items.Item;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FletchingTask implements ChatListener, Main.Task {
+public class FletchingTask implements ChatListener, Task {
 
     private final Map<String, Integer> requiredItems;
     private Area bankArea;
@@ -63,6 +64,11 @@ public class FletchingTask implements ChatListener, Main.Task {
         ClientSettings.closeSettingsInterface();
 
         return Calculations.random(200, 700);
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
     }
 
     private void fletchBows() {

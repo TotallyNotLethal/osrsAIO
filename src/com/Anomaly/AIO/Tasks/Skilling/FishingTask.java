@@ -78,7 +78,7 @@ public class FishingTask implements Task {
 
             stateManager.addState(new BankingState(script, requiredItems, optionalItems));
 
-            stateManager.addState(new EquipItemsState(script, EquipmentSets.GRACEFUL));
+            stateManager.addState(new EquipItemsState(script, null));
         }
 
         stateManager.addState(new WalkToState(script, fishingArea));

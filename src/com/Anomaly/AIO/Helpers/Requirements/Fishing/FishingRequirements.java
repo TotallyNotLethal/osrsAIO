@@ -4,6 +4,7 @@ import java.util.EnumMap;
 
 public class FishingRequirements {
     private static final EnumMap<FishType, FishingEquipment[]> fishToEquipmentMap = new EnumMap<>(FishType.class);
+    private static final EnumMap<FishType, FishRequirement> fishToRequirementMap = new EnumMap<>(FishType.class);
 
     static {
         fishToEquipmentMap.put(FishType.SHRIMP, new FishingEquipment[]{FishingEquipment.SMALL_NET});
@@ -28,6 +29,10 @@ public class FishingRequirements {
 
     public static FishingEquipment[] getRequiredEquipment(FishType fishType) {
         return fishToEquipmentMap.getOrDefault(fishType, new FishingEquipment[]{});
+    }
+
+    public static FishRequirement getFishRequirement(FishType fishType) {
+        return fishToRequirementMap.getOrDefault(fishType, new FishRequirement(1, false));
     }
 }
 
