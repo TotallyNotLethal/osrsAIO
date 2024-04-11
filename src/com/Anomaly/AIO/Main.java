@@ -2,7 +2,6 @@ package com.Anomaly.AIO;
 
 import com.Anomaly.AIO.Tasks.Skilling.FiremakingTask;
 import com.Anomaly.AIO.Tasks.Skilling.FishingTask;
-import com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
@@ -35,14 +34,18 @@ public class Main extends AbstractScript {
 
     @Override
     public int onLoop() {
-        if(!taskStarted) {
-            taskStarted = true;
-            Task task = currentTask.get();
-            if (task != null) {
-                return task.execute();
-            }
+        Task task = currentTask.get();
+
+        if (task == null) {
+            return Calculations.random(200,700);
         }
-        return Calculations.random(1000, 2000);
+
+        if (!task.isComplete()) {
+            return task.execute();
+        } else {
+            currentTask.set(null);
+            return Calculations.random(200,700);
+        }
     }
 
     public void updateTask(Task task) {
@@ -57,10 +60,6 @@ public class Main extends AbstractScript {
             }
         });
         log("Anomaly AIO Script stopped.");
-    }
-
-    public interface Task {
-        int execute();
     }
 
     public Task createTask(String skill, String method, String location) {

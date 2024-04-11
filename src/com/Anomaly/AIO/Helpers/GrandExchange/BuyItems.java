@@ -1,7 +1,8 @@
 package com.Anomaly.AIO.Helpers.GrandExchange;
 
+import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
 import com.Anomaly.AIO.Main;
-import com.Anomaly.AIO.Tasks.Banking.BankTask;
+import com.Anomaly.AIO.Task;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.grandexchange.GrandExchange;
 import org.dreambot.api.methods.grandexchange.LivePrices;
@@ -21,9 +22,9 @@ public class BuyItems {
     private final Map<String, Integer> itemsToBuy;
     public boolean itemsBought;
     private final Player player;
-    private final Main.Task script;
+    private final Task script;
 
-    public BuyItems(Main.Task task, Map<String, Integer> itemsToBuy) {
+    public BuyItems(Task task, Map<String, Integer> itemsToBuy) {
         this.itemsToBuy = itemsToBuy;
         itemsBought = execute();
         player = Players.getLocal();
@@ -51,7 +52,7 @@ public class BuyItems {
             Sleep.sleep(1000, 2000);
         }
 
-        new BankTask(script, itemsToBuy, null);
+        new BankingState(null, itemsToBuy, null);
 
         return true;
     }

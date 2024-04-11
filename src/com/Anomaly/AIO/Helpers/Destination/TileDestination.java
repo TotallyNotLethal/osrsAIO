@@ -26,6 +26,6 @@ public abstract class TileDestination implements Destination {
     }
 
     public boolean isOnScreen(AbstractScript script) {
-        return tile.distance(player) <= 7; // Adjust distance as needed
+        return tile.distance(player) <= 7;
     }
 }

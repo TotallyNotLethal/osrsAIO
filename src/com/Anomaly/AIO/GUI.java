@@ -138,7 +138,7 @@ class GUI extends JFrame {
                         String method = parts[1];
                         String location = parts[2];
 
-                        Main.Task task = mainScript.createTask(skill, method, location);
+                        Task task = mainScript.createTask(skill, method, location);
                         mainScript.setCurrentTask(task);
                     } else {
                         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(this,
@@ -202,7 +202,7 @@ class GUI extends JFrame {
 
     private void populateSkillOptions() {
         skillOptions.put("Woodcutting", Arrays.asList("Trees", "Oak Tree", "Willow Tree"));
-        skillOptions.put("Fishing", Arrays.asList("Shrimps", "Trout", "Salmon"));
+        skillOptions.put("Fishing", Arrays.asList("Shrimp", "Trout", "Salmon"));
         skillOptions.put("Firemaking", Arrays.asList("Logs", "Oak Logs", "Willow Logs"));
         skillOptions.put("Agility", List.of("Run", "Walk"));
     }

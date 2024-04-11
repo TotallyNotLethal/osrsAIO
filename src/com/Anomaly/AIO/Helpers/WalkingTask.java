@@ -1,7 +1,7 @@
 package com.Anomaly.AIO.Helpers;
 
 import com.Anomaly.AIO.Helpers.Destination.Destination;
-import com.Anomaly.AIO.Main.Task;
+import com.Anomaly.AIO.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.interactive.Players;
@@ -36,9 +36,13 @@ public class WalkingTask implements Task {
         } else if (destination instanceof Tile) {
             return ((Tile) destination).distance(player) < 2 ? 0 : Calculations.random(100, 200);
         } else {
-            // Log or handle unsupported destination types
             script.log("Unsupported destination type.");
-            return 0; // End task for unsupported types
+            return 0;
         }
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
     }
 }

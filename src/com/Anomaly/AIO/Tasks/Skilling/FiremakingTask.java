@@ -2,6 +2,7 @@ package com.Anomaly.AIO.Tasks.Skilling;
 
 import com.Anomaly.AIO.Helpers.Locations.FMLocations;
 import com.Anomaly.AIO.Main;
+import com.Anomaly.AIO.Task;
 import org.dreambot.api.ClientSettings;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -24,7 +25,7 @@ import org.dreambot.api.wrappers.widgets.message.Message;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FiremakingTask implements ChatListener, Main.Task {
+public class FiremakingTask implements ChatListener, Task {
 
     private final Map<String, Integer> requiredItems;
 
@@ -113,6 +114,10 @@ public class FiremakingTask implements ChatListener, Main.Task {
         return Calculations.random(200, 700);
     }
 
+    @Override
+    public boolean isComplete() {
+        return false;
+    }
 
 
     private void burnLogs() {

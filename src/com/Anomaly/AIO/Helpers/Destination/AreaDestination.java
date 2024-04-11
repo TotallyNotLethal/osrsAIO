@@ -26,6 +26,6 @@ public abstract class AreaDestination implements Destination {
     }
 
     public boolean isOnScreen(AbstractScript script) {
-        return area.contains(player) && area.getCenter().distance(player) <= 7; // Approximation
+        return area.contains(player) && area.getCenter().distance(player) <= 7;
     }
 }

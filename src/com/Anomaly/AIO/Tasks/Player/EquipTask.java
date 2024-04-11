@@ -1,13 +1,14 @@
 package com.Anomaly.AIO.Tasks.Player;
 
 import com.Anomaly.AIO.Main;
+import com.Anomaly.AIO.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.items.Item;
 
-public class EquipTask implements Main.Task {
+public class EquipTask implements Task {
     public EquipTask() {
         execute();
     }
@@ -21,6 +22,11 @@ public class EquipTask implements Main.Task {
             }
         }
         return Calculations.random(200, 300);
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
     }
 
     private boolean canEquip(Item item) {

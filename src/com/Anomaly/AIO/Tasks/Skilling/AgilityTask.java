@@ -1,6 +1,7 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
 import com.Anomaly.AIO.Main;
+import com.Anomaly.AIO.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
@@ -13,7 +14,7 @@ import org.dreambot.api.wrappers.interactive.Player;
 import java.util.Arrays;
 import java.util.List;
 
-public class AgilityTask implements Main.Task {
+public class AgilityTask implements Task {
     private final AbstractScript script;
     private final Player player;
     private final List<String> commonObstacleActions = Arrays.asList("Climb", "Climb-up", "Cross", "Jump", "Leap", "Hurdle", "Balance", "Jump-off"); // Added "Leap"
@@ -28,7 +29,7 @@ public class AgilityTask implements Main.Task {
     @Override
     public int execute() {
         if (player.isMoving() || player.isAnimating()) {
-            return Calculations.random(500, 1000); // Short delay before the next loop iteration
+            return Calculations.random(500, 1000);
         }
 
         GameObject nextObstacle = getNextObstacle();
@@ -44,6 +45,11 @@ public class AgilityTask implements Main.Task {
             return 0;
         }
         return Calculations.random(100, 200);
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
     }
 
     private GameObject getNextObstacle() {

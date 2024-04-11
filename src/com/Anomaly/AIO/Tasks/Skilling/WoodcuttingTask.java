@@ -2,7 +2,6 @@ package com.Anomaly.AIO.Tasks.Skilling;
 
 import com.Anomaly.AIO.Helpers.Items.EquipmentSets;
 import com.Anomaly.AIO.Helpers.Locations.WCLocations;
-import com.Anomaly.AIO.Tasks.Banking.BankTask;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -27,7 +26,7 @@ import java.util.*;
 
 public class WoodcuttingTask {
 
-    public static int wclvl = Skills.getRealLevel(Skill.WOODCUTTING);
+    /*public static int wclvl = Skills.getRealLevel(Skill.WOODCUTTING);
     public static String[] axe = {"Bronze axe", "Iron axe", "Steel axe", "Mithril axe", "Adamant axe", "Rune axe"};
 
     public static void updateWoodcuttingLevel() {
@@ -223,6 +222,6 @@ public class WoodcuttingTask {
             WoodcuttingTask.bankWood();
         }
 
-    }
+    }*/
 
 }

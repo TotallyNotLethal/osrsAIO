@@ -16,7 +16,7 @@ public class WCLocations {
 
     public static Area chosenArea;
 
-    public static Area wcArea() {
+    /*public static Area wcArea() {
         if (WoodcuttingTask.wclvl < 15) {
             chosenArea = regularTreeArea;
             return regularTreeArea;
@@ -27,7 +27,7 @@ public class WCLocations {
         }
         else chosenArea = willowTreeArea;
         return willowTreeArea;
-    }
+    }*/
 
 
 
