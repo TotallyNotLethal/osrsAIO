@@ -58,7 +58,7 @@ public class FishingTask implements Task {
                 fishingSpotId = 1526;
                 requiredItems.put("Small fishing net", 1);
                 optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
-                //optionalItems.put("Coins", 500); <- Example how to add items also
+                optionalItems.put("Coins", 500);// <- Example how to add items also
             }
             case "Trout", "Salmon" -> {
                 fishingArea = new Area(3100, 3425, 3107, 3435);

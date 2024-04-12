@@ -5,10 +5,11 @@ public enum FishingEquipment {
     FISHING_ROD,
     FLY_FISHING_ROD,
     HARPOON,
-    CAGE,
     LOBSTER_POT,
+    OILY_FISHING_ROD,
     BARBARIAN_ROD,
     KARAMBWAN_VESSEL,
     BIG_NET,
-    DRIFT_NET
+    DRIFT_NET,
+    CORMORANTS_GLOVE
 }

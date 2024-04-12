@@ -66,8 +66,8 @@ public class BankingState implements State {
                     .toList();
 
             for (Item item : itemsToDeposit) {
-                Logger.log("Depositing item:" + item);
-                Bank.deposit(item.getName(), item.getAmount());
+                Logger.log("Depositing item(s):" + item);
+                Bank.depositAll(item.getName());
                 Sleep.sleepUntil(() -> !Inventory.contains(item.getName()), Calculations.random(100,250));
             }
         }
