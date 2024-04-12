@@ -1,6 +1,8 @@
 package com.Anomaly.AIO.Main;
 
 import com.Anomaly.AIO.Main.Skills.SkillManager;
+import org.dreambot.api.Client;
+import org.dreambot.api.data.GameState;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.utilities.Logger;
 
@@ -17,16 +19,25 @@ class GUI extends JFrame {
     private final Map<String, List<String>> skillMethods = new HashMap<>();
     private JList<String> methodList;
     private JList<String> locationList;
+    private Map<String, Integer> skillLevels;
     private final Map<String, List<String>> skillLocations = new HashMap<>();
     private final DefaultListModel<String> methodListModel = new DefaultListModel<>();
     private final DefaultListModel<String> locationListModel = new DefaultListModel<>();
     private final DefaultListModel<String> trainingListModel = new DefaultListModel<>();
     private JList<String> taskList;
     private final Map<String, JLabel> skillLabels = new HashMap<>();
+    private JLabel levelLabel;
     private final Main mainScript;
     private String selectedSkill = "";
     private JLabel selectedSkillLabel;
-    private SkillManager skillManager = new SkillManager();
+    private final SkillManager skillManager = new SkillManager();
+
+    private final Color backgroundColor = new Color(60, 63, 65);
+    private final Color panelColor = new Color(43, 43, 43);
+    private final Color accentColor = new Color(28, 134, 238);
+    private final Color textColor = Color.WHITE;
+    private final Color levelColor = new Color(191, 97, 106);
+    private final Font textFont = new Font("SansSerif", Font.BOLD, 14);
 
     public GUI(Main script) {
         this.mainScript = script;
@@ -63,6 +74,11 @@ class GUI extends JFrame {
 
         add(mainPanel);
 
+        mainPanel.setBackground(backgroundColor);
+        getContentPane().setBackground(backgroundColor);
+        updateLevels();
+
+        pack();
 
         setupLocationListListener();
         setupTaskListListener();
@@ -70,30 +86,30 @@ class GUI extends JFrame {
     }
 
     private JPanel createLeftPanel() {
-        JPanel skillsPanel = new JPanel(new GridLayout(6, 4, 1, 1));
+        JPanel skillsPanel = new JPanel();
+        skillsPanel.setLayout(new GridLayout(0, 3, 5, 5));
 
         loadSkillIcons();
-
-        Map<String, Integer> skillLevels = new HashMap<>();
-
-        for(Skill s : Skill.values())
-            skillLevels.put(s.getName(), s.getLevel());
+        skillLevels = new HashMap<>();
 
         for (String skill : skillIcons.keySet()) {
-            JPanel skillPanel = new JPanel(new BorderLayout());
+            JPanel skillContainer = new JPanel(new BorderLayout());
+            skillContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            skillContainer.setBackground(new Color(60, 63, 65));
+
             JLabel skillLabel = new JLabel(skillIcons.get(skill));
             skillLabel.setHorizontalAlignment(JLabel.CENTER);
 
-            JLabel levelLabel = new JLabel(String.valueOf(skillLevels.getOrDefault(skill, 1)));
+            levelLabel = new JLabel(String.valueOf(skillLevels.getOrDefault(skill, 1)));
             levelLabel.setHorizontalAlignment(JLabel.CENTER);
+            levelLabel.setForeground(Color.ORANGE);
+            levelLabel.setFont(levelLabel.getFont().deriveFont(Font.BOLD, 14f));
 
-            levelLabel.setOpaque(true);
-            levelLabel.setBackground(Color.BLACK);
-            levelLabel.setForeground(Color.RED);
+            skillLabel.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
 
-            skillPanel.add(skillLabel, BorderLayout.CENTER);
-            skillPanel.add(levelLabel, BorderLayout.NORTH);
-            skillPanel.addMouseListener(new MouseAdapter() {
+            skillContainer.add(skillLabel, BorderLayout.CENTER);
+            skillContainer.add(levelLabel, BorderLayout.SOUTH);
+            skillContainer.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     selectedSkill = skill;
@@ -104,10 +120,18 @@ class GUI extends JFrame {
                     }
                     skillLabel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
                     selectedSkillLabel = skillLabel;
+
+                    updateLevels();
                 }
             });
             skillLabels.put(skill, levelLabel);
-            skillsPanel.add(skillPanel);
+            skillsPanel.add(skillContainer);
+        }
+
+        for (Component comp : skillsPanel.getComponents()) {
+            if (comp instanceof JPanel skillContainer) {
+                styleComponent(skillContainer);
+            }
         }
 
         return skillsPanel;
@@ -193,8 +217,54 @@ class GUI extends JFrame {
             }).start();
         });
 
+        rightPanel.setBackground(backgroundColor);
+        styleComponent(taskList);
+        styleButton(startButton);
+
         return rightPanel;
     }
+
+    private void styleList(JList<?> list) {
+        list.setBackground(panelColor);
+        list.setForeground(textColor);
+        list.setFont(textFont);
+        list.setSelectionBackground(accentColor);
+        list.setSelectionForeground(textColor);
+        list.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        list.setFixedCellHeight(30);
+    }
+
+    private void styleButton(JButton button) {
+        button.setBackground(accentColor);
+        button.setForeground(textColor);
+        button.setFont(textFont);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                button.setBackground(accentColor.darker());
+            }
+            public void mouseExited(MouseEvent evt) {
+                button.setBackground(accentColor);
+            }
+        });
+    }
+
+    private void styleComponent(Component comp) {
+        if (comp instanceof JScrollPane scrollPane) {
+            scrollPane.getViewport().setBackground(panelColor);
+            scrollPane.setBorder(BorderFactory.createLineBorder(backgroundColor));
+            Component view = scrollPane.getViewport().getView();
+            if (view instanceof JList) {
+                styleList((JList<?>) view);
+            }
+        } else if (comp instanceof JPanel panel) {
+            panel.setBackground(panelColor);
+            panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        }
+    }
+
 
     private void loadSkillIcons() {
         skillIcons.put("Attack", new ImageIcon(Objects.requireNonNull(getClass().getResource("/Icons/Attack_icon.png"))));
@@ -222,25 +292,13 @@ class GUI extends JFrame {
         skillIcons.put("Construction", new ImageIcon(Objects.requireNonNull(getClass().getResource("/Icons/Construction_icon.png"))));
     }
 
-    private void updateTrainingPanels(String skill) {
-        List<String> methods = skillOptions.getOrDefault(skill, List.of("No method"));
-        List<String> locations = skillLocations.getOrDefault(skill, List.of("No location"));
-
-        methodListModel.clear();
-        methods.forEach(methodListModel::addElement);
-
-        locationListModel.clear();
-        locations.forEach(locationListModel::addElement);
-    }
-
     private void setupTaskListListener() {
         taskList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
                     int index = taskList.locationToIndex(e.getPoint());
-                    if (index >= 0) { // Ensure a valid item was clicked
-                        // Optional: Show a confirmation dialog before removing
+                    if (index >= 0) {
                         int confirm = JOptionPane.showConfirmDialog(GUI.this,
                                 "Are you sure you want to remove this task?",
                                 "Remove Task", JOptionPane.YES_NO_OPTION);
@@ -248,6 +306,19 @@ class GUI extends JFrame {
                             trainingListModel.remove(index);
                         }
                     }
+                }
+            }
+        });
+    }
+
+    public void updateLevels()
+    {
+        SwingUtilities.invokeLater(() -> {
+            for (Skill s : Skill.values()) {
+                skillLevels.put(s.getName(), s.getLevel());
+                JLabel levelLabel = skillLabels.get(s.getName());
+                if (levelLabel != null) {
+                    levelLabel.setText(String.valueOf(s.getLevel()));
                 }
             }
         });

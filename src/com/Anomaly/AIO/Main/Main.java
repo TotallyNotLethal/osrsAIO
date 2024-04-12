@@ -4,7 +4,10 @@ import com.Anomaly.AIO.Helpers.Locations.Location;
 import com.Anomaly.AIO.Tasks.Skilling.FiremakingTask;
 import com.Anomaly.AIO.Tasks.Skilling.FishingTask;
 import com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask;
+import org.dreambot.api.Client;
+import org.dreambot.api.data.GameState;
 import org.dreambot.api.methods.Calculations;
+import org.dreambot.api.randoms.RandomSolver;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
@@ -15,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-@ScriptManifest(author = "Team-Anomaly", name = "Advanced AIO Bot", version = 1.0, description = "An all-in-one OSRS script", category = Category.MISC)
+@ScriptManifest(author = "Team-Anomaly", name = "Anomaly AIO Bot", version = 1.0, description = "An all-in-one OSRS script", category = Category.MISC)
 public class Main extends AbstractScript {
 
     private final List<Task> tasks = new ArrayList<>();
@@ -30,7 +33,6 @@ public class Main extends AbstractScript {
             Sleep.sleep(500);
             gui.setVisible(true);
         });
-
         log("Anomaly AIO Script started!");
     }
 
@@ -46,14 +48,19 @@ public class Main extends AbstractScript {
             return task.execute();
         } else {
             currentTask.set(null);
+            gui.updateLevels();
             return Calculations.random(200,700);
         }
+    }
+
+    @Override
+    public void onSolverEnd(RandomSolver solver) {
+        gui.updateLevels();
     }
 
     public void updateTask(Task task) {
         currentTask.set(task);
     }
-
     @Override
     public void onExit() {
         SwingUtilities.invokeLater(() -> {

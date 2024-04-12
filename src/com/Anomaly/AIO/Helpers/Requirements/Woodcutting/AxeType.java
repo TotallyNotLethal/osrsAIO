@@ -43,7 +43,7 @@ public enum AxeType {
     }
 
     public static AxeType getBestAxeForLevel(int woodcuttingLevel, boolean isMember) {
-        AxeType bestAxe = BRONZE; // Default to bronze if no other axe is available for the level
+        AxeType bestAxe = BRONZE;
         for (AxeType axe : values()) {
             Logger.log("Checking Axe: " + axe);
             if (woodcuttingLevel >= axe.getLevelRequirement() && (isMember || !axe.isMembersOnly()) && axe.getLevelRequirement() > bestAxe.getLevelRequirement()) {
