@@ -1,9 +1,8 @@
-package com.Anomaly.AIO.Helpers.Locations;
+package com.Anomaly.AIO.Helpers.Locations.Woodcutting;
 
-import com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask;
 import org.dreambot.api.methods.map.Area;
 
-public class WCLocations {
+public class WoodcuttingLocations {
     public static final Area wcBank = new Area(3182, 3445, 3185, 3436);
 
     public static Area regularTreeArea = new Area(3174, 3448, 3145, 3465);

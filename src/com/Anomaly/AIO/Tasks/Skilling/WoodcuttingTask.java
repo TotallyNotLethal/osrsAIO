@@ -1,29 +1,5 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
-import com.Anomaly.AIO.Helpers.Items.EquipmentSets;
-import com.Anomaly.AIO.Helpers.Locations.WCLocations;
-import org.dreambot.api.input.Mouse;
-import org.dreambot.api.methods.Calculations;
-import org.dreambot.api.methods.container.impl.Inventory;
-import org.dreambot.api.methods.container.impl.bank.Bank;
-import org.dreambot.api.methods.container.impl.equipment.Equipment;
-import org.dreambot.api.methods.depositbox.DepositBox;
-import org.dreambot.api.methods.input.Camera;
-import org.dreambot.api.methods.interactive.GameObjects;
-import org.dreambot.api.methods.interactive.Players;
-import org.dreambot.api.methods.map.Area;
-import org.dreambot.api.methods.skills.Skill;
-import org.dreambot.api.methods.skills.Skills;
-import org.dreambot.api.methods.tabs.Tab;
-import org.dreambot.api.methods.tabs.Tabs;
-import org.dreambot.api.methods.walking.impl.Walking;
-import org.dreambot.api.script.AbstractScript;
-import org.dreambot.api.utilities.Logger;
-import org.dreambot.api.utilities.Sleep;
-import org.dreambot.api.wrappers.interactive.GameObject;
-
-import java.util.*;
-
 public class WoodcuttingTask {
 
     /*public static int wclvl = Skills.getRealLevel(Skill.WOODCUTTING);
@@ -51,7 +27,7 @@ public class WoodcuttingTask {
         for (GameObject tree : trees) {
             if (tree.getName().equals(treeType)) {
                 double distance = Players.getLocal().distance(tree);
-                if (distance < closestDistance & WCLocations.wcArea().contains(tree)) {
+                if (distance < closestDistance & WoodcuttingLocations.wcArea().contains(tree)) {
                     closestTree = tree;
                     closestDistance = distance;
                 }
@@ -91,11 +67,11 @@ public class WoodcuttingTask {
 
 
     public static void chopTree() {
-        WCLocations.wcArea();
+        WoodcuttingLocations.wcArea();
 
-        if (!WCLocations.wcArea().contains(Players.getLocal()) && !Inventory.isFull() && !nonTargetLog()) {
-            Walking.walk(WCLocations.wcArea().getRandomTile());
-            Sleep.sleepUntil(() -> WCLocations.wcArea().contains(Players.getLocal()), Calculations.random(3000, 5000));
+        if (!WoodcuttingLocations.wcArea().contains(Players.getLocal()) && !Inventory.isFull() && !nonTargetLog()) {
+            Walking.walk(WoodcuttingLocations.wcArea().getRandomTile());
+            Sleep.sleepUntil(() -> WoodcuttingLocations.wcArea().contains(Players.getLocal()), Calculations.random(3000, 5000));
         } else if (!Inventory.isFull() && !Players.getLocal().isAnimating()) {
             GameObject closestTree = findClosestTreeToChop(); // Find any closest tree initially
             if (closestTree != null && closestTree.interact("Chop down")) {
@@ -114,7 +90,7 @@ public class WoodcuttingTask {
 
     private static GameObject findNextBestTree(GameObject currentTree) {
         String treeType = findClosestTreeToChop().getName();
-        return GameObjects.all(tree -> tree != null && tree.getName().contains(treeType)  && !tree.getName().contains("stump") && WCLocations.wcArea().contains(tree) && !tree.equals(currentTree))
+        return GameObjects.all(tree -> tree != null && tree.getName().contains(treeType)  && !tree.getName().contains("stump") && WoodcuttingLocations.wcArea().contains(tree) && !tree.equals(currentTree))
                 .stream()
                 .min(Comparator.comparingDouble(tree -> Players.getLocal().distance(tree)))
                 .orElse(null);
@@ -138,13 +114,13 @@ public class WoodcuttingTask {
     public static void bankWood() {
 
         if (Inventory.isFull() || !Inventory.contains(axe) && !Equipment.contains(axe) || nonTargetLog()) {
-            if (WCLocations.wcArea() == WCLocations.willowTreeArea) {
-                if (!WCLocations.wcDepositBox.contains(Players.getLocal())) {
-                    Walking.walk(WCLocations.wcDepositBox.getRandomTile());
-                    Sleep.sleepUntil(() -> WCLocations.wcDepositBox.contains(Players.getLocal()), Calculations.random(2550, 4550));
+            if (WoodcuttingLocations.wcArea() == WoodcuttingLocations.willowTreeArea) {
+                if (!WoodcuttingLocations.wcDepositBox.contains(Players.getLocal())) {
+                    Walking.walk(WoodcuttingLocations.wcDepositBox.getRandomTile());
+                    Sleep.sleepUntil(() -> WoodcuttingLocations.wcDepositBox.contains(Players.getLocal()), Calculations.random(2550, 4550));
                 }
 
-                if (!DepositBox.isOpen() && WCLocations.wcDepositBox.contains(Players.getLocal())) {
+                if (!DepositBox.isOpen() && WoodcuttingLocations.wcDepositBox.contains(Players.getLocal())) {
                     DepositBox.open();
                     Sleep.sleepUntil(DepositBox::isOpen, Calculations.random(1000, 2500));
                 }
@@ -155,7 +131,7 @@ public class WoodcuttingTask {
                     DepositBox.close();
                 }
             }
-            if(WCLocations.wcArea() != WCLocations.willowTreeArea){
+            if(WoodcuttingLocations.wcArea() != WoodcuttingLocations.willowTreeArea){
                 if (!Bank.contains(Players.getLocal())) {
                     Walking.walk(Bank.getClosestBankLocation());
                     Sleep.sleepUntil(() -> Bank.contains(Players.getLocal()), Calculations.random(2550, 4550));

@@ -1,9 +1,9 @@
-package com.Anomaly.AIO.Helpers.Locations;
+package com.Anomaly.AIO.Helpers.Locations.Firemaking;
 
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
 
-public class FMLocations {
+public class FiremakingLocations {
     public static Tile fmstart1 = new Tile(3180, 3482);
     public static Tile fmstart2 = new Tile(3180, 3483);
     public static Tile fmstart3 = new Tile(3180, 3496);

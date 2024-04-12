@@ -2,6 +2,9 @@ package com.Anomaly.AIO.Tasks.Skilling;
 
 import com.Anomaly.AIO.Helpers.Interactions.FishingInteractions;
 import com.Anomaly.AIO.Helpers.Items.EquipmentSets;
+import com.Anomaly.AIO.Helpers.Locations.Fishing.FishingLocations;
+import com.Anomaly.AIO.Helpers.Locations.Fishing.FishingSpot;
+import com.Anomaly.AIO.Helpers.Locations.Location;
 import com.Anomaly.AIO.Helpers.Requirements.Fishing.FishType;
 import com.Anomaly.AIO.Helpers.Requirements.Fishing.FishingEquipment;
 import com.Anomaly.AIO.Helpers.Requirements.Fishing.FishingRequirements;
@@ -24,10 +27,13 @@ import org.dreambot.api.wrappers.interactive.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class FishingTask implements Task {
     private final AbstractScript script;
-    String method, location, interaction;
+    String method, interaction;
+    Location location;
+    FishType fishType;
     private final Player player;
     private Area fishingArea;
     private Area bankingArea;
@@ -36,53 +42,42 @@ public class FishingTask implements Task {
     private final Map<String, Integer> requiredItems;
 
     private final Map<String, Integer> optionalItems;
-    private StateManager stateManager;
+    private final StateManager stateManager;
 
     public FishingTask(AbstractScript script, String method, String location) {
         this.script = script;
         this.method = method;
-        this.location = location;
+        this.location = Location.valueOf(location.toUpperCase());
+        this.fishType = FishType.valueOf(method.toUpperCase());
         this.stateManager = new StateManager(script);
         requiredItems = new HashMap<>();
         optionalItems = new HashMap<>();
         this.player = Players.getLocal();
 
-        setupFishingTask(method);
+        setupFishingTask(fishType);
         prepareStates();
     }
 
-    private void setupFishingTask(String method) {
-
-        FishType fishType = FishType.valueOf(method.toUpperCase());
+    private void setupFishingTask(FishType fishType) {
 
         FishingEquipment[] requiredEquipment = FishingRequirements.fishToEquipmentMap.get(fishType);
         if (requiredEquipment != null) {
             for (FishingEquipment equipment : requiredEquipment) {
-                requiredItems.put(equipment.getDisplayName(), 1);
+                requiredItems.put(equipment.getDisplayName(), equipment.getAmount());
             }
         }
+        FishingSpot spot = FishingLocations.getFishingSpot(location, fishType);
+        this.fishingArea = Objects.requireNonNull(spot).getArea();
+        bankingArea = Bank.getClosestBankLocation().getArea(2);
+        optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
 
-        switch (method) {
-            case "Shrimp" -> {
-                fishingArea = new Area(3236, 3157, 3250, 3140);
-                bankingArea = Bank.getClosestBankLocation().getArea(2);
-                optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
-                //optionalItems.put("Coins", 500);// <- Example how to add items also
-            }
-            case "Trout", "Salmon" -> {
-                fishingArea = new Area(3100, 3425, 3107, 3435);
-                bankingArea = Bank.getClosestBankLocation().getArea(2);
-                requiredItems.put("Feather", 5000);
-                optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
-            }
-            case "Lobster" -> {
-                fishingArea = new Area(2922, 3182, 2926, 3175);
+        switch (location) {
+            case KARAMJA -> {
                 bankingArea = new Area(3044, 3237, 3050, 3233);
                 useDepositBox = true;
-                requiredItems.put("Coins", 360);
-                optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
+                requiredItems.put("Coins", 600);
             }
-            default -> throw new IllegalArgumentException("Invalid fishing method");
+            default -> throw new IllegalArgumentException("Invalid fishing location");
         }
     }
 
@@ -124,7 +119,9 @@ public class FishingTask implements Task {
             for (String item : requiredItems.keySet()) {
                 if (!Inventory.contains(item)) {
                     script.log("Missing required item: " + item);
-                    return -1;
+                    stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox));
+
+                    return Calculations.random(200,700);
                 }
             }
 

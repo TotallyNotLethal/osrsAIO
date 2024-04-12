@@ -15,6 +15,7 @@ public class StateManager {
     }
 
     public void executeState(State state) {
+        Logger.log("Added state: " + state.toString());
         states.add(state);
         executeCurrentState();
     }

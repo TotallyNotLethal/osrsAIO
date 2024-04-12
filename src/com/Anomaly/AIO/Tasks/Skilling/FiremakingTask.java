@@ -1,6 +1,6 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
-import com.Anomaly.AIO.Helpers.Locations.FMLocations;
+import com.Anomaly.AIO.Helpers.Locations.Firemaking.FiremakingLocations;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.ClientSettings;
 import org.dreambot.api.methods.Calculations;
@@ -74,10 +74,10 @@ public class FiremakingTask implements ChatListener, Task {
         if (currentFmStartTile == null || Players.getLocal().getY() != currentFmStartTile.getY() && !Inventory.isFull()) {
             int tileChoice = Calculations.random(1, 5);
             switch (tileChoice) {
-                case 1 -> currentFmStartTile = FMLocations.fmstart1;
-                case 2 -> currentFmStartTile = FMLocations.fmstart2;
-                case 3 -> currentFmStartTile = FMLocations.fmstart3;
-                case 4 -> currentFmStartTile = FMLocations.fmstart4;
+                case 1 -> currentFmStartTile = FiremakingLocations.fmstart1;
+                case 2 -> currentFmStartTile = FiremakingLocations.fmstart2;
+                case 3 -> currentFmStartTile = FiremakingLocations.fmstart3;
+                case 4 -> currentFmStartTile = FiremakingLocations.fmstart4;
             }
         }
         return currentFmStartTile;
@@ -101,13 +101,13 @@ public class FiremakingTask implements ChatListener, Task {
         }
         if (!ClientSettings.areRoofsHidden()) ClientSettings.toggleRoofs(false);
         ClientSettings.closeSettingsInterface();
-        if (!FMLocations.FIRE_SPACE.contains(Players.getLocal())) {
-            Walking.walk(FMLocations.FIRE_SPACE.getCenter());
-            Sleep.sleepUntil(() -> FMLocations.FIRE_SPACE.contains(Players.getLocal()), 5000);
+        if (!FiremakingLocations.FIRE_SPACE.contains(Players.getLocal())) {
+            Walking.walk(FiremakingLocations.FIRE_SPACE.getCenter());
+            Sleep.sleepUntil(() -> FiremakingLocations.FIRE_SPACE.contains(Players.getLocal()), 5000);
         }
 
         /*if (!hasLogs() || !hasTinderbox()) {
-            if (!Bank.isOpen() && FMLocations.FIRE_SPACE.contains(Players.getLocal())) {
+            if (!Bank.isOpen() && FiremakingLocations.FIRE_SPACE.contains(Players.getLocal())) {
                 Bank.open();
             }
             */
