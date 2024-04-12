@@ -9,8 +9,10 @@ import java.util.Map;
 public enum SkillData {
     WOODCUTTING(
             Map.of(
-                    "Lumbridge", Arrays.asList("Tree", "Oak Tree"),
-                    "Draynor Village", Arrays.asList("Willow Tree")
+                    "Lumbridge", Arrays.asList("Tree", "Oak", "Willow", "Yew"),
+                    "Draynor Village", Arrays.asList("Willow"),
+                    "Varrock", Arrays.asList("Maple", "Yew"),
+                    "Falador", Arrays.asList("Yew", "Magic")
             )
     ),
     FISHING(

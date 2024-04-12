@@ -1,7 +1,9 @@
 package com.Anomaly.AIO.Main;
 
+import com.Anomaly.AIO.Helpers.Locations.Location;
 import com.Anomaly.AIO.Tasks.Skilling.FiremakingTask;
 import com.Anomaly.AIO.Tasks.Skilling.FishingTask;
+import com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
@@ -69,6 +71,9 @@ public class Main extends AbstractScript {
             }
             case "Firemaking" -> {
                 return new FiremakingTask(this, method, location);
+            }
+            case "Woodcutting" -> {
+                return new WoodcuttingTask(this, method, location);
             }
             default -> {
                 log("Unsupported skill/method: " + skill + "/" + method);

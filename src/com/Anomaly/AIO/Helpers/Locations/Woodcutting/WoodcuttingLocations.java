@@ -1,33 +1,45 @@
 package com.Anomaly.AIO.Helpers.Locations.Woodcutting;
 
+import com.Anomaly.AIO.Helpers.Locations.Location;
+import com.Anomaly.AIO.Helpers.Locations.Spot;
+import com.Anomaly.AIO.Helpers.Requirements.Woodcutting.TreeType;
 import org.dreambot.api.methods.map.Area;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WoodcuttingLocations {
-    public static final Area wcBank = new Area(3182, 3445, 3185, 3436);
+    private static final Map<Location, Map<TreeType, Spot>> locations = new EnumMap<>(Location.class);
 
-    public static Area regularTreeArea = new Area(3174, 3448, 3145, 3465);
-    public static Area oakTreeArea = new Area(3169, 3422, 3161, 3411);
-    public static Area willowTreeArea = new Area(3055, 3258, 3064, 3250);
-    public static Area yewTreeArea = new Area(3201, 3506, 3225, 3498);
-    public static Area wcDepositBox = new Area(3043, 3236, 3049, 3234);
-    public static Area lumbridgeBank = new Area(3207, 3222, 3210, 3218, 2);
+    static {
+        Map<TreeType, Spot> lumbridgeTrees = new HashMap<>();
+        lumbridgeTrees.put(TreeType.TREE, new Spot(new Area(3184, 3227, 3197, 3213), false));
+        lumbridgeTrees.put(TreeType.OAK, new Spot(new Area(3205, 3225, 3215, 3215), false));
+        lumbridgeTrees.put(TreeType.WILLOW, new Spot(new Area(3190, 3270, 3195, 3275), false));
+        lumbridgeTrees.put(TreeType.YEW, new Spot( new Area(3248, 3203, 3251, 3200), false));
 
+        Map<TreeType, Spot> draynorVillageTrees = new HashMap<>();
+        draynorVillageTrees.put(TreeType.WILLOW, new Spot(new Area(3081, 3240, 3091, 3225), false));
 
-    public static Area chosenArea;
+        Map<TreeType, Spot> varrockTrees = new HashMap<>();
+        varrockTrees.put(TreeType.MAPLE, new Spot(new Area(3220, 3500, 3225, 3505), true));
+        varrockTrees.put(TreeType.YEW, new Spot(new Area(3200, 3500, 3205, 3505), true));
 
-    /*public static Area wcArea() {
-        if (WoodcuttingTask.wclvl < 15) {
-            chosenArea = regularTreeArea;
-            return regularTreeArea;
+        Map<TreeType, Spot> faladorTrees = new HashMap<>();
+        faladorTrees.put(TreeType.YEW, new Spot(new Area(3000, 3315, 3005, 3320), false));
+        faladorTrees.put(TreeType.MAGIC, new Spot(new Area(2990, 3310, 2995, 3315), false));
+
+        locations.put(Location.LUMBRIDGE, lumbridgeTrees);
+        locations.put(Location.DRAYNOR_VILLAGE, draynorVillageTrees);
+        locations.put(Location.VARROCK, varrockTrees);
+        locations.put(Location.FALADOR, faladorTrees);
+    }
+
+    public static Spot getWoodcuttingSpot(Location location, TreeType treeType) {
+        Map<TreeType, Spot> spots = locations.get(location);
+        if (spots != null) {
+            return spots.get(treeType);
         }
-        if (WoodcuttingTask.wclvl >= 15 && WoodcuttingTask.wclvl < 30) {
-            chosenArea = oakTreeArea;
-            return oakTreeArea;
-        }
-        else chosenArea = willowTreeArea;
-        return willowTreeArea;
-    }*/
-
-
-
+        return null;
+    }
 }

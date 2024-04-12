@@ -100,4 +100,3 @@ public class FishingRequirements {
         return fishToRequirementMap.getOrDefault(fishType, new FishRequirement(1, false));
     }
 }
-
