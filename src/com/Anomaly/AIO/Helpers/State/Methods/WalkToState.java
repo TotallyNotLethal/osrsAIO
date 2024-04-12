@@ -28,6 +28,14 @@ import org.dreambot.api.wrappers.interactive.Player;
             this.player = Players.getLocal();
         }
 
+        public WalkToState(AbstractScript script, BankLocation bankLocation) {
+            this.script = script;
+            this.destination = null;
+            this.area = bankLocation.getArea(2);
+            this.tile = area.getCenter();
+            this.player = Players.getLocal();
+        }
+
         public WalkToState(AbstractScript script, Area area) {
             this.script = script;
             this.destination = null;

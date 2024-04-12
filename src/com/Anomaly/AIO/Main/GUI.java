@@ -1,6 +1,8 @@
-package com.Anomaly.AIO;
+package com.Anomaly.AIO.Main;
 
+import com.Anomaly.AIO.Main.Skills.SkillManager;
 import org.dreambot.api.methods.skills.Skill;
+import org.dreambot.api.utilities.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,20 +21,19 @@ class GUI extends JFrame {
     private final DefaultListModel<String> methodListModel = new DefaultListModel<>();
     private final DefaultListModel<String> locationListModel = new DefaultListModel<>();
     private final DefaultListModel<String> trainingListModel = new DefaultListModel<>();
+    private JList<String> taskList;
     private final Map<String, JLabel> skillLabels = new HashMap<>();
     private final Main mainScript;
     private String selectedSkill = "";
+    private JLabel selectedSkillLabel;
+    private SkillManager skillManager = new SkillManager();
 
     public GUI(Main script) {
-
         this.mainScript = script;
         setTitle("Bot Settings");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
-
-        populateSkillOptions();
-        populateSkillLocations();
 
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -61,11 +62,15 @@ class GUI extends JFrame {
         mainPanel.add(createRightPanel(), BorderLayout.EAST);
 
         add(mainPanel);
+
+
+        setupLocationListListener();
+        setupTaskListListener();
         setVisible(true);
     }
 
     private JPanel createLeftPanel() {
-        JPanel skillsPanel = new JPanel(new GridLayout(6, 4, 1, 1)); // Adjust rows, columns, and gaps
+        JPanel skillsPanel = new JPanel(new GridLayout(6, 4, 1, 1));
 
         loadSkillIcons();
 
@@ -91,8 +96,14 @@ class GUI extends JFrame {
             skillPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    updateTrainingPanels(skill);
                     selectedSkill = skill;
+                    updateLocationsPanel(skill);
+
+                    if (selectedSkillLabel != null) {
+                        selectedSkillLabel.setBorder(null);
+                    }
+                    skillLabel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+                    selectedSkillLabel = skillLabel;
                 }
             });
             skillLabels.put(skill, levelLabel);
@@ -100,6 +111,35 @@ class GUI extends JFrame {
         }
 
         return skillsPanel;
+    }
+
+    private void updateLocationsPanel(String skill) {
+        List<String> locations = skillManager.getLocations(skill.toUpperCase());
+        Logger.log("Updating locations for skill: " + skill + " with locations: " + locations);
+        locationListModel.clear();
+        for (String location : locations) {
+            locationListModel.addElement(location);
+        }
+        methodListModel.clear();
+    }
+
+    private void updateMethodsPanel(String skill, String location) {
+        List<String> methods = skillManager.getMethods(skill.toUpperCase(), location);
+        methodListModel.clear();
+        for (String method : methods) {
+            methodListModel.addElement(method);
+        }
+    }
+
+    private void setupLocationListListener() {
+        locationList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                String selectedLocation = locationList.getSelectedValue();
+                if (selectedLocation != null && !selectedSkill.isEmpty()) {
+                    updateMethodsPanel(selectedSkill, selectedLocation);
+                }
+            }
+        });
     }
 
     public void taskAdded(String skill) {
@@ -121,7 +161,7 @@ class GUI extends JFrame {
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
 
-        JList<String> taskList = new JList<>(trainingListModel);
+        taskList = new JList<>(trainingListModel);
         JScrollPane taskListScroll = new JScrollPane(taskList);
         rightPanel.add(taskListScroll, BorderLayout.CENTER);
 
@@ -193,17 +233,23 @@ class GUI extends JFrame {
         locations.forEach(locationListModel::addElement);
     }
 
-    private void populateSkillLocations() {
-        skillLocations.put("Woodcutting", Arrays.asList("Lumbridge", "Draynor Village"));
-        skillLocations.put("Fishing", Arrays.asList("Lumbridge Swamp", "Barbarian Village"));
-        skillLocations.put("Firemaking", Arrays.asList("Grand Exchange", "Falador Park"));
-        skillLocations.put("Agility", List.of("Varrock"));
-    }
-
-    private void populateSkillOptions() {
-        skillOptions.put("Woodcutting", Arrays.asList("Trees", "Oak Tree", "Willow Tree"));
-        skillOptions.put("Fishing", Arrays.asList("Shrimp", "Trout", "Salmon"));
-        skillOptions.put("Firemaking", Arrays.asList("Logs", "Oak Logs", "Willow Logs"));
-        skillOptions.put("Agility", List.of("Run", "Walk"));
+    private void setupTaskListListener() {
+        taskList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
+                    int index = taskList.locationToIndex(e.getPoint());
+                    if (index >= 0) { // Ensure a valid item was clicked
+                        // Optional: Show a confirmation dialog before removing
+                        int confirm = JOptionPane.showConfirmDialog(GUI.this,
+                                "Are you sure you want to remove this task?",
+                                "Remove Task", JOptionPane.YES_NO_OPTION);
+                        if (confirm == JOptionPane.YES_OPTION) {
+                            trainingListModel.remove(index);
+                        }
+                    }
+                }
+            }
+        });
     }
 }

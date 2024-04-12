@@ -1,4 +1,4 @@
-package com.Anomaly.AIO;
+package com.Anomaly.AIO.Main;
 
 import com.Anomaly.AIO.Tasks.Skilling.FiremakingTask;
 import com.Anomaly.AIO.Tasks.Skilling.FishingTask;

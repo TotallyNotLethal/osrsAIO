@@ -1,8 +1,7 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
 import com.Anomaly.AIO.Helpers.Locations.FMLocations;
-import com.Anomaly.AIO.Main;
-import com.Anomaly.AIO.Task;
+import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.ClientSettings;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -10,7 +9,6 @@ import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
-import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.AbstractScript;

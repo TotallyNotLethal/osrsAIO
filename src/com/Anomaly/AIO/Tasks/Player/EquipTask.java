@@ -1,7 +1,6 @@
 package com.Anomaly.AIO.Tasks.Player;
 
-import com.Anomaly.AIO.Main;
-import com.Anomaly.AIO.Task;
+import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.interactive.Players;

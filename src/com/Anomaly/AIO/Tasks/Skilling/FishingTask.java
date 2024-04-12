@@ -1,29 +1,23 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
-import com.Anomaly.AIO.Helpers.Destination.AreaDestination;
-import com.Anomaly.AIO.Helpers.Destination.Destination;
 import com.Anomaly.AIO.Helpers.Interactions.FishingInteractions;
 import com.Anomaly.AIO.Helpers.Items.EquipmentSets;
 import com.Anomaly.AIO.Helpers.Requirements.Fishing.FishType;
 import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
 import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
-import com.Anomaly.AIO.Helpers.State.State;
 import com.Anomaly.AIO.Helpers.State.StateManager;
-import com.Anomaly.AIO.Helpers.State.StateUtil;
-import com.Anomaly.AIO.Helpers.WalkingTask;
-import com.Anomaly.AIO.Task;
-import com.Anomaly.AIO.Main;
+import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
-import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.NPC;
+import org.dreambot.api.wrappers.interactive.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +25,7 @@ import java.util.Map;
 public class FishingTask implements Task {
     private final AbstractScript script;
     String method, location, interaction;
+    private final Player player;
     private Area fishingArea;
     private int fishingSpotId;
     private final Map<String, Integer> requiredItems;
@@ -45,6 +40,7 @@ public class FishingTask implements Task {
         this.stateManager = new StateManager(script);
         requiredItems = new HashMap<>();
         optionalItems = new HashMap<>();
+        this.player = Players.getLocal();
 
         setupFishingTask(method);
         prepareStates();
@@ -58,7 +54,7 @@ public class FishingTask implements Task {
                 fishingSpotId = 1526;
                 requiredItems.put("Small fishing net", 1);
                 optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
-                optionalItems.put("Coins", 500);// <- Example how to add items also
+                //optionalItems.put("Coins", 500);// <- Example how to add items also
             }
             case "Trout", "Salmon" -> {
                 fishingArea = new Area(3100, 3425, 3107, 3435);
@@ -73,8 +69,9 @@ public class FishingTask implements Task {
 
     private void prepareStates() {
         //StateUtil.goToBank(requiredItems, optionalItems);
-        if (!hasAllRequiredItems(requiredItems)) {
-            stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation().getArea(4)));
+        if (!hasAllRequiredItems(requiredItems) || Inventory.isFull()) {
+            if(!Bank.getClosestBankLocation().getArea(4).contains(player))
+                stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
 
             stateManager.addState(new BankingState(script, requiredItems, optionalItems));
 

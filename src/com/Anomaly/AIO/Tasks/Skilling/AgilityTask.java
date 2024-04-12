@@ -1,13 +1,11 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
-import com.Anomaly.AIO.Main;
-import com.Anomaly.AIO.Task;
+import com.Anomaly.AIO.Main.Main;
+import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.script.AbstractScript;
-import org.dreambot.api.utilities.Logger;
-import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
 
