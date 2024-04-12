@@ -21,7 +21,7 @@ public class StateUtil {
         if (stateManager == null) {
             throw new IllegalStateException("StateManager not initialized");
         }
-        BankingState bankingState = new BankingState(stateManager.getScript(), requiredItems, optionalItems, itemsToKeep);
+        BankingState bankingState = new BankingState(stateManager.getScript(), requiredItems, optionalItems, false, itemsToKeep);
         stateManager.executeState(bankingState);
     }
 

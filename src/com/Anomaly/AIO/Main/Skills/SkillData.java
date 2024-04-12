@@ -14,7 +14,8 @@ public enum SkillData {
     FISHING(
             Map.of(
                     "Lumbridge Swamp", Arrays.asList("Shrimp", "Anchovies"),
-                    "Barbarian Village", Arrays.asList("Trout", "Salmon")
+                    "Barbarian Village", Arrays.asList("Trout", "Salmon"),
+                    "Karamja", Arrays.asList("Lobster")
             )
     );
     // Add other skills here

@@ -3,7 +3,7 @@ package com.Anomaly.AIO.Helpers.Requirements.Fishing;
 import java.util.EnumMap;
 
 public class FishingRequirements {
-    private static final EnumMap<FishType, FishingEquipment[]> fishToEquipmentMap = new EnumMap<>(FishType.class);
+    public static final EnumMap<FishType, FishingEquipment[]> fishToEquipmentMap = new EnumMap<>(FishType.class);
     private static final EnumMap<FishType, FishRequirement> fishToRequirementMap = new EnumMap<>(FishType.class);
 
     static {

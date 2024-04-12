@@ -46,7 +46,7 @@ public class BuyItems {
             Sleep.sleep(1000, 2000);
         }
 
-        new BankingState(null, itemsToBuy, null);
+        new BankingState(null, itemsToBuy, null, false);
 
         return true;
     }
