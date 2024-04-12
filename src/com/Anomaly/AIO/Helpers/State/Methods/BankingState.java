@@ -44,14 +44,11 @@ public class BankingState implements State {
     @Override
     public int execute() {
         if (useDepositBox) {
-            // Handle deposit box interaction
             if (!DepositBox.isOpen()) {
                 DepositBox.open();
                 return Calculations.random(500, 1000);
             } else {
-                // Use the deposit box
                 depositItemsToDepositBox();
-                // No withdrawal happens with deposit boxes
                 DepositBox.close();
                 isComplete = true;
                 return Calculations.random(200, 300);
@@ -78,10 +75,8 @@ public class BankingState implements State {
     }
 
     private void depositItems() {
-        // Combine required and optional items for a single reference of items not to deposit
         Map<String, Integer> allRequiredItems = new HashMap<>(itemsToWithdraw);
         allRequiredItems.putAll(optionalItemsToWithdraw);
-        //allRequiredItems.putAll(itemsToKeep);
 
         List<Item> itemsToDeposit = Inventory.all().stream()
                 .filter(item -> item != null && !allRequiredItems.containsKey(item.getName()))
@@ -118,7 +113,6 @@ public class BankingState implements State {
     }
 
     private void depositItemsToDepositBox() {
-        // Same logic for deposit boxes, but make sure to use DepositBox class methods
         Map<String, Integer> allRequiredItems = new HashMap<>(itemsToWithdraw);
         allRequiredItems.putAll(optionalItemsToWithdraw);
 

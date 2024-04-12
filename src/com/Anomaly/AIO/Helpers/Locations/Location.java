@@ -4,5 +4,5 @@ public enum Location {
     LUMBRIDGE,
     CATHERBY,
     KARAMJA
-    // Add more locations as needed
+    // Add more locations here
 }
