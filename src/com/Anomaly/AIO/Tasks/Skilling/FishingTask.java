@@ -3,7 +3,7 @@ package com.Anomaly.AIO.Tasks.Skilling;
 import com.Anomaly.AIO.Helpers.Interactions.FishingInteractions;
 import com.Anomaly.AIO.Helpers.Items.EquipmentSets;
 import com.Anomaly.AIO.Helpers.Locations.Fishing.FishingLocations;
-import com.Anomaly.AIO.Helpers.Locations.Fishing.FishingSpot;
+import com.Anomaly.AIO.Helpers.Locations.Spot;
 import com.Anomaly.AIO.Helpers.Locations.Location;
 import com.Anomaly.AIO.Helpers.Requirements.Fishing.FishType;
 import com.Anomaly.AIO.Helpers.Requirements.Fishing.FishingEquipment;
@@ -16,7 +16,6 @@ import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
-import org.dreambot.api.methods.depositbox.DepositBox;
 import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
@@ -66,7 +65,7 @@ public class FishingTask implements Task {
                 requiredItems.put(equipment.getDisplayName(), equipment.getAmount());
             }
         }
-        FishingSpot spot = FishingLocations.getFishingSpot(location, fishType);
+        Spot spot = FishingLocations.getFishingSpot(location, fishType);
         this.fishingArea = Objects.requireNonNull(spot).getArea();
         bankingArea = Bank.getClosestBankLocation().getArea(2);
         optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
