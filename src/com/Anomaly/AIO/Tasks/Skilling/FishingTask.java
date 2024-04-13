@@ -46,8 +46,8 @@ public class FishingTask implements Task {
     public FishingTask(AbstractScript script, String method, String location) {
         this.script = script;
         this.method = method;
-        this.location = Location.valueOf(location.toUpperCase());
-        this.fishType = FishType.valueOf(method.toUpperCase());
+        this.location = Location.byDisplayName(location);
+        this.fishType = FishType.byDisplayName(method);
         this.stateManager = new StateManager(script);
         requiredItems = new HashMap<>();
         optionalItems = new HashMap<>();
@@ -76,8 +76,19 @@ public class FishingTask implements Task {
                 useDepositBox = true;
                 requiredItems.put("Coins", 600);
             }
-            default -> throw new IllegalArgumentException("Invalid fishing location");
+            //default -> throw new IllegalArgumentException("Invalid fishing location");
         }
+    }
+
+    private boolean shouldUseDepositBox() {
+        for (Map.Entry<String, Integer> entry : requiredItems.entrySet()) {
+            String itemName = entry.getKey();
+            int requiredQuantity = entry.getValue();
+            if (Inventory.count(itemName) < requiredQuantity) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void prepareStates() {
@@ -86,14 +97,14 @@ public class FishingTask implements Task {
             if(!Bank.getClosestBankLocation().getArea(4).contains(player))
                 stateManager.addState(new WalkToState(script, bankingArea));
 
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false));
+            stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox && shouldUseDepositBox()));
 
             stateManager.addState(new EquipItemsState(script, null));
         }
 
         stateManager.addState(new WalkToState(script, fishingArea));
 
-        interaction = FishingInteractions.getAction(FishType.valueOf(method.toUpperCase()));
+        interaction = FishingInteractions.getAction(Objects.requireNonNull(FishType.byDisplayName(method)));
         //stateManager.addState(new FishingState(script, fishingArea, fishingSpotId, interaction));
     }
 
@@ -118,21 +129,25 @@ public class FishingTask implements Task {
             for (String item : requiredItems.keySet()) {
                 if (!Inventory.contains(item)) {
                     script.log("Missing required item: " + item);
-                    stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox));
+                    //stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox));
 
-                    return Calculations.random(200,700);
+                    return -1;//Calculations.random(200,700);
                 }
             }
 
             NPC fishingSpot = NPCs.closest(npc -> npc != null && npc.hasAction(interaction));
-            if (fishingSpot != null && fishingSpot.interact(interaction)) {
-                Sleep.sleepUntil(() -> !fishingSpot.exists() || Inventory.isFull(), Calculations.random(10000,15000));
+            if (fishingSpot != null && !Inventory.isFull() && !(player.getAnimation() == 618) && fishingSpot.interact(interaction) ) {
+                Sleep.sleep(2000);
+                Sleep.sleepUntil(() -> !fishingSpot.exists() || Inventory.isFull() || !player.isAnimating(), Calculations.random(200,500));
             }
 
             if(Inventory.isFull()){
-            stateManager.addState(new WalkToState(script, bankingArea));
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox));
-            stateManager.addState(new WalkToState(script, fishingArea));
+                boolean shouldUseDepositBox = shouldUseDepositBox(); // Check if we should use deposit box
+                Area walkToArea = shouldUseDepositBox ? new Area(3044, 3237, 3050, 3233) : Bank.getClosestBankLocation().getArea(5);
+                stateManager.addState(new WalkToState(script, walkToArea));
+                stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox && shouldUseDepositBox()));
+                stateManager.addState(new WalkToState(script, fishingArea));
+                useDepositBox = shouldUseDepositBox(); // Update the flag based on remaining items.
             }
         }
         return Calculations.random(1000, 2000);

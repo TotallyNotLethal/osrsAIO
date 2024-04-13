@@ -67,6 +67,11 @@ public class BankingState implements State {
             depositItems();
             withdrawItems(itemsToWithdraw, true);
             withdrawItems(optionalItemsToWithdraw, false);
+
+            if(itemsToBuy.size() > 0) {
+                isComplete = true;
+                script.stop();
+            }
             Bank.close();
         }
 

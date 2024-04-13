@@ -1,5 +1,7 @@
 package com.Anomaly.AIO.Helpers.Requirements.Woodcutting;
 
+import org.dreambot.api.methods.world.World;
+import org.dreambot.api.methods.world.Worlds;
 import org.dreambot.api.utilities.Logger;
 
 public enum AxeType {
@@ -46,7 +48,7 @@ public enum AxeType {
         AxeType bestAxe = BRONZE;
         for (AxeType axe : values()) {
             Logger.log("Checking Axe: " + axe);
-            if (woodcuttingLevel >= axe.getLevelRequirement() && (isMember || !axe.isMembersOnly()) && axe.getLevelRequirement() > bestAxe.getLevelRequirement()) {
+            if (woodcuttingLevel >= axe.getLevelRequirement() && Worlds.getCurrent().isMembers() == axe.isMembersOnly && (isMember || !axe.isMembersOnly()) && axe.getLevelRequirement() > bestAxe.getLevelRequirement()) {
                 bestAxe = axe;
                 Logger.log("Best Axe:" + bestAxe);
             }

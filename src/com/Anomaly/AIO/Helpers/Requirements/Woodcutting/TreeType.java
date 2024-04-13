@@ -40,6 +40,15 @@ public enum TreeType {
         this.isMembersOnly = isMembersOnly;
     }
 
+    public static TreeType byDisplayName(String displayName) {
+        for (TreeType treeType : TreeType.values()) {
+            if (treeType.getDisplayName().equalsIgnoreCase(displayName)) {
+                return treeType;
+            }
+        }
+        return null;
+    }
+
     public String getDisplayName() {
         return displayName;
     }

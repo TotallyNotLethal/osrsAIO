@@ -1,12 +1,12 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
-import com.Anomaly.AIO.Helpers.Locations.Fishing.FishingLocations;
 import com.Anomaly.AIO.Helpers.Locations.Location;
 import com.Anomaly.AIO.Helpers.Locations.Spot;
 import com.Anomaly.AIO.Helpers.Locations.Woodcutting.WoodcuttingLocations;
 import com.Anomaly.AIO.Helpers.Requirements.Woodcutting.AxeType;
 import com.Anomaly.AIO.Helpers.Requirements.Woodcutting.TreeType;
 import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
+import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
 import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.Task;
@@ -14,14 +14,12 @@ import org.dreambot.api.Client;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
-import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.Skills;
 import org.dreambot.api.script.AbstractScript;
-import org.dreambot.api.utilities.AccountManager;
 import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
@@ -35,7 +33,7 @@ public class WoodcuttingTask implements Task {
     private final TreeType treeType;
     private final Location location;
     private final Area woodcuttingArea;
-    private final Area bankingArea;
+    private Area bankingArea;
     private final Map<String, Integer> requiredItems;
     private final Map<String, Integer> optionalItems;
     private final StateManager stateManager;
@@ -46,8 +44,8 @@ public class WoodcuttingTask implements Task {
 
     public WoodcuttingTask(AbstractScript script, String treeType, String location) {
         this.script = script;
-        this.treeType = TreeType.valueOf(treeType.toUpperCase());
-        this.location = Location.valueOf(location.toUpperCase());
+        this.treeType = TreeType.byDisplayName(treeType);
+        this.location = Location.byDisplayName(location);
         this.bankingArea = Bank.getClosestBankLocation().getArea(3);
         this.stateManager = new StateManager(script);
         this.requiredItems = new HashMap<>();
@@ -59,17 +57,28 @@ public class WoodcuttingTask implements Task {
         Spot spot = WoodcuttingLocations.getWoodcuttingSpot(this.location, this.treeType);
         this.woodcuttingArea = Objects.requireNonNull(spot).getArea();
 
-        setupWoodcuttingTask();
+        assert this.location != null;
+        setupWoodcuttingTask(this.location);
         prepareStates();
     }
 
-    private void setupWoodcuttingTask() {
+    private void setupWoodcuttingTask(Location location) {
         requiredItems.put(AxeType.getBestAxeForLevel(woodcuttingLevel, isMember).getDisplayName(), 1);
+
+        switch (location) {
+            case PORT_SARIM -> {
+                bankingArea = new Area(3044, 3237, 3050, 3233);
+                useDepositBox = true;
+            }
+            default -> throw new IllegalArgumentException("Invalid fishing location");
+        }
+
     }
 
     private void prepareStates() {
-        if (!hasAllRequiredItems(requiredItems)) {
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox));
+        if (!hasAllRequiredItems(requiredItems) || Inventory.isFull()) {
+            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false));
+            stateManager.addState(new EquipItemsState(script, null));
         }
         stateManager.addState(new WalkToState(script, woodcuttingArea));
     }

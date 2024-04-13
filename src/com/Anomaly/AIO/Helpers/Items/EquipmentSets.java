@@ -9,6 +9,13 @@ public class EquipmentSets {
             .addItem("Graceful boots", 1)
             .addItem("Graceful cape", 1);
 
+    public static EquipmentSet ROGUE = new EquipmentSet()
+            .addItem("Rogue mask", 1)
+            .addItem("Rogue top", 1)
+            .addItem("Rogue trousers", 1)
+            .addItem("Rogue gloves", 1)
+            .addItem("Rogue boots", 1);
+
     public static EquipmentSet BRONZE = new EquipmentSet()
             .addItem("Bronze full helm", 1)
             .addItem("Bronze platebody", 1)

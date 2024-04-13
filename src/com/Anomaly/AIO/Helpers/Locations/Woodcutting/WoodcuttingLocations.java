@@ -21,6 +21,9 @@ public class WoodcuttingLocations {
         Map<TreeType, Spot> draynorVillageTrees = new HashMap<>();
         draynorVillageTrees.put(TreeType.WILLOW, new Spot(new Area(3081, 3240, 3091, 3225), false));
 
+        Map<TreeType, Spot> portSarimTrees = new HashMap<>();
+        portSarimTrees.put(TreeType.WILLOW, new Spot(new Area(3056, 3256, 3064, 3250), false));
+
         Map<TreeType, Spot> varrockTrees = new HashMap<>();
         varrockTrees.put(TreeType.MAPLE, new Spot(new Area(3220, 3500, 3225, 3505), true));
         varrockTrees.put(TreeType.YEW, new Spot(new Area(3200, 3500, 3205, 3505), true));
@@ -31,6 +34,7 @@ public class WoodcuttingLocations {
 
         locations.put(Location.LUMBRIDGE, lumbridgeTrees);
         locations.put(Location.DRAYNOR_VILLAGE, draynorVillageTrees);
+        locations.put(Location.PORT_SARIM, portSarimTrees);
         locations.put(Location.VARROCK, varrockTrees);
         locations.put(Location.FALADOR, faladorTrees);
     }

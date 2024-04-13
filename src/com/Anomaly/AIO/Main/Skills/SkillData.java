@@ -10,18 +10,24 @@ public enum SkillData {
     WOODCUTTING(
             Map.of(
                     "Lumbridge", Arrays.asList("Tree", "Oak", "Willow", "Yew"),
-                    "Draynor Village", Arrays.asList("Willow"),
+                    "Draynor village", Arrays.asList("Willow"),
+                    "Port sarim", Arrays.asList("Willow"),
                     "Varrock", Arrays.asList("Maple", "Yew"),
                     "Falador", Arrays.asList("Yew", "Magic")
             )
     ),
     FISHING(
             Map.of(
-                    "Lumbridge Swamp", Arrays.asList("Shrimp", "Anchovies"),
-                    "Barbarian Village", Arrays.asList("Trout", "Salmon"),
+                    "Lumbridge", Arrays.asList("Shrimp", "Anchovies"),
+                    "Barbarian village", Arrays.asList("Trout", "Salmon", "Rainbow fish", "Pike"),
                     "Karamja", Arrays.asList("Lobster", "Swordfish", "Tuna", "Shrimp", "Anchovies", "Sardine", "Herring")
             )
-    );
+    ),
+    THIEVING(
+            Map.of(
+            "Lumbridge", Arrays.asList("Man", "Woman")
+                            )
+                            );
     // Add other skills here
 
     private final Map<String, List<String>> locationsAndMethods;
