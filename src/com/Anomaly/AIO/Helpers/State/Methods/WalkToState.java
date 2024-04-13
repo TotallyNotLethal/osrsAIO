@@ -60,11 +60,11 @@ import org.dreambot.api.wrappers.interactive.Player;
                     Walking.walk(destination.getTile());
                     Sleep.sleepUntil(() -> destination.contains(player), 3500);
                 }
-                return destination.contains(player) ? 0 : 1000;
+                return destination.contains(player) ? 0 : Calculations.random(2000,3500);
             }
             Logger.log("Walking to: " + tile);
             Walking.walk(tile);
-            Sleep.sleepUntil(() -> !player.isAnimating(), Calculations.random(2000,3500));
+            Sleep.sleepUntil(() -> !player.isMoving(), Calculations.random(2000,3500));
 
             return area.contains(player) ? 0 : Calculations.random(200,700);
         }

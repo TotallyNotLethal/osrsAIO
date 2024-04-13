@@ -1,6 +1,7 @@
 package com.Anomaly.AIO.Helpers.Locations;
 
 public enum Location {
+    ALL("All",true),
     LUMBRIDGE("Lumbridge",true),
     BARBARIAN_VILLAGE("Barbarian village",true),
     CATHERBY("Catherby",false),

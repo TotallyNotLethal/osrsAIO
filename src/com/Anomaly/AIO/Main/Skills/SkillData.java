@@ -23,12 +23,16 @@ public enum SkillData {
                     "Karamja", Arrays.asList("Lobster", "Swordfish", "Tuna", "Shrimp", "Anchovies", "Sardine", "Herring")
             )
     ),
+    AGILITY(
+            Map.of(
+                    "All", Arrays.asList("Draynor village", "Varrock")
+            )
+    ),
     THIEVING(
             Map.of(
             "Lumbridge", Arrays.asList("Man", "Woman")
                             )
-                            );
-    // Add other skills here
+    );
 
     private final Map<String, List<String>> locationsAndMethods;
 

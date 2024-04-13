@@ -1,10 +1,7 @@
 package com.Anomaly.AIO.Main;
 
 import com.Anomaly.AIO.Helpers.Locations.Location;
-import com.Anomaly.AIO.Tasks.Skilling.FiremakingTask;
-import com.Anomaly.AIO.Tasks.Skilling.FishingTask;
-import com.Anomaly.AIO.Tasks.Skilling.ThievingTask;
-import com.Anomaly.AIO.Tasks.Skilling.WoodcuttingTask;
+import com.Anomaly.AIO.Tasks.Skilling.*;
 import org.dreambot.api.Client;
 import org.dreambot.api.data.GameState;
 import org.dreambot.api.methods.Calculations;
@@ -85,6 +82,9 @@ public class Main extends AbstractScript {
             }
             case "Thieving" -> {
                 return new ThievingTask(this, method, location);
+            }
+            case "Agility" -> {
+                return new AgilityTask(this, method, location);
             }
             default -> {
                 log("Unsupported skill/method: " + skill + "/" + method);
