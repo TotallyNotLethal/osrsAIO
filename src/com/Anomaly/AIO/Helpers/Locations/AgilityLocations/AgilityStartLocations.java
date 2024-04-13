@@ -23,7 +23,7 @@ public class AgilityStartLocations {
         allStartLocationsSpots.put(Location.POLLNIVNEACH, new Spot(new Area(3350, 2962, 3352, 2961), true));
         allStartLocationsSpots.put(Location.CANIFIS, new Spot(new Area(3505, 3490, 3508, 3488), true));
         allStartLocationsSpots.put(Location.GNOME_STRONGHOLD, new Spot(new Area(2473, 3437, 2476, 3436), true));
-        allStartLocationsSpots.put(Location.WILDERNESS, new Spot(new Area(2999, 3934, 3001, 3932), true));
+        allStartLocationsSpots.put(Location.WILDERNESS, new Spot(new Area(3003, 3938, 3005, 3936), true));
         allStartLocationsSpots.put(Location.RELLEKKA, new Spot(new Area(2623, 3678, 2626, 3677), true));
 
         locations.put(Location.ALL, allStartLocationsSpots);
