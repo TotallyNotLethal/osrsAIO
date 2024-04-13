@@ -157,7 +157,7 @@ public boolean finished = false;
     private GameObject getNextObstacle() {
         return GameObjects.closest(gameObject ->
                 gameObject != null && (gameObject.canReach() || isObstacleReachable(gameObject)) &&
-                        !encounteredObstacles.contains(gameObject) && !gameObject.getName().equalsIgnoreCase("Ladder") && !gameObject.getName().equalsIgnoreCase("Stairs") && !gameObject.getName().equalsIgnoreCase("Staircase") && !gameObject.getName().equalsIgnoreCase("Curtain") &&
+                        !encounteredObstacles.contains(gameObject) && !gameObject.getName().equalsIgnoreCase("Ladder") && !gameObject.getName().equalsIgnoreCase("Stairs") && !gameObject.getName().equalsIgnoreCase("Staircase") && !gameObject.getName().equalsIgnoreCase("Curtain") && !gameObject.getName().equalsIgnoreCase("Trapdoor") &&
                         Arrays.stream(gameObject.getActions()).anyMatch(commonObstacleActions::contains)
 
         );
