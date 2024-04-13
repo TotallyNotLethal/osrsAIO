@@ -28,7 +28,7 @@ public enum SkillData {
                     "All", Arrays.asList(
                             "Draynor village", "Al kharid", "Gnome stronghold",
                             "Varrock", "Falador", "Pollnivneach", "Canifis",
-                            "Rellekka", "Ardougne", "Seers", "Wilderness")
+                            "Rellekka", "Ardougne", "Seers village", "Wilderness")
             )
     ),
     THIEVING(
