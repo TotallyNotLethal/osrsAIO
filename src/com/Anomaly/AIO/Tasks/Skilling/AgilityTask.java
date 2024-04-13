@@ -45,7 +45,7 @@ public class AgilityTask implements Task {
             "Walk-across", "Climb-over", "Climb-under", "Walk-on",
             "Swing-across", "Squeeze-through", "Jump-over", "Swing-on",
             "Step-across", "Balance-across", "Vault", "Jump-across",
-            "Ride","Slide-down", "Teeth-grip");
+            "Ride","Slide-down", "Teeth-grip", "Jump-in");
     private GameObject lastObstacle;
     private List<GameObject> encounteredObstacles = new ArrayList<>();
     private final Main main = new Main();
