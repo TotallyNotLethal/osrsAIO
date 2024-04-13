@@ -86,7 +86,7 @@ public class AgilityTask implements Task {
         if (markOfGrace != null && markOfGrace.canReach()) {
             markOfGrace.interact("Take");
             Sleep.sleepUntil(() -> !markOfGrace.exists(), Calculations.random(4000, 6000));
-            return Calculations.random(1000, 2000);
+            return Calculations.random(3000, 5000);
         }
 
         GameObject nextObstacle = getNextObstacle();
@@ -111,7 +111,7 @@ public class AgilityTask implements Task {
             script.log("No more obstacles found or last obstacle repeated.");
             return 0;
         }
-        return Calculations.random(500, 1000);
+        return Calculations.random(1000, 2500);
     }
 
 
@@ -122,7 +122,7 @@ public class AgilityTask implements Task {
 
     private GameObject getNextObstacle() {
         return GameObjects.closest(gameObject ->
-                gameObject != null &&
+                gameObject != null && gameObject.canReach() &&
                         !encounteredObstacles.contains(gameObject) &&
                         Arrays.stream(gameObject.getActions()).anyMatch(commonObstacleActions::contains) &&
                         gameObject.isOnScreen()
