@@ -1,24 +1,27 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
 import com.Anomaly.AIO.Helpers.Items.EquipmentSets;
-import com.Anomaly.AIO.Helpers.Locations.AgilityLocations.AgilityLocations;
+import com.Anomaly.AIO.Helpers.Locations.AgilityLocations.AgilityEndLocations;
+import com.Anomaly.AIO.Helpers.Locations.AgilityLocations.AgilityStartLocations;
 import com.Anomaly.AIO.Helpers.Locations.Location;
 import com.Anomaly.AIO.Helpers.Locations.Spot;
-import com.Anomaly.AIO.Helpers.Locations.Thieving.ThievingLocations;
 import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
 import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
 import com.Anomaly.AIO.Helpers.State.StateManager;
-import com.Anomaly.AIO.Helpers.State.StateUtil;
 import com.Anomaly.AIO.Main.Main;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.Bank;
+import org.dreambot.api.methods.input.Camera;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.item.GroundItems;
 import org.dreambot.api.methods.map.Area;
+import org.dreambot.api.methods.map.Tile;
+import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.AbstractScript;
+import org.dreambot.api.utilities.Logger;
 import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
@@ -42,7 +45,7 @@ public class AgilityTask implements Task {
             "Walk-across", "Climb-over", "Climb-under", "Walk-on",
             "Swing-across", "Squeeze-through", "Jump-over", "Swing-on",
             "Step-across", "Balance-across", "Vault", "Jump-across",
-            "Ride","Slide-down");
+            "Ride","Slide-down", "Teeth-grip");
     private GameObject lastObstacle;
     private List<GameObject> encounteredObstacles = new ArrayList<>();
     private final Main main = new Main();
@@ -54,7 +57,7 @@ public class AgilityTask implements Task {
         this.player = Players.getLocal();
         this.optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
 
-        Spot spot = AgilityLocations.getAgilitySpot(this.method, this.location);
+        Spot spot = AgilityStartLocations.getAgilitySpot(this.method, this.location);
 
         if (spot != null) {
             this.agilityArea = spot.getArea();
@@ -73,49 +76,67 @@ public class AgilityTask implements Task {
             stateManager.addState(new BankingState(script, requiredItems, optionalItems, false));
             stateManager.addState(new EquipItemsState(script, null));
             stateManager.addState(new WalkToState(script, agilityArea));
+            Camera.setZoom(Camera.getMaxZoom()); Camera.rotateTo(2045, 383);
         }
     }
-
+public boolean finished = false;
     @Override
     public int execute() {
-        if (!stateManager.isComplete()) {
-            stateManager.executeCurrentState();
-            return Calculations.random(200, 500);
-        }
-
-        if (player.isMoving() || player.isAnimating()) {
-            return Calculations.random(5000, 6000);
-        }
-
-        GroundItem markOfGrace = GroundItems.closest("Mark of Grace");
-        if (markOfGrace != null && markOfGrace.canReach()) {
-            markOfGrace.interact("Take");
-            Sleep.sleepUntil(() -> !markOfGrace.exists(), Calculations.random(4000, 6000));
-            return Calculations.random(3000, 5000);
-        }
-
-        GameObject nextObstacle = getNextObstacle();
-        if (nextObstacle != null && !encounteredObstacles.contains(nextObstacle)) {
-            String action = determineActionForObstacle(nextObstacle);
-            if (action != null) {
-                if(!player.isAnimating() && !player.isMoving()) {
-                    nextObstacle.interact(action);
-                    encounteredObstacles.add(nextObstacle);
-                    lastObstacle = nextObstacle;
-
-
-                    if (action.equals("Jump-off") || action.equals("Climb-down")) {
-                        stateManager.addState(new WalkToState(script, agilityArea));
-                        encounteredObstacles.clear();
-                    }
-                    Sleep.sleepUntil(() -> !player.isAnimating() && !player.isMoving(), 10000);
-                    return Calculations.random(4000, 6000);
-                }
+        if(!finished) {
+            if (!stateManager.isComplete()) {
+                stateManager.executeCurrentState();
+                return Calculations.random(200, 500);
             }
-        } else {
-            script.log("No more obstacles found retrying.");
-            encounteredObstacles.clear();
-            return Calculations.random(200,500);
+
+            if (isInEndLocation()) {
+                finished = true;
+                Logger.log("Player is in the end location, walking back to start...");
+                stateManager.addState(new WalkToState(script, agilityArea));
+                stateManager.executeCurrentState();
+                encounteredObstacles.clear();
+                finished = false;
+
+                return Calculations.random(1000, 2000);
+            }
+
+            if (player.isMoving() || player.isAnimating()) {
+                return Calculations.random(2000, 3000);
+            }
+
+            GroundItem markOfGrace = GroundItems.closest("Mark of Grace");
+            if (markOfGrace != null && markOfGrace.canReach()) {
+                markOfGrace.interact("Take");
+                Sleep.sleepUntil(() -> !markOfGrace.exists(), Calculations.random(4000, 6000));
+                return Calculations.random(3000, 5000);
+            }
+
+            GameObject nextObstacle = getNextObstacle();
+            if (nextObstacle != null && !encounteredObstacles.contains(nextObstacle)) {
+                String action = determineActionForObstacle(nextObstacle);
+                Logger.log("Found obstacle: " + nextObstacle);
+                if (action != null) {
+                    if (!player.isAnimating() && !player.isMoving()) {
+
+                        if (nextObstacle.distance() > 8) {
+                            Walking.walk(nextObstacle.getTile().getRandomized(4));
+                            Sleep.sleep(200);
+                            Sleep.sleepUntil(() -> !player.isAnimating() && !player.isAnimating(), 3000);
+                        }
+
+                        nextObstacle.interact(action);
+                        encounteredObstacles.add(nextObstacle);
+                        lastObstacle = nextObstacle;
+                        Sleep.sleepUntil(() -> !player.isAnimating() && !player.isMoving(), 10000);
+
+                        return Calculations.random(4000, 6000);
+                    }
+                }
+            } else {
+                script.log("No more obstacles found retrying.");
+                encounteredObstacles.clear();
+
+                return Calculations.random(200, 500);
+            }
         }
         return Calculations.random(1000, 2500);
     }
@@ -126,13 +147,28 @@ public class AgilityTask implements Task {
         return false;
     }
 
+    private boolean isInEndLocation() {
+        Spot endSpot = AgilityEndLocations.getAgilitySpot(this.method, this.location);
+        return endSpot != null && endSpot.getArea().contains(player);
+    }
+
     private GameObject getNextObstacle() {
         return GameObjects.closest(gameObject ->
-                gameObject != null && gameObject.canReach() &&
-                        !encounteredObstacles.contains(gameObject) &&
-                        Arrays.stream(gameObject.getActions()).anyMatch(commonObstacleActions::contains) &&
-                        gameObject.isOnScreen()
+                gameObject != null && (gameObject.canReach() || isObstacleReachable(gameObject)) &&
+                        !encounteredObstacles.contains(gameObject) && !gameObject.getName().equalsIgnoreCase("Ladder") && !gameObject.getName().equalsIgnoreCase("Stairs") && !gameObject.getName().equalsIgnoreCase("Staircase") && !gameObject.getName().equalsIgnoreCase("Curtain") &&
+                        Arrays.stream(gameObject.getActions()).anyMatch(commonObstacleActions::contains)
+
         );
+    }
+
+    private boolean isObstacleReachable(GameObject obstacle) {
+        Area surroundingArea = obstacle.getSurroundingArea(3);
+        for (Tile tile : surroundingArea.getTiles()) {
+            if (tile.canReach()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String determineActionForObstacle(GameObject obstacle) {
