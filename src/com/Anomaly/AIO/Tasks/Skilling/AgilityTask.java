@@ -54,7 +54,6 @@ public class AgilityTask implements Task {
             this.agilityArea = spot.getArea();
         } else {
             script.log("No agility spot found for location: " + this.location + " and spot: " + this.method);
-            // Handle the null case appropriately, perhaps throw an exception or set a default value
         }
 
         this.agilityArea = Objects.requireNonNull(spot).getArea();
