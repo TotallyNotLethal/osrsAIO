@@ -36,7 +36,13 @@ public class AgilityTask implements Task {
     private Location location;
     private Location method;
     private Area agilityArea;
-    private final List<String> commonObstacleActions = Arrays.asList("Climb", "Climb-up", "Cross", "Jump-up", "Jump", "Leap", "Hurdle", "Balance", "Jump-off", "Climb-down");
+    private final List<String> commonObstacleActions = Arrays.asList(
+            "Climb", "Climb-up", "Cross", "Jump-up", "Jump",
+            "Leap", "Hurdle", "Balance", "Jump-off", "Climb-down",
+            "Walk-across", "Climb-over", "Climb-under", "Walk-on",
+            "Swing-across", "Squeeze-through", "Jump-over", "Swing-on",
+            "Step-across", "Balance-across", "Vault", "Jump-across",
+            "Ride","Slide-down");
     private GameObject lastObstacle;
     private List<GameObject> encounteredObstacles = new ArrayList<>();
     private final Main main = new Main();

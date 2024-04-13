@@ -25,7 +25,10 @@ public enum SkillData {
     ),
     AGILITY(
             Map.of(
-                    "All", Arrays.asList("Draynor village", "Al kharid", "Varrock", "Falador", "Pollnivneach", "Canifis", "Rellekka", "Ardougne")
+                    "All", Arrays.asList(
+                            "Draynor village", "Al kharid", "Gnome stronghold",
+                            "Varrock", "Falador", "Pollnivneach", "Canifis",
+                            "Rellekka", "Ardougne")
             )
     ),
     THIEVING(
