@@ -84,6 +84,12 @@ public class ThievingTask implements Task {
                 case CHEST, DOOR -> interactWithObject();
             }
 
+        if(Inventory.isFull()){
+            stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
+            stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox));
+            stateManager.addState(new WalkToState(script, thievingArea));
+        }
+
         return Calculations.random(300, 600);
     }
 
