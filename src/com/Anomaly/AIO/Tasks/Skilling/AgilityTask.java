@@ -55,7 +55,9 @@ public class AgilityTask implements Task {
         this.location = Location.byDisplayName(location);
         this.method = Location.byDisplayName(method);
         this.player = Players.getLocal();
-        this.optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
+
+        if(Location.byDisplayName(location) == Location.WILDERNESS)
+            this.optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
 
         Spot spot = AgilityStartLocations.getAgilitySpot(this.method, this.location);
 
