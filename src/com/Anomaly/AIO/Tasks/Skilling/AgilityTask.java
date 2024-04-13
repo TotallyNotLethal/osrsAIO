@@ -107,8 +107,9 @@ public class AgilityTask implements Task {
                 }
             }
         } else {
-            script.log("No more obstacles found or last obstacle repeated.");
-            return 0;
+            script.log("No more obstacles found retrying.");
+            encounteredObstacles.clear();
+            return Calculations.random(200,500);
         }
         return Calculations.random(1000, 2500);
     }
