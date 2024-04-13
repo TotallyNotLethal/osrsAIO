@@ -16,7 +16,6 @@ public class ThievingLocations {
         Map<ThievableEntity, Spot> lumbridgeSpots = new HashMap<>();
         lumbridgeSpots.put(ThievingNPC.MAN, new Spot(new Area(3217, 3226, 3226, 3211), false));
         lumbridgeSpots.put(ThievingNPC.WOMAN, new Spot(new Area(3217, 3226, 3226, 3211), false));
-        // ... Add other NPCs, stalls, chests, and doors as needed
 
         locations.put(Location.LUMBRIDGE, lumbridgeSpots);
     }
