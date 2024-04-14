@@ -80,6 +80,9 @@ public class BankingState implements State {
     }
 
     private void depositItems() {
+
+        //Bank.depositAllEquipment();
+        //Bank.depositAllItems();
         Map<String, Integer> allRequiredItems = new HashMap<>(itemsToWithdraw);
         allRequiredItems.putAll(optionalItemsToWithdraw);
 

@@ -9,6 +9,12 @@ public class EquipmentSets {
             .addItem("Graceful boots", 1)
             .addItem("Graceful cape", 1);
 
+    public static EquipmentSet PROSPECTOR = new EquipmentSet()
+            .addItem("Prospector helmet", 1)
+            .addItem("Prospector jacket", 1)
+            .addItem("Prospector legs", 1)
+            .addItem("Prospector boots", 1);
+
     public static EquipmentSet ROGUE = new EquipmentSet()
             .addItem("Rogue mask", 1)
             .addItem("Rogue top", 1)

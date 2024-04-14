@@ -86,6 +86,9 @@ public class Main extends AbstractScript {
             case "Agility" -> {
                 return new AgilityTask(this, method, location);
             }
+            case "Mining" -> {
+                return new MiningTask(this, method, location);
+            }
             default -> {
                 log("Unsupported skill/method: " + skill + "/" + method);
                 return null;

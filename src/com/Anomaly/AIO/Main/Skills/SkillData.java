@@ -31,6 +31,11 @@ public enum SkillData {
                             "Rellekka", "Ardougne", "Seers village", "Wilderness")
             )
     ),
+    MINING(
+            Map.of(
+                    "Lumbridge", Arrays.asList("Tin", "Copper")
+            )
+    ),
     THIEVING(
             Map.of(
             "Lumbridge", Arrays.asList("Man", "Woman")
