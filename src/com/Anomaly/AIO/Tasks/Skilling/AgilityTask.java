@@ -115,7 +115,7 @@ public boolean finished = false;
             }
 
             GroundItem markOfGrace = GroundItems.closest("Mark of Grace");
-            if (markOfGrace != null && markOfGrace.canReach()) {
+            if (markOfGrace != null && (markOfGrace.canReach() || markOfGrace.distance() < 3) ) {
                 markOfGrace.interact("Take");
                 Sleep.sleepUntil(() -> !markOfGrace.exists(), Calculations.random(4000, 6000));
                 return Calculations.random(1000, 2000);
