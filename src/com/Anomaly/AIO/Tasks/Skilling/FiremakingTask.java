@@ -30,7 +30,7 @@ public class FiremakingTask implements ChatListener, Task {
     private static Tile currentFmStartTile;
 
 
-    public FiremakingTask(AbstractScript script, String method, String location) {
+    public FiremakingTask(AbstractScript script, String method, String location, int duration, int stopLevel) {
         Player player = Players.getLocal();
         requiredItems = new HashMap<>();
 

@@ -29,15 +29,17 @@ public class BankingState implements State {
     Map<String, Integer> itemsToBuy;
     private final Player player;
     private boolean isComplete = false;
+    private boolean justStarted = false;
 
     public BankingState(AbstractScript script, Map<String, Integer> itemsToWithdraw,
-                        Map<String, Integer> optionalItemsToWithdraw, boolean useDepositBox, String... itemsToKeep) {
+                        Map<String, Integer> optionalItemsToWithdraw, boolean useDepositBox, boolean justStarted, String... itemsToKeep) {
         this.script = script;
         this.bankLocation = Bank.getClosestBankLocation();
         this.itemsToKeep = Arrays.asList(itemsToKeep);
         this.itemsToWithdraw = itemsToWithdraw;
         this.optionalItemsToWithdraw = optionalItemsToWithdraw;
         this.useDepositBox = useDepositBox;
+        this.justStarted = justStarted;
         this.player = Players.getLocal();
     }
 
@@ -64,7 +66,13 @@ public class BankingState implements State {
                 return Calculations.random(500, 1000);
             }
 
-            depositItems();
+            if(justStarted) {
+                justStarted = false;
+                Bank.depositAllItems();
+                Bank.depositAllEquipment();
+            }
+            else
+                depositItems();
             withdrawItems(itemsToWithdraw, true);
             withdrawItems(optionalItemsToWithdraw, false);
 
@@ -80,9 +88,6 @@ public class BankingState implements State {
     }
 
     private void depositItems() {
-
-        //Bank.depositAllEquipment();
-        //Bank.depositAllItems();
         Map<String, Integer> allRequiredItems = new HashMap<>(itemsToWithdraw);
         allRequiredItems.putAll(optionalItemsToWithdraw);
 

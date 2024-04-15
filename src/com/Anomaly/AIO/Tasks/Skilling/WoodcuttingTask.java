@@ -7,6 +7,7 @@ import com.Anomaly.AIO.Helpers.Requirements.Woodcutting.AxeType;
 import com.Anomaly.AIO.Helpers.Requirements.Woodcutting.TreeType;
 import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
 import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
+import com.Anomaly.AIO.Helpers.State.Methods.TeleportToState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
 import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.Task;
@@ -41,8 +42,10 @@ public class WoodcuttingTask implements Task {
     private Integer woodcuttingLevel = 1;
     private Boolean isMember = false;
     private boolean useDepositBox;
+    private int completeLevel = 1;
+    private int completeTime = 1;
 
-    public WoodcuttingTask(AbstractScript script, String treeType, String location) {
+    public WoodcuttingTask(AbstractScript script, String treeType, String location, int duration, int stopLevel) {
         this.script = script;
         this.treeType = TreeType.byDisplayName(treeType);
         this.location = Location.byDisplayName(location);
@@ -77,9 +80,12 @@ public class WoodcuttingTask implements Task {
 
     private void prepareStates() {
         if (!hasAllRequiredItems(requiredItems) || Inventory.isFull()) {
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false));
+
+            stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
+            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false, true));
             stateManager.addState(new EquipItemsState(script, null));
         }
+        stateManager.addState(new TeleportToState(script, woodcuttingArea));
         stateManager.addState(new WalkToState(script, woodcuttingArea));
     }
 
@@ -101,7 +107,7 @@ public class WoodcuttingTask implements Task {
         } else {
             if (Inventory.isFull()) {
                 stateManager.addState(new WalkToState(script, bankingArea));
-                stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox));
+                stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox, true));
             } else {
                 GameObject tree = GameObjects.closest(gameObject -> gameObject != null &&
                         gameObject.getName().equalsIgnoreCase(treeType.getDisplayName()) &&

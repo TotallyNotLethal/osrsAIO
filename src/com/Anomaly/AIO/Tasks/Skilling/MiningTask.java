@@ -8,6 +8,7 @@ import com.Anomaly.AIO.Helpers.Requirements.Mining.OreType;
 import com.Anomaly.AIO.Helpers.Requirements.Mining.PickaxeType;
 import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
 import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
+import com.Anomaly.AIO.Helpers.State.Methods.TeleportToState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
 import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.Task;
@@ -41,9 +42,11 @@ public class MiningTask implements Task {
     private final Player player;
     private Integer miningLevel = 1;
     private Boolean isMember = false;
+    private int completeLevel = 1;
+    private int completeTime = 1;
     private boolean useDepositBox;
 
-    public MiningTask(AbstractScript script, String treeType, String location) {
+    public MiningTask(AbstractScript script, String treeType, String location, int duration, int stopLevel) {
         this.script = script;
         this.oreType = OreType.byDisplayName(treeType);
         this.location = Location.byDisplayName(location);
@@ -80,9 +83,11 @@ public class MiningTask implements Task {
 
     private void prepareStates() {
         if (!hasAllRequiredItems(requiredItems) || Inventory.isFull()) {
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false));
+            stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
+            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false, true));
             stateManager.addState(new EquipItemsState(script, null));
         }
+        stateManager.addState(new TeleportToState(script, miningArea));
         stateManager.addState(new WalkToState(script, miningArea));
     }
 
@@ -104,14 +109,14 @@ public class MiningTask implements Task {
         } else {
             if (Inventory.isFull()) {
                 stateManager.addState(new WalkToState(script, bankingArea));
-                stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox));
+                stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox, false));
                 stateManager.addState(new WalkToState(script, miningArea));
             } else {
                 GameObject ore = GameObjects.closest(gameObject -> gameObject != null &&
                         gameObject.getName().contains(oreType.getDisplayName()) &&
                         miningArea.contains(gameObject));
                 if (ore != null && !player.isAnimating() && ore.interact("Mine")) {
-                    Sleep.sleepUntil(() -> !Players.getLocal().isAnimating() || Inventory.isFull(), Calculations.random(10000, 15000));
+                    Sleep.sleepUntil(() -> !player.isAnimating() || Inventory.isFull(), Calculations.random(10000, 15000));
                 }
             }
         }

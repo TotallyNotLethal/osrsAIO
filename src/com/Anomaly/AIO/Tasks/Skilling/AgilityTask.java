@@ -7,6 +7,7 @@ import com.Anomaly.AIO.Helpers.Locations.Location;
 import com.Anomaly.AIO.Helpers.Locations.Spot;
 import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
 import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
+import com.Anomaly.AIO.Helpers.State.Methods.TeleportToState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
 import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.Main;
@@ -19,6 +20,7 @@ import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.item.GroundItems;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
+import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.utilities.Logger;
@@ -27,7 +29,9 @@ import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
 import org.dreambot.api.wrappers.items.GroundItem;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class AgilityTask implements Task {
     private final AbstractScript script;
@@ -37,6 +41,10 @@ public class AgilityTask implements Task {
 
     private final Map<String, Integer> optionalItems = new HashMap<>();
     private Location location;
+    private int completeLevel = 1;
+    private int completeTime = 1;
+
+    long startTime = System.currentTimeMillis();
     private Location method;
     private Area agilityArea;
     private final List<String> commonObstacleActions = Arrays.asList(
@@ -49,7 +57,7 @@ public class AgilityTask implements Task {
     private GameObject lastObstacle;
     private List<GameObject> encounteredObstacles = new ArrayList<>();
     private final Main main = new Main();
-    public AgilityTask(AbstractScript script, String location, String method) {
+    public AgilityTask(AbstractScript script, String location, String method, int duration, int stopLevel) {
         this.script = script;
         this.stateManager = new StateManager(script);
         this.location = Location.byDisplayName(location);
@@ -75,8 +83,9 @@ public class AgilityTask implements Task {
     private void prepareStates() {
         if (!agilityArea.contains(player)) {
             stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false));
+            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false, true));
             stateManager.addState(new EquipItemsState(script, null));
+            stateManager.addState(new TeleportToState(script, agilityArea));
             stateManager.addState(new WalkToState(script, agilityArea));
             Camera.setZoom(Camera.getMaxZoom()); Camera.rotateTo(2045, 383);
         }
@@ -102,14 +111,14 @@ public boolean finished = false;
             }
 
             if (player.isMoving() || player.isAnimating()) {
-                return Calculations.random(2000, 3000);
+                return Calculations.random(1000, 2000);
             }
 
             GroundItem markOfGrace = GroundItems.closest("Mark of Grace");
             if (markOfGrace != null && markOfGrace.canReach()) {
                 markOfGrace.interact("Take");
                 Sleep.sleepUntil(() -> !markOfGrace.exists(), Calculations.random(4000, 6000));
-                return Calculations.random(3000, 5000);
+                return Calculations.random(1000, 2000);
             }
 
             GameObject nextObstacle = getNextObstacle();
@@ -119,7 +128,7 @@ public boolean finished = false;
                 if (action != null) {
                     if (!player.isAnimating() && !player.isMoving()) {
 
-                        if (nextObstacle.distance() > 8) {
+                        if (nextObstacle.distance() > 8 && !nextObstacle.isOnScreen()) {
                             Walking.walk(nextObstacle.getTile().getRandomized(4));
                             Sleep.sleep(200);
                             Sleep.sleepUntil(() -> !player.isAnimating() && !player.isAnimating(), 3000);
@@ -130,7 +139,7 @@ public boolean finished = false;
                         lastObstacle = nextObstacle;
                         Sleep.sleepUntil(() -> !player.isAnimating() && !player.isMoving(), 10000);
 
-                        return Calculations.random(4000, 6000);
+                        return Calculations.random(2000, 3000);
                     }
                 }
             } else {
@@ -140,13 +149,13 @@ public boolean finished = false;
                 return Calculations.random(200, 500);
             }
         }
-        return Calculations.random(1000, 2500);
+        return Calculations.random(1000, 1500);
     }
 
 
     @Override
     public boolean isComplete() {
-        return false;
+        return false;//completeLevel > Skill.AGILITY.getLevel() || System.currentTimeMillis() - startTime > completeTime;
     }
 
     private boolean isInEndLocation() {

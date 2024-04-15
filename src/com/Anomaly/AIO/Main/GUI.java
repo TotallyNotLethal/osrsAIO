@@ -8,6 +8,8 @@ import org.dreambot.api.utilities.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
@@ -30,6 +32,12 @@ class GUI extends JFrame {
     private final Main mainScript;
     private String selectedSkill = "";
     private JLabel selectedSkillLabel;
+    private JTabbedPane tabbedPane;
+    private JTextField durationField;
+    private JTextField stopLevelField;
+    private JPanel settingsPanel;
+    private JPanel skillSettingsPanel;
+    private JButton startButton;
     private final SkillManager skillManager = new SkillManager();
 
     private final Color backgroundColor = new Color(60, 63, 65);
@@ -49,89 +57,103 @@ class GUI extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        tabbedPane = new JTabbedPane();
+        settingsPanel = new JPanel();
+
+        JPanel botSettingsPanel = new JPanel(new BorderLayout());
+        botSettingsPanel.add(createLeftPanel(), BorderLayout.WEST);
+        botSettingsPanel.add(createCenterSplitPane(), BorderLayout.CENTER);
+        botSettingsPanel.add(createRightPanel(), BorderLayout.EAST);
+
+        tabbedPane.addTab("General", mainPanel);
+        tabbedPane.addTab("Settings", settingsPanel);
+
         methodList = new JList<>(methodListModel);
-        methodList.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                if (evt.getClickCount() == 2) {
-                    String selectedMethod = methodList.getSelectedValue();
-                    String selectedLocation = locationList.getSelectedValue();
-                    if (selectedMethod != null && selectedLocation != null) {
-                        String taskDescription = selectedSkill + " - " + selectedMethod + " @ " + selectedLocation;
-                        trainingListModel.addElement(taskDescription);
-                        taskAdded(selectedSkill);
-                    }
-                }
-            }
-        });
+
         locationList = new JList<>(locationListModel);
 
-        JPanel leftPanel = createLeftPanel();
-        JSplitPane centerSplitPane = createCenterSplitPane();
 
-        mainPanel.add(leftPanel, BorderLayout.WEST);
-        mainPanel.add(centerSplitPane, BorderLayout.CENTER);
+        mainPanel.add(createLeftPanel(), BorderLayout.WEST);
+        mainPanel.add(createCenterSplitPane(), BorderLayout.CENTER);
         mainPanel.add(createRightPanel(), BorderLayout.EAST);
+        //add(mainPanel);
+        add(tabbedPane, BorderLayout.CENTER);
 
-        add(mainPanel);
 
         mainPanel.setBackground(backgroundColor);
         getContentPane().setBackground(backgroundColor);
         updateLevels();
 
         pack();
-
-        setupLocationListListener();
+        setupListListeners();
         setupTaskListListener();
         setVisible(true);
     }
 
-    private JPanel createLeftPanel() {
-        JPanel skillsPanel = new JPanel();
-        skillsPanel.setLayout(new GridLayout(0, 3, 5, 5));
+    private JPanel createSkillSettingsPanel(String skill) {
+        skillSettingsPanel = new JPanel();
+        skillSettingsPanel.setLayout(new BoxLayout(skillSettingsPanel, BoxLayout.Y_AXIS));
 
+        if (skillIcons.containsKey(skill)) {
+            JLabel skillIconLabel = new JLabel(skillIcons.get(skill));
+            skillIconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            skillSettingsPanel.add(skillIconLabel);
+        }
+
+        skillSettingsPanel.add(new JLabel("Duration (min):"));
+        durationField = new JTextField("5");
+        skillSettingsPanel.add(durationField);
+
+        skillSettingsPanel.add(new JLabel("Stop Level:"));
+        stopLevelField = new JTextField("1");
+        skillSettingsPanel.add(stopLevelField);
+
+        skillSettingsPanel.setBackground(panelColor);
+        skillSettingsPanel.setForeground(textColor);
+        styleComponent(skillSettingsPanel);
+
+        return skillSettingsPanel;
+    }
+
+    private JPanel createLeftPanel() {
+        JPanel skillsPanel = new JPanel(new GridLayout(0, 3, 5, 5));
         loadSkillIcons();
         skillLevels = new HashMap<>();
 
         for (String skill : skillIcons.keySet()) {
             JPanel skillContainer = new JPanel(new BorderLayout());
             skillContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            skillContainer.setBackground(new Color(60, 63, 65));
+            skillContainer.setBackground(backgroundColor);
 
             JLabel skillLabel = new JLabel(skillIcons.get(skill));
             skillLabel.setHorizontalAlignment(JLabel.CENTER);
+            skillLabels.put(skill, skillLabel);
 
-            levelLabel = new JLabel(String.valueOf(skillLevels.getOrDefault(skill, 1)));
-            levelLabel.setHorizontalAlignment(JLabel.CENTER);
-            levelLabel.setForeground(Color.ORANGE);
-            levelLabel.setFont(levelLabel.getFont().deriveFont(Font.BOLD, 14f));
-
-            skillLabel.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
+            levelLabel = new JLabel(String.valueOf(skillLevels.getOrDefault(skill, 1)), JLabel.CENTER);
+            levelLabel.setForeground(levelColor);
+            levelLabel.setFont(textFont);
 
             skillContainer.add(skillLabel, BorderLayout.CENTER);
-            skillContainer.add(levelLabel, BorderLayout.SOUTH);
+            //skillContainer.add(levelLabel, BorderLayout.SOUTH);
+
             skillContainer.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     selectedSkill = skill;
                     updateLocationsPanel(skill);
+                    updateLevels();
+
+                    SwingUtilities.invokeLater(() -> updateSkillSettingsPanel(skill));
 
                     if (selectedSkillLabel != null) {
                         selectedSkillLabel.setBorder(null);
                     }
-                    skillLabel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+                    skillLabel.setBorder(BorderFactory.createLineBorder(accentColor));
                     selectedSkillLabel = skillLabel;
-
-                    updateLevels();
                 }
             });
-            skillLabels.put(skill, levelLabel);
-            skillsPanel.add(skillContainer);
-        }
 
-        for (Component comp : skillsPanel.getComponents()) {
-            if (comp instanceof JPanel skillContainer) {
-                styleComponent(skillContainer);
-            }
+            skillsPanel.add(skillContainer);
         }
 
         return skillsPanel;
@@ -155,7 +177,7 @@ class GUI extends JFrame {
         }
     }
 
-    private void setupLocationListListener() {
+    private void setupListListeners() {
         locationList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 String selectedLocation = locationList.getSelectedValue();
@@ -164,64 +186,186 @@ class GUI extends JFrame {
                 }
             }
         });
+
+        methodList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                taskAdded(selectedSkill);
+                String selectedMethod = methodList.getSelectedValue();
+                String selectedLocation = locationList.getSelectedValue();
+                if (selectedMethod != null && selectedLocation != null) {
+                    String taskDescription = selectedSkill + " - " + selectedMethod + " @ " + selectedLocation;
+                    trainingListModel.addElement(taskDescription);
+                    taskList.ensureIndexIsVisible(trainingListModel.size() - 1);
+
+                    Logger.log("Added task: " + taskDescription);
+                } else {
+                    Logger.log("Either method or location is null");
+                }
+            }
+        });
     }
 
     public void taskAdded(String skill) {
-        JLabel label = skillLabels.get(skill);
-        if (label != null) {
-            label.setForeground(Color.GREEN);
-        }
+        stopLevelField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                try {
+                    int stopLevel = Integer.parseInt(stopLevelField.getText());
+                    //JLabel levelLabel = skillLabels.get(skill);
+                    if (levelLabel != null) {
+                        levelLabel.setText(String.valueOf(stopLevel));
+                    }
+                } catch (NumberFormatException ignored) {
+                    int stopLevel = 99;
+                }
+            }
+        });
     }
 
     private JSplitPane createCenterSplitPane() {
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setTopComponent(new JScrollPane(locationList));
-        splitPane.setBottomComponent(new JScrollPane(methodList));
-        splitPane.setDividerLocation(this.getSize().height/2 - 50);
+        locationList = new JList<>(locationListModel);
+        locationList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane locationScrollPane = new JScrollPane(locationList);
+        styleComponent(locationScrollPane);
+
+        methodList = new JList<>(methodListModel);
+        methodList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane methodScrollPane = new JScrollPane(methodList);
+        styleComponent(methodScrollPane);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, locationScrollPane, methodScrollPane);
+        splitPane.setDividerLocation(150);
+        splitPane.setResizeWeight(0.5);
+        styleComponent(splitPane);
+
         return splitPane;
     }
 
     private JPanel createRightPanel() {
-        JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new BorderLayout());
-
         taskList = new JList<>(trainingListModel);
         JScrollPane taskListScroll = new JScrollPane(taskList);
-        rightPanel.add(taskListScroll, BorderLayout.CENTER);
+        styleComponent(taskListScroll);
 
-        JButton startButton = new JButton("Start");
-        rightPanel.add(startButton, BorderLayout.PAGE_END);
+        JSplitPane rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        rightSplitPane.setTopComponent(taskListScroll);
+        skillSettingsPanel = createSkillSettingsPanel(selectedSkill);
+        rightSplitPane.setBottomComponent(skillSettingsPanel);
+        rightSplitPane.setDividerLocation(200);
+        rightSplitPane.setResizeWeight(0.7);
+        styleComponent(rightSplitPane);
 
-        startButton.addActionListener(e -> {
-            new Thread(() -> {
-                for (int i = 0; i < trainingListModel.size(); i++) {
-                    String taskDescription = trainingListModel.get(i);
-                    String[] parts = taskDescription.split(" - | @ ");
-                    if (parts.length == 3) {
-                        String skill = parts[0];
-                        String method = parts[1];
-                        String location = parts[2];
-
-                        Task task = mainScript.createTask(skill, method, location);
-                        mainScript.setCurrentTask(task);
-                    } else {
-                        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(this,
-                                "Error parsing task: " + taskDescription,
-                                "Task Execution Error", JOptionPane.ERROR_MESSAGE));
-                    }
-                }
-                SwingUtilities.invokeLater(() -> {
-                    trainingListModel.clear();
-                    startButton.setEnabled(false);
-                });
-            }).start();
-        });
-
-        rightPanel.setBackground(backgroundColor);
-        styleComponent(taskList);
+        startButton = new JButton("Start");
+        startButton.setPreferredSize(new Dimension(100, 40));
+        startButton.addActionListener(e -> startTasks());
         styleButton(startButton);
 
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(startButton);
+        styleComponent(buttonPanel);
+
+        JPanel rightPanel = new JPanel(new BorderLayout(5, 5));
+        rightPanel.add(rightSplitPane, BorderLayout.CENTER);
+        rightPanel.add(buttonPanel, BorderLayout.SOUTH);
+        styleComponent(rightPanel);
+
         return rightPanel;
+    }
+
+    public void updateSkillSettingsPanel(String skill) {
+        skillSettingsPanel.removeAll();
+
+        skillSettingsPanel.setLayout(new BoxLayout(skillSettingsPanel, BoxLayout.Y_AXIS));
+
+        JPanel iconPanel = new JPanel();
+        iconPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        iconPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        if (skillIcons.containsKey(skill)) {
+            JLabel skillIconLabel = new JLabel(scaleIcon(skillIcons.get(skill), 32, 32));
+            iconPanel.add(skillIconLabel);
+        }
+
+        JPanel fieldsPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+        fieldsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel durationLabel = new JLabel("Duration (min):");
+        durationField = new JTextField("5");
+        JLabel stopLevelLabel = new JLabel("Stop Level:");
+        stopLevelField = new JTextField("1");
+
+        fieldsPanel.add(durationLabel);
+        fieldsPanel.add(durationField);
+        fieldsPanel.add(stopLevelLabel);
+        fieldsPanel.add(stopLevelField);
+
+        styleComponent(durationLabel);
+        styleComponent(durationField);
+        styleComponent(stopLevelLabel);
+        styleComponent(stopLevelField);
+
+        skillSettingsPanel.add(iconPanel);
+        skillSettingsPanel.add(Box.createVerticalStrut(10));
+        skillSettingsPanel.add(fieldsPanel);
+        pack();
+
+        skillSettingsPanel.revalidate();
+        skillSettingsPanel.repaint();
+    }
+
+    private ImageIcon scaleIcon(ImageIcon icon, int width, int height) {
+        Image img = icon.getImage();
+        Image newImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(newImg);
+    }
+
+    private void styleComponent(JComponent component) {
+        component.setFont(new Font("SansSerif", Font.BOLD, 12));
+        if (component instanceof JTextField) {
+            component.setPreferredSize(new Dimension(100, 30));
+        }
+    }
+
+    private void startTasks() {
+        new Thread(() -> {
+            int duration = parseInteger(durationField.getText(), 0);
+            int stopLevel = parseInteger(stopLevelField.getText(), 99);
+
+            for (int i = 0; i < trainingListModel.size(); i++) {
+                String taskDescription = trainingListModel.get(i);
+                String[] parts = taskDescription.split(" - | @ ");
+                if (parts.length == 3) {
+                    String skill = parts[0];
+                    String method = parts[1];
+                    String location = parts[2];
+
+                    Task task = mainScript.createTask(skill, method, location, duration, stopLevel);
+
+                    mainScript.setCurrentTask(task);
+
+                    Logger.log("Started task: " + taskDescription + " for " + duration + " minutes or until level " + stopLevel);
+                } else {
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(GUI.this,
+                            "Error parsing task: " + taskDescription,
+                            "Task Execution Error", JOptionPane.ERROR_MESSAGE));
+                }
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                trainingListModel.clear();
+                startButton.setEnabled(true);
+                durationField.setText("");
+                stopLevelField.setText("");
+            });
+        }).start();
+    }
+
+    private int parseInteger(String value, int defaultValue) {
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
     private void styleList(JList<?> list) {

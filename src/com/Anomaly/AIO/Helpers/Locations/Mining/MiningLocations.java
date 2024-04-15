@@ -16,6 +16,8 @@ public class MiningLocations {
         lumbridgeOres.put(OreType.TIN, new Spot(new Area(3220, 3150, 3226, 3144), false));
         lumbridgeOres.put(OreType.COPPER, new Spot(new Area(3231, 3143, 3225, 3149), false));
 
+
+
         locations.put(Location.LUMBRIDGE, lumbridgeOres);
     }
 

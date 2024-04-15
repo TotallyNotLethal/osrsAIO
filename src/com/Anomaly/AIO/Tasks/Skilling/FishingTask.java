@@ -10,6 +10,7 @@ import com.Anomaly.AIO.Helpers.Requirements.Fishing.FishingEquipment;
 import com.Anomaly.AIO.Helpers.Requirements.Fishing.FishingRequirements;
 import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
 import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
+import com.Anomaly.AIO.Helpers.State.Methods.TeleportToState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
 import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.Task;
@@ -43,7 +44,7 @@ public class FishingTask implements Task {
     private final Map<String, Integer> optionalItems;
     private final StateManager stateManager;
 
-    public FishingTask(AbstractScript script, String method, String location) {
+    public FishingTask(AbstractScript script, String method, String location, int duration, int stopLevel) {
         this.script = script;
         this.method = method;
         this.location = Location.byDisplayName(location);
@@ -68,7 +69,7 @@ public class FishingTask implements Task {
         Spot spot = FishingLocations.getFishingSpot(location, fishType);
         this.fishingArea = Objects.requireNonNull(spot).getArea();
         bankingArea = Bank.getClosestBankLocation().getArea(2);
-        optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
+        //optionalItems.putAll(EquipmentSets.GRACEFUL.getItems());
 
         switch (location) {
             case KARAMJA -> {
@@ -97,11 +98,11 @@ public class FishingTask implements Task {
             if(!Bank.getClosestBankLocation().getArea(4).contains(player))
                 stateManager.addState(new WalkToState(script, bankingArea));
 
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox && shouldUseDepositBox()));
+            stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox && shouldUseDepositBox(), true));
 
             stateManager.addState(new EquipItemsState(script, null));
         }
-
+        stateManager.addState(new TeleportToState(script, fishingArea));
         stateManager.addState(new WalkToState(script, fishingArea));
 
         interaction = FishingInteractions.getAction(Objects.requireNonNull(FishType.byDisplayName(method)));
@@ -142,12 +143,12 @@ public class FishingTask implements Task {
             }
 
             if(Inventory.isFull()){
-                boolean shouldUseDepositBox = shouldUseDepositBox(); // Check if we should use deposit box
+                boolean shouldUseDepositBox = shouldUseDepositBox();
                 Area walkToArea = shouldUseDepositBox ? new Area(3044, 3237, 3050, 3233) : Bank.getClosestBankLocation().getArea(5);
                 stateManager.addState(new WalkToState(script, walkToArea));
-                stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox && shouldUseDepositBox()));
+                stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox && shouldUseDepositBox(), false));
                 stateManager.addState(new WalkToState(script, fishingArea));
-                useDepositBox = shouldUseDepositBox(); // Update the flag based on remaining items.
+                useDepositBox = shouldUseDepositBox();
             }
         }
         return Calculations.random(1000, 2000);

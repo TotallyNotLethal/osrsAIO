@@ -69,25 +69,25 @@ public class Main extends AbstractScript {
         log("Anomaly AIO Script stopped.");
     }
 
-    public Task createTask(String skill, String method, String location) {
+    public Task createTask(String skill, String method, String location, int duration, int stopLevel) {
         switch (skill) {
             case "Fishing" -> {
-                return new FishingTask(this, method, location);
+                return new FishingTask(this, method, location, duration, stopLevel);
             }
             case "Firemaking" -> {
-                return new FiremakingTask(this, method, location);
+                return new FiremakingTask(this, method, location, duration, stopLevel);
             }
             case "Woodcutting" -> {
-                return new WoodcuttingTask(this, method, location);
+                return new WoodcuttingTask(this, method, location, duration, stopLevel);
             }
             case "Thieving" -> {
-                return new ThievingTask(this, method, location);
+                return new ThievingTask(this, method, location, duration, stopLevel);
             }
             case "Agility" -> {
-                return new AgilityTask(this, method, location);
+                return new AgilityTask(this, method, location, duration, stopLevel);
             }
             case "Mining" -> {
-                return new MiningTask(this, method, location);
+                return new MiningTask(this, method, location, duration, stopLevel);
             }
             default -> {
                 log("Unsupported skill/method: " + skill + "/" + method);

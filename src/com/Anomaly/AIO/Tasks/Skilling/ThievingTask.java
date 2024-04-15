@@ -9,6 +9,7 @@ import com.Anomaly.AIO.Helpers.Requirements.Thieving.*;
 import com.Anomaly.AIO.Helpers.Requirements.Thieving.ThievingEntity;
 import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
 import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
+import com.Anomaly.AIO.Helpers.State.Methods.TeleportToState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
 import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.Task;
@@ -38,6 +39,8 @@ public class ThievingTask implements Task {
     private final Area thievingArea;
     private Area bankingArea;
     private boolean useDepositBox = false;
+    private int completeLevel = 1;
+    private int completeTime = 1;
     private boolean shadowVeil = false;
     private double shadowTimer = 0.6 * Skill.MAGIC.getLevel();
     private final Map<String, Integer> requiredItems = new HashMap<>();
@@ -45,7 +48,7 @@ public class ThievingTask implements Task {
     private final Map<String, Integer> optionalItems = new HashMap<>();
     private final StateManager stateManager;
 
-    public ThievingTask(AbstractScript script, String thievingTarget, String location) {
+    public ThievingTask(AbstractScript script, String thievingTarget, String location, int duration, int stopLevel) {
         this.script = script;
         this.location = Location.byDisplayName(location);
         this.thievableEntity = getThievableEntityByName(thievingTarget);
@@ -64,8 +67,9 @@ public class ThievingTask implements Task {
     private void prepareStates() {
         if (!thievingArea.contains(player)) {
             stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false));
+            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false, true));
             stateManager.addState(new EquipItemsState(script, null));
+            stateManager.addState(new TeleportToState(script, thievingArea));
             stateManager.addState(new WalkToState(script, thievingArea));
         }
     }
@@ -86,7 +90,7 @@ public class ThievingTask implements Task {
 
         if(Inventory.isFull()){
             stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox));
+            stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox, false));
             stateManager.addState(new WalkToState(script, thievingArea));
         }
 
