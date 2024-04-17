@@ -167,7 +167,6 @@ public class SarachnisTask extends Task {
         }
 
         if (stateManager.hasStates()) {
-            Logger.log(stateManager.currentState());
             stateManager.executeCurrentState();
         } else {
             Logger.log("No states left to execute. Checking conditions...");
