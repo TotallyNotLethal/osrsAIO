@@ -37,15 +37,15 @@ public class PrayerFlickState implements State {
 
     @Override
     public int execute() {
-        if (npcTarget == null || !npcTarget.exists() || !npcTarget.isInteracting(player)) {
+        if (npcTarget == null) {
             npcTarget = determineTarget();
-            /*if (npcTarget == null) {
+            if (npcTarget == null) {
                 if (activatedPrayer) {
                     Prayers.toggle(false, requiredPrayer);
                     activatedPrayer = false;
                 }
                 return 0;
-            }*/
+            }
         }
 
         NPCAttack npcAnimation = NPCAttack.findByNpcName(npcTarget.getName());

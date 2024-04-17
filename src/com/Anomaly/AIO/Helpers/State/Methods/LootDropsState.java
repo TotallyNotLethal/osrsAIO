@@ -2,6 +2,7 @@ package com.Anomaly.AIO.Helpers.State.Methods;
 
 import com.Anomaly.AIO.Helpers.State.State;
 import org.dreambot.api.methods.Calculations;
+import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.item.GroundItems;
 import org.dreambot.api.script.AbstractScript;
@@ -27,22 +28,23 @@ public class LootDropsState implements State {
 
     @Override
     public int execute() {
-        GroundItem priorityItem = GroundItems.closest(item -> item != null && priorityItems != null && priorityItems.contains(item.getName()));
-        if (priorityItem != null && priorityItem.canReach() && priorityItem.distance() < 9) {
-            priorityItem.interact("Take");
-            Logger.log("Picking up priority item: " + priorityItem.getName());
-            Sleep.sleepUntil(() -> !priorityItem.exists(), 1000);
-            return Calculations.random(400, 800);
-        }
+        if(!Inventory.isFull()) {
+            GroundItem priorityItem = GroundItems.closest(item -> item != null && priorityItems != null && priorityItems.contains(item.getName()));
+            if (priorityItem != null && priorityItem.canReach() && priorityItem.distance() < 9) {
+                priorityItem.interact("Take");
+                Logger.log("Picking up priority item: " + priorityItem.getName());
+                Sleep.sleepUntil(() -> !priorityItem.exists(), 1000);
+                return Calculations.random(400, 800);
+            }
 
-        GroundItem anyItem = GroundItems.closest(item -> item != null && item.canReach());
-        if (anyItem != null && anyItem.canReach() && anyItem.distance() < 9) {
-            anyItem.interact("Take");
-            Logger.log("Picking up item: " + anyItem.getName());
-            Sleep.sleepUntil(() -> !anyItem.exists(), 1000);
-            return Calculations.random(400, 800);
+            GroundItem anyItem = GroundItems.closest(item -> item != null && item.canReach());
+            if (anyItem != null && anyItem.canReach() && anyItem.distance() < 9) {
+                anyItem.interact("Take");
+                Logger.log("Picking up item: " + anyItem.getName());
+                Sleep.sleepUntil(() -> !anyItem.exists(), 1000);
+                return Calculations.random(400, 800);
+            }
         }
-
         return Calculations.random(100, 200);
     }
 
