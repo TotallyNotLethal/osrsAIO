@@ -34,20 +34,15 @@ public class EscapeState implements State {
         hasPrayerPots = Inventory.contains(item -> item != null && item.getName().contains("Prayer potion"));
 
         if ((prayer == 0 && !hasPrayerPots) || (health < 70 && !hasHealingItems)) {
-            //if (Tabs.isOpen(Tab.INVENTORY)) {
                 Inventory.get(item -> item != null && item.getName().contains("teleport")).interact("Break");
-            //} else {
-                //Tabs.open(Tab.INVENTORY);
-            //}
-            //Sleep.sleepUntil(() -> !currentArea.contains(player), 5000);
             return 600;
         }
-        return 60; // Run this check quickly and frequently
+        return 60;
     }
 
     @Override
     public boolean isComplete() {
         Logger.log("Escape completed..");
-        return true;//!currentArea.contains(player) || (hasPrayerPots && hasHealingItems);
+        return true;
     }
 }
