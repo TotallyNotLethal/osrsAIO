@@ -1,5 +1,7 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
+import com.Anomaly.AIO.Helpers.Destination.AreaDestination;
+import com.Anomaly.AIO.Helpers.Destination.Destination;
 import com.Anomaly.AIO.Helpers.Items.EquipmentSets;
 import com.Anomaly.AIO.Helpers.Locations.AgilityLocations.AgilityEndLocations;
 import com.Anomaly.AIO.Helpers.Locations.AgilityLocations.AgilityStartLocations;
@@ -33,7 +35,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class AgilityTask implements Task {
+public class AgilityTask extends Task {
     private final AbstractScript script;
     private final StateManager stateManager;
     private final Player player;
@@ -151,7 +153,6 @@ public boolean finished = false;
         }
         return Calculations.random(1000, 1500);
     }
-
 
     @Override
     public boolean isComplete() {

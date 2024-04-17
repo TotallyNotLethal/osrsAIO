@@ -1,6 +1,8 @@
 package com.Anomaly.AIO.Main;
 
 import com.Anomaly.AIO.Helpers.Locations.Location;
+import com.Anomaly.AIO.Helpers.Paintable;
+import com.Anomaly.AIO.Tasks.Combat.Bossing.SarachnisTask;
 import com.Anomaly.AIO.Tasks.Skilling.*;
 import org.dreambot.api.Client;
 import org.dreambot.api.data.GameState;
@@ -12,6 +14,7 @@ import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.utilities.Sleep;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -70,6 +73,7 @@ public class Main extends AbstractScript {
     }
 
     public Task createTask(String skill, String method, String location, int duration, int stopLevel) {
+        //return new SarachnisTask(this);
         switch (skill) {
             case "Fishing" -> {
                 return new FishingTask(this, method, location, duration, stopLevel);
@@ -88,6 +92,9 @@ public class Main extends AbstractScript {
             }
             case "Mining" -> {
                 return new MiningTask(this, method, location, duration, stopLevel);
+            }
+            case "Other" -> {
+                return new SarachnisTask(this);
             }
             default -> {
                 log("Unsupported skill/method: " + skill + "/" + method);

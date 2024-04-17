@@ -38,6 +38,7 @@ class GUI extends JFrame {
     private JPanel settingsPanel;
     private JPanel skillSettingsPanel;
     private JButton startButton;
+    public Task task;
     private final SkillManager skillManager = new SkillManager();
 
     private final Color backgroundColor = new Color(60, 63, 65);
@@ -339,7 +340,7 @@ class GUI extends JFrame {
                     String method = parts[1];
                     String location = parts[2];
 
-                    Task task = mainScript.createTask(skill, method, location, duration, stopLevel);
+                    task = mainScript.createTask(skill, method, location, duration, stopLevel);
 
                     mainScript.setCurrentTask(task);
 
@@ -434,6 +435,7 @@ class GUI extends JFrame {
         skillIcons.put("Runecrafting", new ImageIcon(Objects.requireNonNull(getClass().getResource("/Icons/Runecraft_icon.png"))));
         skillIcons.put("Hunter", new ImageIcon(Objects.requireNonNull(getClass().getResource("/Icons/Hunter_icon.png"))));
         skillIcons.put("Construction", new ImageIcon(Objects.requireNonNull(getClass().getResource("/Icons/Construction_icon.png"))));
+        skillIcons.put("Other", new ImageIcon(Objects.requireNonNull(getClass().getResource("/Icons/Coins_icon.png"))));
     }
 
     private void setupTaskListListener() {

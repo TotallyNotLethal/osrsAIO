@@ -50,7 +50,9 @@ public enum Location {
     POLLNIVNEACH("Pollnivneach",false),
     SOPHANEM("Sophanem",false),
     MENAPHOS("Menaphos",false),
-    ANACHRONIA("Anachronia",false);
+    ANACHRONIA("Anachronia",false),
+    SARACHNIS_LADDER("Sarachnis ladder",false),
+    SARACHNIS_LAIR("Sarachnis lair",false);
 
     private final boolean isFreeToPlay;
     private final String displayName;

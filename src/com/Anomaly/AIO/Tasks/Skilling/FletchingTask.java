@@ -15,10 +15,11 @@ import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.Player;
 import org.dreambot.api.wrappers.items.Item;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FletchingTask implements ChatListener, Task {
+public class FletchingTask extends Task implements ChatListener {
 
     private final Map<String, Integer> requiredItems;
     private Area bankArea;

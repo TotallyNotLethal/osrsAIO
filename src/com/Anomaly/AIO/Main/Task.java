@@ -1,6 +1,6 @@
 package com.Anomaly.AIO.Main;
 
-public interface Task {
-    int execute();
-    boolean isComplete();
+public abstract class Task {
+    public abstract int execute();
+    public abstract boolean isComplete();
 }

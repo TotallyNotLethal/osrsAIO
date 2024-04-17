@@ -26,11 +26,12 @@ import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class MiningTask implements Task {
+public class MiningTask extends Task {
     private final AbstractScript script;
     private final OreType oreType;
     private final Location location;

@@ -83,6 +83,30 @@ public class TeleportToState implements State {
 
             if (closestTeleportLocation != null && !closestTeleportLocation.getArea().contains(player)) {
                 Logger.log("Teleporting using " + (teleportType.equals("Tablet") ? "tablet: " : "accessory: ") + closestTeleportLocation.getName());
+                boolean hasTeleportItem = false;
+
+                if(teleportType.equals("Tablet") && Inventory.contains(closestTablet.getLocation().getName()))
+                    hasTeleportItem = true;
+                else if(teleportType.equals("Accessory") && Inventory.contains(closestAccessory.getAccessoryName()))
+                    hasTeleportItem = true;
+
+                if(hasTeleportItem)
+                {
+                    if(teleportType.equals("Tablet"))
+                    {
+                        Inventory.get(closestTablet.getLocation().getName()).interact("Break");
+                        TeleportLocation finalClosestTeleportLocation = closestTeleportLocation;
+                        Sleep.sleepUntil(() -> finalClosestTeleportLocation.getArea().contains(player), 5000);
+                        return Calculations.random(1000,2000);
+                    }
+
+                    /*else if(teleportType.equals("Accessory"))
+                    {
+                        TeleportLocation finalClosestTeleportLocation = closestTeleportLocation;
+                        Sleep.sleepUntil(() -> finalClosestTeleportLocation.getArea().contains(player), 5000);
+                    }*/
+
+                }
 
                 if(!Bank.isOpen())
                     Bank.open();
@@ -99,7 +123,7 @@ public class TeleportToState implements State {
                         Item accessoryItem = null;
 
                         for (Item item : Bank.all()) {
-                            if (item != null && item.isValid() && !item.isPlaceholder() && item.getName().contains(closestAccessory.getAccessoryName() + "(")) {
+                            if (item != null && item.isValid() && !item.isPlaceholder() && item.getName().contains(closestAccessory.getAccessoryName())) {
                                 accessoryItem = item;
                                 break;
                             }
@@ -112,7 +136,7 @@ public class TeleportToState implements State {
 
                         Inventory.get(accessoryItem.getName()).interact("Rub");
                         Sleep.sleepUntil(Dialogues::inDialogue, 1000);
-                        if (accessoryItem.getName().contains("Skills")) {
+                        if (accessoryItem.getName().contains("Skills") || accessoryItem.getName().contains("Xeric")) {
                             WidgetChild widgetChild = Widgets.getWidgetChild(187, 3);
                             if (widgetChild != null) {
                                 TeleportAccessory finalClosestAccessory = closestAccessory;

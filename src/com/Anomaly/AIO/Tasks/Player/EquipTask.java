@@ -7,7 +7,9 @@ import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.items.Item;
 
-public class EquipTask implements Task {
+import java.awt.*;
+
+public class EquipTask extends Task {
     public EquipTask() {
         execute();
     }

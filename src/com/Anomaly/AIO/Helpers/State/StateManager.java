@@ -41,6 +41,7 @@ public class StateManager {
     public void clearStates() { states.clear(); }
 
     public AbstractScript getScript(){ return this.script; }
+    public State currentState() { return states.peek(); }
 
     public boolean isComplete() {
         return states.isEmpty();

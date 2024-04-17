@@ -25,11 +25,12 @@ import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.interactive.Player;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class FishingTask implements Task {
+public class FishingTask extends Task {
     private final AbstractScript script;
     String method, interaction;
     Location location;

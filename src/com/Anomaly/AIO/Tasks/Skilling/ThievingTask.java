@@ -27,11 +27,12 @@ import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.interactive.Player;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class ThievingTask implements Task {
+public class ThievingTask extends Task {
     private final AbstractScript script;
     private final ThievableEntity thievableEntity;
     private final Location location;

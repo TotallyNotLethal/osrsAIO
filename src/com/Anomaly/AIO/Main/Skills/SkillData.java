@@ -36,6 +36,12 @@ public enum SkillData {
                     "Lumbridge", Arrays.asList("Tin", "Copper")
             )
     ),
+    OTHER(
+            Map.of(
+                    "Bossing", Arrays.asList("Sarachnis"),
+                    "Minigames", Arrays.asList("")
+            )
+    ),
     THIEVING(
             Map.of(
             "Lumbridge", Arrays.asList("Man", "Woman")

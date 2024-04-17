@@ -5,10 +5,7 @@ import com.Anomaly.AIO.Helpers.Locations.Spot;
 import com.Anomaly.AIO.Helpers.Locations.Woodcutting.WoodcuttingLocations;
 import com.Anomaly.AIO.Helpers.Requirements.Woodcutting.AxeType;
 import com.Anomaly.AIO.Helpers.Requirements.Woodcutting.TreeType;
-import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
-import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
-import com.Anomaly.AIO.Helpers.State.Methods.TeleportToState;
-import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
+import com.Anomaly.AIO.Helpers.State.Methods.*;
 import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.Client;
@@ -25,11 +22,12 @@ import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class WoodcuttingTask implements Task {
+public class WoodcuttingTask extends Task {
     private final AbstractScript script;
     private final TreeType treeType;
     private final Location location;
@@ -66,16 +64,15 @@ public class WoodcuttingTask implements Task {
     }
 
     private void setupWoodcuttingTask(Location location) {
-        requiredItems.put(AxeType.getBestAxeForLevel(woodcuttingLevel, isMember).getDisplayName(), 1);
+        //requiredItems.put(AxeType.getBestAxeForLevel(woodcuttingLevel, isMember).getDisplayName(), 1);
 
         switch (location) {
             case PORT_SARIM -> {
                 bankingArea = new Area(3044, 3237, 3050, 3233);
                 useDepositBox = true;
             }
-            default -> throw new IllegalArgumentException("Invalid fishing location");
+            //default -> throw new IllegalArgumentException("Invalid woodcutting location");
         }
-
     }
 
     private void prepareStates() {

@@ -7,8 +7,8 @@ public enum TeleportAccessory {
     // Games Necklace
     BARBARIAN_ASSAULT("Games necklace", new TeleportLocation("Barbarian Assault", new Area(2516, 3584, 2543, 3564))),
     BURTHORPE_GAMES_ROOM("Games necklace", new TeleportLocation("Burthorpe Games Room", new Area(2938, 3525, 2879, 3580))),
-    TEARS_OF_GUTHIX("Games necklace", new TeleportLocation("Tears of Guthix", new Area(2487, 9400, 2493, 9394))), // Placeholder area
-    CORPORAL_BEAST("Games necklace", new TeleportLocation("Corporal Beast", new Area(2977, 4374, 2981, 4370))), // Placeholder area
+    TEARS_OF_GUTHIX("Games necklace", new TeleportLocation("Tears of Guthix", new Area(2487, 9400, 2493, 9394))),
+    CORPORAL_BEAST("Games necklace", new TeleportLocation("Corporal Beast", new Area(2977, 4374, 2981, 4370))),
     WINTERTODT_CAMP("Games necklace", new TeleportLocation("Wintertodt Camp", new Area(1667, 3924, 1595, 4035))),
 
     // Ring of Dueling
@@ -58,7 +58,11 @@ public enum TeleportAccessory {
     // Burning Amulet
     CHAOS_TEMPLE("Burning amulet", new TeleportLocation("Chaos Temple", new Area(2940, 3511, 2928, 3519))),
     BANDIT_CAMP("Burning amulet", new TeleportLocation("Bandit Camp", new Area(3056, 3686, 3022, 3709))),
-    LAVA_MAZE("Burning amulet", new TeleportLocation("Lava Maze", new Area(3118, 3824, 3022, 3883)));
+    LAVA_MAZE("Burning amulet", new TeleportLocation("Lava Maze", new Area(3118, 3824, 3022, 3883))),
+
+    // Xeric Talisman
+
+    XERICS_GLADE("Xeric's talisman", new TeleportLocation("Xeric's Glade", new Area(1732, 3569, 1755, 3565)));
 
     private final TeleportLocation location;
     private final String accessoryName;

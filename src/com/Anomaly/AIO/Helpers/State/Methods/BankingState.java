@@ -74,7 +74,8 @@ public class BankingState implements State {
             else
                 depositItems();
             withdrawItems(itemsToWithdraw, true);
-            withdrawItems(optionalItemsToWithdraw, false);
+            if(optionalItemsToWithdraw != null)
+                withdrawItems(optionalItemsToWithdraw, false);
 
             if(itemsToBuy.size() > 0) {
                 isComplete = true;
@@ -89,7 +90,8 @@ public class BankingState implements State {
 
     private void depositItems() {
         Map<String, Integer> allRequiredItems = new HashMap<>(itemsToWithdraw);
-        allRequiredItems.putAll(optionalItemsToWithdraw);
+        if(optionalItemsToWithdraw != null)
+            allRequiredItems.putAll(optionalItemsToWithdraw);
 
         List<Item> itemsToDeposit = Inventory.all().stream()
                 .filter(item -> item != null && !allRequiredItems.containsKey(item.getName()))

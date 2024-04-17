@@ -5,5 +5,4 @@ public interface ThievableEntity {
     int getLevelRequirement();
     boolean requiresLockpick();
     ThievingEntity getEntityType();
-    // Any other common methods that need to be implemented by all thievable entities.
 }

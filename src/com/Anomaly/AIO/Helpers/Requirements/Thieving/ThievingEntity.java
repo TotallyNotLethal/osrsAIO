@@ -5,6 +5,4 @@ public enum ThievingEntity {
     STALL,
     CHEST,
     DOOR;
-
-    // You can expand this enum with additional details or methods as needed.
 }

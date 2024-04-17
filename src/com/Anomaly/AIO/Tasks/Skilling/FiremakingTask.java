@@ -20,10 +20,11 @@ import org.dreambot.api.wrappers.interactive.Player;
 import org.dreambot.api.wrappers.items.Item;
 import org.dreambot.api.wrappers.widgets.message.Message;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FiremakingTask implements ChatListener, Task {
+public class FiremakingTask extends Task implements ChatListener {
 
     private final Map<String, Integer> requiredItems;
 
@@ -123,7 +124,6 @@ public class FiremakingTask implements ChatListener, Task {
     public boolean isComplete() {
         return false;
     }
-
 
     private void burnLogs() {
         Tile fmTile = selectFmStartTile();
