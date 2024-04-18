@@ -2,7 +2,6 @@
   <artifact type="jar" build-on-make="true" name="osrsAIO.jar">
     <output-path>$USER_HOME$/DreamBot/Scripts</output-path>
     <root id="archive" name="DreamBot AIO.jar">
-      <element id="extracted-dir" path="$USER_HOME$/DreamBot/BotData/client.jar" path-in-jar="/" />
       <element id="module-output" name="DreamBot AIO" />
     </root>
   </artifact>
