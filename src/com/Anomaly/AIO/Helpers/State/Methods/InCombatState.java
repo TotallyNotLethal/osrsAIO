@@ -42,6 +42,7 @@ public class InCombatState implements State {
 
     @Override
     public int execute() {
+        Logger.log("In combat state");
         if (targets != null && !targets.isEmpty()) {
             for (NPC n : targets) {
                 if (n != null && n.exists() && n.getHealthPercent() > 0) {
@@ -57,7 +58,7 @@ public class InCombatState implements State {
                 target.interact("Attack");
             Sleep.sleepUntil(() -> player.isInteracting(target), 600);
         } else {
-            return Calculations.random(1000, 2000);
+            return 0;
         }
         return 0;
     }
@@ -69,6 +70,6 @@ public class InCombatState implements State {
                 targets.clear();
             return !target.exists() || player.isInteracting(target);
         }
-        else return targets == null;
+        else return true;
     }
 }

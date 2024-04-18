@@ -18,6 +18,7 @@ public class PrayerFlickState implements State {
     private final String targetNpcName;
     private NPC npcTarget;
     private boolean activatedPrayer;
+    private boolean disablePrayer;
     private Prayer requiredPrayer;
     private final Player player;
 
@@ -25,6 +26,14 @@ public class PrayerFlickState implements State {
         this.script = script;
         this.player = Players.getLocal();
         this.targetNpcName = targetNpcName;
+        this.npcTarget = determineTarget();
+    }
+
+    public PrayerFlickState(AbstractScript script, boolean disablePrayer) {
+        this.script = script;
+        this.player = Players.getLocal();
+        this.targetNpcName = "";
+        this.disablePrayer = disablePrayer;
         this.npcTarget = determineTarget();
     }
 
@@ -37,15 +46,22 @@ public class PrayerFlickState implements State {
 
     @Override
     public int execute() {
+        if(disablePrayer || npcTarget == null) {
+            disablePrayers();
+            disablePrayer = false;
+            return 0;
+        }
+
+        Logger.log("In prayer state");
         if (npcTarget == null) {
             npcTarget = determineTarget();
-            if (npcTarget == null) {
+            /*if (npcTarget == null) {
                 if (activatedPrayer) {
-                    Prayers.toggle(false, requiredPrayer);
+                    Prayers.toggle(true, Prayers.getActive()[0]);
                     activatedPrayer = false;
                 }
                 return 0;
-            }
+            }*/
         }
 
         NPCAttack npcAnimation = NPCAttack.findByNpcName(npcTarget.getName());
@@ -61,6 +77,12 @@ public class PrayerFlickState implements State {
             }
         }
         return 0;
+    }
+
+    public boolean disablePrayers() {
+        for (Prayer prayer : Prayers.getActive())
+            Prayers.toggle(false, prayer);
+        return Prayers.getActive().length == 0;
     }
 
     @Override

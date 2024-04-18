@@ -35,6 +35,7 @@ public class EscapeState implements State {
 
         if ((prayer == 0 && !hasPrayerPots) || (health < 70 && !hasHealingItems)) {
                 Inventory.get(item -> item != null && item.getName().contains("teleport")).interact("Break");
+                Sleep.sleep(6000);
             return 600;
         }
         return 60;
@@ -42,7 +43,6 @@ public class EscapeState implements State {
 
     @Override
     public boolean isComplete() {
-        Logger.log("Escape completed..");
         return true;
     }
 }

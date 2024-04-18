@@ -8,6 +8,7 @@ import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.Bank;
+import org.dreambot.api.methods.input.Camera;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.interactive.Players;
@@ -58,8 +59,9 @@ public class SarachnisTask extends Task {
         player = Players.getLocal();
         requiredItems.put("Super combat potion(4)", 1);
         requiredItems.put("Prayer potion(4)", 3);
-        requiredItems.put("Monkfish", 22);
+        requiredItems.put("Monkfish", 2);
         requiredItems.put("Varrock teleport", 10);
+        Camera.setZoom(Camera.getMaxZoom()); Camera.rotateTo(2045, 383);
         getToLair();
     }
 
@@ -90,12 +92,14 @@ public class SarachnisTask extends Task {
         {
             case 0 -> {
                 Logger.log("Starting from scratch!");
+                stateManager.addState(new PrayerFlickState(script, true));
                 stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
                 stateManager.addState(new BankingState(script, requiredItems, null, false, false));
                 stateManager.addState(new TeleportToState(script, TeleportAccessory.XERICS_GLADE.getLocation().getArea()));
                 stateManager.addState(new WalkToState(script, sarachnisLadder.getCenter()));
             }
             case 1 -> {
+                Logger.log("At ladder");
                 customPath.connectStartToClosestNode();
                 customPath.attachToWeb();
                 GameObjects.closest("Ladder").interact("Climb-down");
@@ -103,12 +107,14 @@ public class SarachnisTask extends Task {
                 stateManager.addState(new WalkToState(script, customPath.getStart().getTile()));
             }
             case 2 -> {
+                Logger.log("At gate");
                 //Prayers.toggle(true, Prayer.PROTECT_FROM_MISSILES);
                 GameObjects.closest("Thick Web").interact("Quick-enter");
                 Sleep.sleep(600);
                 Sleep.sleepUntil(() -> sarachnisLair.contains(player), 5000);
             }
             case 3 -> {
+                Logger.log("In Lair");
             }
 
             default -> throw new IllegalStateException("Unexpected value: " + player.getTile());
@@ -147,13 +153,15 @@ public class SarachnisTask extends Task {
             else combatState.setTarget(sarachnis);
             if(player.getHealthPercent() < 70 || Skills.getBoostedLevel(Skill.PRAYER) < 30)
                 stateManager.addState(recoverState);
-            if(sarachnis != null && sarachnis.exists())
+            if(sarachnis != null && sarachnis.exists() && sarachnisLair.contains(player))
                 stateManager.addState(prayerFlickState);
-            if(player.getHealthPercent() < 70)
+            if(player.getHealthPercent() < 70 && sarachnisLair.contains(player)) {
                 stateManager.addState(escapeState);
-            if(sarachnis != null && sarachnis.exists())
+            }
+            if(sarachnis != null && sarachnis.exists() && sarachnisLair.contains(player))
                 stateManager.addState(combatState);
-            stateManager.addState(lootDropsState);
+            if(sarachnis == null && sarachnisLair.contains(player))
+                stateManager.addState(lootDropsState);
         }
     }
 

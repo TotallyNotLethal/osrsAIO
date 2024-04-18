@@ -25,6 +25,7 @@ public class RecoverState implements State {
 
     @Override
     public int execute() {
+        Logger.log("In recover state");
         if (player.getHealthPercent() <= healthThreshold) {
             Item food = Inventory.get(item -> item != null && item.isValid() && item.hasAction("Eat"));
             if (food != null) {
