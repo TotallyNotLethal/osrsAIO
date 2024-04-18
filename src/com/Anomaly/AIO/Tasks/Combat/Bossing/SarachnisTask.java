@@ -137,7 +137,7 @@ public class SarachnisTask extends Task {
                 return Integer.compare(id2, id1);
             });
                 combatState = new InCombatState(script, sarachnis);
-                lootDropsState = new LootDropsState(script, Arrays.asList("Sarachnis cudgel", "Giant egg sac"));
+                lootDropsState = new LootDropsState(script, sarachnisLair, Arrays.asList("Sarachnis cudgel", "Giant egg sac"));
                 prayerFlickState = new PrayerFlickState(script, "Sarachnis");
                 recoverState = new RecoverState(script, 70);
                 escapeState = new EscapeState(script, player.getTile().getArea(15));

@@ -5,6 +5,7 @@ import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.item.GroundItems;
+import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.utilities.Logger;
 import org.dreambot.api.utilities.Sleep;
@@ -18,11 +19,13 @@ import java.util.stream.Collectors;
 public class LootDropsState implements State {
     private final AbstractScript script;
     private final List<String> priorityItems;
+    private final Area lootArea;
     private final Player player;
 
-    public LootDropsState(AbstractScript script, List<String> priorityItems) {
+    public LootDropsState(AbstractScript script, Area lootArea, List<String> priorityItems) {
         this.script = script;
         this.priorityItems = priorityItems;
+        this.lootArea = lootArea;
         this.player = Players.getLocal();
     }
 
@@ -30,7 +33,7 @@ public class LootDropsState implements State {
     public int execute() {
         if(!Inventory.isFull()) {
             GroundItem priorityItem = GroundItems.closest(item -> item != null && priorityItems != null && priorityItems.contains(item.getName()));
-            if (priorityItem != null && priorityItem.canReach() && priorityItem.distance() < 9) {
+            if (priorityItem != null && priorityItem.canReach() && lootArea.contains(priorityItem)) {
                 priorityItem.interact("Take");
                 Logger.log("Picking up priority item: " + priorityItem.getName());
                 Sleep.sleepUntil(() -> !priorityItem.exists(), 1000);
@@ -38,7 +41,7 @@ public class LootDropsState implements State {
             }
 
             GroundItem anyItem = GroundItems.closest(item -> item != null && item.canReach());
-            if (anyItem != null && anyItem.canReach() && anyItem.distance() < 9) {
+            if (anyItem != null && anyItem.canReach() && lootArea.contains(anyItem)) {
                 anyItem.interact("Take");
                 Logger.log("Picking up item: " + anyItem.getName());
                 Sleep.sleepUntil(() -> !anyItem.exists(), 1000);
@@ -53,7 +56,7 @@ public class LootDropsState implements State {
         boolean noItems = true;
         List<GroundItem> items = GroundItems.all();
         for (GroundItem drop : items)
-            if(drop.distance() < 8)
+            if(lootArea.contains(drop))
                 noItems = false;
         return noItems;
     }
