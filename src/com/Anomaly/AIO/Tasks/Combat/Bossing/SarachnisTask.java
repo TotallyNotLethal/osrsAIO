@@ -4,6 +4,7 @@ import com.Anomaly.AIO.Helpers.Locations.Teleports.Accessories.TeleportAccessory
 import com.Anomaly.AIO.Helpers.State.Methods.*;
 import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.Task;
+import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.input.Camera;
 import org.dreambot.api.methods.interactive.GameObjects;
@@ -158,7 +159,7 @@ public class SarachnisTask extends Task {
             }
             if(sarachnis != null && sarachnis.exists() && sarachnisLair.contains(player))
                 stateManager.addState(combatState);
-            if(sarachnis == null && sarachnisLair.contains(player))
+            if(sarachnis == null && sarachnisLair.contains(player) && !Inventory.isFull())
                 stateManager.addState(lootDropsState);
         }
     }
