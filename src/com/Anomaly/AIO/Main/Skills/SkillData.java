@@ -39,7 +39,8 @@ public enum SkillData {
     OTHER(
             Map.of(
                     "Bossing", Arrays.asList("Sarachnis"),
-                    "Minigames", Arrays.asList("")
+                    "Minigames", Arrays.asList(""),
+                    "GrandExchange", Arrays.asList("Sell inventory")
             )
     ),
     THIEVING(

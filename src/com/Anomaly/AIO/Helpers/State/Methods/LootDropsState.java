@@ -24,7 +24,7 @@ public class LootDropsState implements State {
     private final List<String> priorityItems;
     private final Area lootArea;
     private final Player player;
-    private List<Item> loot = new ArrayList<>();
+    private int lootPrice = 0;
 
     public LootDropsState(AbstractScript script, Area lootArea, List<String> priorityItems) {
         this.script = script;
@@ -39,29 +39,23 @@ public class LootDropsState implements State {
             GroundItem priorityItem = GroundItems.closest(item -> item != null && priorityItems != null && priorityItems.contains(item.getName()));
             if (priorityItem != null && priorityItem.canReach() && lootArea.contains(priorityItem)) {
                 priorityItem.interact("Take");
-                Logger.log("Picking up priority item: " + priorityItem.getName());
                 Sleep.sleepUntil(() -> !priorityItem.exists(), 2000);
-                loot.add(priorityItem.getItem());
-                return Calculations.random(400, 800);
+                lootPrice += LivePrices.get(priorityItem.getItem()) * priorityItem.getAmount();
+                return Calculations.random(600, 1200);
             }
 
             GroundItem anyItem = GroundItems.closest(item -> item != null && item.canReach());
             if (anyItem != null && anyItem.canReach() && lootArea.contains(anyItem)) {
                 anyItem.interact("Take");
-                Logger.log("Picking up item: " + anyItem.getName());
                 Sleep.sleepUntil(() -> !anyItem.exists(), 2000);
-                loot.add(anyItem.getItem());
-                return Calculations.random(400, 800);
+                lootPrice += LivePrices.get(anyItem.getItem()) * anyItem.getAmount();
+                return Calculations.random(600, 1200);
             }
         }
         return Calculations.random(100, 200);
     }
 
     public int getLootPrices() {
-        int lootPrice = 0;
-        for (Item item : loot) {
-            lootPrice += LivePrices.get(item);
-        }
         return lootPrice;
     }
 

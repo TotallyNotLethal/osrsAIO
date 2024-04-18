@@ -42,6 +42,7 @@ public class SarachnisTask extends Task {
     private EscapeState escapeState;
     private boolean sarachnisDefeated;
     private final Player player;
+    private int lootPrice = 0;
     private final Area sarachnisLadder = new Area(1696, 3579, 1708, 3569);
 
     public SarachnisTask(AbstractScript script) {
@@ -178,6 +179,9 @@ public class SarachnisTask extends Task {
         } else {
             Logger.log("No states left to execute. Checking conditions...");
         }
+        if(lootDropsState != null && lootDropsState.getLootPrices() != 0)
+            lootPrice += lootDropsState.getLootPrices();
+
         return 0;
     }
 
@@ -189,7 +193,7 @@ public class SarachnisTask extends Task {
         //g.drawString("Current State: " + stateManager.currentState(), 10, 275); // Example
         g.drawString("Sarachnis Health: " + (sarachnis != null ? sarachnis.getHealthPercent() + "%" : "N/A"), 10, 290);
         //g.drawString("Kills Count: " + kills, 10, 305);
-        //g.drawString(lootDropsState != null ? "Coins earned: " + lootDropsState.getLootPrices() : "Coins earned: 0", 10, 320);
+        g.drawString("Coins earned: " + lootPrice, 10, 320);
     }
 
     @Override

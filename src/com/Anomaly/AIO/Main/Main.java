@@ -1,6 +1,7 @@
 package com.Anomaly.AIO.Main;
 
 import com.Anomaly.AIO.Tasks.Combat.Bossing.SarachnisTask;
+import com.Anomaly.AIO.Tasks.GrandExchange.MarketPlaceTask;
 import com.Anomaly.AIO.Tasks.Skilling.*;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.randoms.RandomSolver;
@@ -21,16 +22,22 @@ public class Main extends AbstractScript {
     private final List<Task> tasks = new ArrayList<>();
     private AtomicReference<Task> currentTask = new AtomicReference<>();
     public boolean taskStarted = false;
+    private SettingsManager settingsManager;
     private GUI gui;
 
     @Override
     public void onStart() {
         SwingUtilities.invokeLater(() -> {
-            gui = new GUI(this);
+            settingsManager = new SettingsManager();
+            gui = new GUI(this, settingsManager);
             Sleep.sleep(500);
             gui.setVisible(true);
         });
         log("Anomaly AIO Script started!");
+    }
+
+    public SettingsManager getSettingsManager() {
+        return settingsManager;
     }
 
     @Override
@@ -70,9 +77,9 @@ public class Main extends AbstractScript {
 
     @Override
     public void onPaint(Graphics g) {
-        Task task = currentTask.get();  // Retrieve the actual Task object from the AtomicReference
+        Task task = currentTask.get();
         if (task != null) {
-            task.onPaint(g);  // Delegate painting to the current task
+            task.onPaint(g);
         }
     }
 
@@ -98,7 +105,18 @@ public class Main extends AbstractScript {
                 return new MiningTask(this, method, location, duration, stopLevel);
             }
             case "Other" -> {
-                return new SarachnisTask(this);
+                switch(method) {
+                    case "Sarachnis" -> {
+                        return new SarachnisTask(this);
+                    }
+                    case "Sell inventory" -> {
+                        return new MarketPlaceTask(this, settingsManager);
+                    }
+                    default -> {
+                        log("Unsupported skill/method: " + skill + "/" + method);
+                        return null;
+                    }
+                }
             }
             default -> {
                 log("Unsupported skill/method: " + skill + "/" + method);

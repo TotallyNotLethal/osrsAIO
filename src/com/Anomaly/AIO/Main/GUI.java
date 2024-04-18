@@ -30,6 +30,7 @@ class GUI extends JFrame {
     private final Map<String, JLabel> skillLabels = new HashMap<>();
     private JLabel levelLabel;
     private final Main mainScript;
+    private SettingsManager settingsManager;
     private String selectedSkill = "";
     private JLabel selectedSkillLabel;
     private JTabbedPane tabbedPane;
@@ -38,6 +39,9 @@ class GUI extends JFrame {
     private JPanel settingsPanel;
     private JPanel skillSettingsPanel;
     private JButton startButton;
+    private JCheckBox buyItemsCheckbox;
+    private JCheckBox sellItemsCheckbox;
+    private JCheckBox useStaminaPotionsCheckbox;
     public Task task;
     private final SkillManager skillManager = new SkillManager();
 
@@ -48,18 +52,23 @@ class GUI extends JFrame {
     private final Color levelColor = new Color(191, 97, 106);
     private final Font textFont = new Font("SansSerif", Font.BOLD, 14);
 
-    public GUI(Main script) {
+    public GUI(Main script, SettingsManager settingsManager) {
         this.mainScript = script;
-        setTitle("Bot Settings");
+        this.settingsManager = settingsManager;
+        setTitle("Anomaly AIO | Beta v1.0");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
+
 
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         tabbedPane = new JTabbedPane();
         settingsPanel = new JPanel();
+
+        setupSettingsPanel();
+        setupEventHandlers();
 
         JPanel botSettingsPanel = new JPanel(new BorderLayout());
         botSettingsPanel.add(createLeftPanel(), BorderLayout.WEST);
@@ -89,6 +98,48 @@ class GUI extends JFrame {
         setupListListeners();
         setupTaskListListener();
         setVisible(true);
+    }
+
+    private void setupEventHandlers() {
+        buyItemsCheckbox.addActionListener(e -> {
+            settingsManager.setBuyItems(buyItemsCheckbox.isSelected());
+        });
+
+        sellItemsCheckbox.addActionListener(e -> {
+            settingsManager.setSellItems(sellItemsCheckbox.isSelected());
+        });
+
+        useStaminaPotionsCheckbox.addActionListener(e -> {
+            settingsManager.setUseStaminaPotions(useStaminaPotionsCheckbox.isSelected());
+        });
+    }
+
+    private void setupSettingsPanel() {
+        settingsPanel.setLayout(new BoxLayout(settingsPanel, BoxLayout.Y_AXIS));
+
+        // Grand Exchange Panel
+        JPanel grandExchangePanel = new JPanel();
+        grandExchangePanel.setBorder(BorderFactory.createTitledBorder("Grand Exchange"));
+        grandExchangePanel.setLayout(new GridLayout(0, 1)); // One column, multiple rows
+
+        buyItemsCheckbox = new JCheckBox("Buy Items");
+        sellItemsCheckbox = new JCheckBox("Sell Items");
+
+        grandExchangePanel.add(buyItemsCheckbox);
+        grandExchangePanel.add(sellItemsCheckbox);
+
+        // Miscellaneous Panel
+        JPanel miscPanel = new JPanel();
+        miscPanel.setBorder(BorderFactory.createTitledBorder("Miscellaneous"));
+        miscPanel.setLayout(new GridLayout(0, 1)); // One column, multiple rows
+
+        useStaminaPotionsCheckbox = new JCheckBox("Use Stamina Potions");
+
+        miscPanel.add(useStaminaPotionsCheckbox);
+
+        // Adding panels to settings panel
+        settingsPanel.add(grandExchangePanel);
+        settingsPanel.add(miscPanel);
     }
 
     private JPanel createSkillSettingsPanel(String skill) {
