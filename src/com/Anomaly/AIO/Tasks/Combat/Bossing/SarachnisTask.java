@@ -58,8 +58,8 @@ public class SarachnisTask extends Task {
         this.stateManager = new StateManager(script);
         player = Players.getLocal();
         requiredItems.put("Super combat potion(4)", 1);
-        requiredItems.put("Prayer potion(4)", 3);
-        requiredItems.put("Monkfish", 2);
+        requiredItems.put("Prayer potion(4)", 2);
+        requiredItems.put("Monkfish", 23);
         requiredItems.put("Varrock teleport", 10);
         Camera.setZoom(Camera.getMaxZoom()); Camera.rotateTo(2045, 383);
         getToLair();
