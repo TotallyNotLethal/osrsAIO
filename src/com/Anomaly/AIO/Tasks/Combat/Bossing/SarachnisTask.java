@@ -187,8 +187,8 @@ public class SarachnisTask extends Task {
 
         //g.drawString("Current State: " + stateManager.currentState(), 10, 275); // Example
         g.drawString("Sarachnis Health: " + (sarachnis != null ? sarachnis.getHealthPercent() + "%" : "N/A"), 10, 290);
-        g.drawString("Kills Count: " + kills, 10, 305);
-        g.drawString("Coins earned: " + lootDropsState.getLootPrices(), 10, 320);
+        //g.drawString("Kills Count: " + kills, 10, 305);
+        //g.drawString(lootDropsState != null ? "Coins earned: " + lootDropsState.getLootPrices() : "Coins earned: 0", 10, 320);
     }
 
     @Override
