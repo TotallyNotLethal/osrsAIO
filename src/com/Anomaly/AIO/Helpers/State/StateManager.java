@@ -3,10 +3,11 @@ package com.Anomaly.AIO.Helpers.State;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.utilities.Logger;
 
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class StateManager {
+public class StateManager{
     private Queue<State> states = new LinkedList<>();
     private AbstractScript script;
 
@@ -15,7 +16,6 @@ public class StateManager {
     }
 
     public void executeState(State state) {
-        Logger.log("Added state: " + state.toString());
         states.add(state);
         executeCurrentState();
     }

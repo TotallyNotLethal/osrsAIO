@@ -1,11 +1,7 @@
 package com.Anomaly.AIO.Main;
 
-import com.Anomaly.AIO.Helpers.Locations.Location;
-import com.Anomaly.AIO.Helpers.Paintable;
 import com.Anomaly.AIO.Tasks.Combat.Bossing.SarachnisTask;
 import com.Anomaly.AIO.Tasks.Skilling.*;
-import org.dreambot.api.Client;
-import org.dreambot.api.data.GameState;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.randoms.RandomSolver;
 import org.dreambot.api.script.AbstractScript;
@@ -70,6 +66,14 @@ public class Main extends AbstractScript {
             }
         });
         log("Anomaly AIO Script stopped.");
+    }
+
+    @Override
+    public void onPaint(Graphics g) {
+        Task task = currentTask.get();  // Retrieve the actual Task object from the AtomicReference
+        if (task != null) {
+            task.onPaint(g);  // Delegate painting to the current task
+        }
     }
 
     public Task createTask(String skill, String method, String location, int duration, int stopLevel) {
