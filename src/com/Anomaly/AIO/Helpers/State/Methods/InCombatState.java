@@ -42,7 +42,6 @@ public class InCombatState implements State {
 
     @Override
     public int execute() {
-        Logger.log("In combat state");
         if (targets != null && !targets.isEmpty()) {
             for (NPC n : targets) {
                 if (n != null && n.exists() && n.getHealthPercent() > 0) {

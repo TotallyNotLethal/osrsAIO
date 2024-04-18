@@ -60,7 +60,7 @@ public class SarachnisTask extends Task {
         requiredItems.put("Super combat potion(4)", 1);
         requiredItems.put("Prayer potion(4)", 2);
         requiredItems.put("Monkfish", 23);
-        requiredItems.put("Varrock teleport", 10);
+        requiredItems.put("Varrock teleport", 1);
         Camera.setZoom(Camera.getMaxZoom()); Camera.rotateTo(2045, 383);
         getToLair();
     }
@@ -99,7 +99,6 @@ public class SarachnisTask extends Task {
                 stateManager.addState(new WalkToState(script, sarachnisLadder.getCenter()));
             }
             case 1 -> {
-                Logger.log("At ladder");
                 customPath.connectStartToClosestNode();
                 customPath.attachToWeb();
                 GameObjects.closest("Ladder").interact("Climb-down");
@@ -107,14 +106,12 @@ public class SarachnisTask extends Task {
                 stateManager.addState(new WalkToState(script, customPath.getStart().getTile()));
             }
             case 2 -> {
-                Logger.log("At gate");
                 //Prayers.toggle(true, Prayer.PROTECT_FROM_MISSILES);
                 GameObjects.closest("Thick Web").interact("Quick-enter");
                 Sleep.sleep(600);
                 Sleep.sleepUntil(() -> sarachnisLair.contains(player), 5000);
             }
             case 3 -> {
-                Logger.log("In Lair");
             }
 
             default -> throw new IllegalStateException("Unexpected value: " + player.getTile());

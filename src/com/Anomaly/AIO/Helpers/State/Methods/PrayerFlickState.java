@@ -52,7 +52,6 @@ public class PrayerFlickState implements State {
             return 0;
         }
 
-        Logger.log("In prayer state");
         if (npcTarget == null) {
             npcTarget = determineTarget();
             /*if (npcTarget == null) {
