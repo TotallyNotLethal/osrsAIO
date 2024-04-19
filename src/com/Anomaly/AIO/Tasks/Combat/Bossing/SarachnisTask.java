@@ -3,6 +3,8 @@ package com.Anomaly.AIO.Tasks.Combat.Bossing;
 import com.Anomaly.AIO.Helpers.Locations.Teleports.Accessories.TeleportAccessory;
 import com.Anomaly.AIO.Helpers.State.Methods.*;
 import com.Anomaly.AIO.Helpers.State.StateManager;
+import com.Anomaly.AIO.Helpers.TickManagement.Bosses.SarachnisBoss;
+import com.Anomaly.AIO.Helpers.TickManagement.TickManagerState;
 import com.Anomaly.AIO.Main.SettingsManager;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -17,6 +19,7 @@ import org.dreambot.api.methods.prayer.Prayer;
 import org.dreambot.api.methods.prayer.Prayers;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.Skills;
+import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.walking.web.node.CustomWebPath;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.utilities.Logger;
@@ -24,7 +27,6 @@ import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.interactive.Player;
-import org.dreambot.api.wrappers.items.Item;
 
 import java.awt.*;
 import java.util.*;
@@ -33,12 +35,13 @@ import java.util.List;
 public class SarachnisTask extends Task {
     private final AbstractScript script;
     private final StateManager stateManager;
+    private TickManagerState tickManagerState;
     private final SettingsManager settings;
     private boolean isComplete;
     private final Map<String, Integer> requiredItems = new HashMap<>();
     private final Map<String, Integer> optionalItems = new HashMap<>();
     private NPC sarachnis;
-    private int trips = 0;
+    private int kills = 0;
     private boolean statesCreated;
     private InCombatState combatState;
     private LootDropsState lootDropsState;
@@ -58,7 +61,7 @@ public class SarachnisTask extends Task {
         player = Players.getLocal();
         requiredItems.put("Super combat potion(4)", 1);
         requiredItems.put("Prayer potion(4)", 2);
-        requiredItems.put("Monkfish", 23);
+        requiredItems.put("Potato with cheese", 23);
         if(this.settings.isUsePOHEnabled())
             requiredItems.put("Teleport to house", 1);
         else
@@ -163,12 +166,22 @@ public class SarachnisTask extends Task {
     private void fightingStates() {
         if(sarachnisLair.contains(player)) {
             sarachnis = NPCs.closest(n -> n != null && n.getName().equals("Sarachnis"));
+            /*SarachnisBoss sarachnisBoss = new SarachnisBoss(sarachnis);
+            if(tickManagerState == null && sarachnis != null && sarachnis.exists()) {
+                tickManagerState = new TickManagerState(script, settings, sarachnisBoss);
+                stateManager.setBackgroundState(tickManagerState);
+            }
 
-            if (sarachnis != null && !sarachnis.exists()) { // If Sarachnis no longer exists, it is defeated
-                if (!sarachnisDefeated) { // If we haven't already registered the defeat
-                    trips++; // Increment the trips counter
-                    sarachnisDefeated = true; // Set the flag to prevent re-counting
-                    Logger.log("Sarachnis defeated! Total kills: " + trips);
+            sarachnisBoss.setSarachnisNPC(sarachnis);
+            if(tickManagerState != null && sarachnis != null) {
+                tickManagerState.setBoss(sarachnisBoss);
+            }*/
+
+            if (sarachnis == null) {
+                if (!sarachnisDefeated) {
+                    kills++;
+                    sarachnisDefeated = true;
+                    Logger.log("Sarachnis defeated! Total kills: " + kills);
                 }
             } else {
                 sarachnisDefeated = false; // Reset the flag when Sarachnis is present
@@ -214,6 +227,12 @@ public class SarachnisTask extends Task {
 
     @Override
     public int execute() {
+
+        /*if (Players.getLocal().isMoving() && tickManagerState != null) {
+            Tile destination = Walking.getDestination();
+            tickManagerState.planPlayerMove(destination);
+        }*/
+
         if (stateManager.isComplete()) {
             getToLair();
             if (!stateManager.hasStates() || sarachnis == null || !sarachnis.exists()) {
@@ -234,12 +253,21 @@ public class SarachnisTask extends Task {
     public void onPaint(Graphics g) {
         super.onPaint(g);
         g.setColor(Color.WHITE);
-        //g.drawString("Current State: " + stateManager.currentState(), 10, 275);
-        g.drawString("Sarachnis Health: " + (sarachnis != null ? sarachnis.getHealthPercent() + "%" : "N/A"), 10, 275);
-        g.drawString("Sarachnis Distance: " + (sarachnis != null ? sarachnis.distance() : "N/A"), 10, 290);
+        g.drawString("Sarachnis Health: " + (sarachnis != null ? sarachnis.getHealthPercent() + "%" : "N/A"), 10, 290);
+        g.drawString("Sarachnis Distance: " + (sarachnis != null ? sarachnis.distance() : "N/A"), 10, 305);
 
-        g.drawString(trips == 0 ? String.format("Coins earned: %d | Avg per Trip(%d)", lootPrice, lootPrice) : String.format("Coins earned: %d | Avg per Trip(%d)", lootPrice, lootPrice/ trips), 10, 305);
-        g.drawString("Trips completed: " + trips, 10, 320);
+        g.drawString(kills == 0 ? String.format("Coins earned: %d | Avg per Kill(%d)", lootPrice, lootPrice) : String.format("Coins earned: %d | Avg per Kill(%d)", lootPrice, lootPrice/ kills), 10, 320);
+        g.drawString("Kills completed: " + kills, 10, 335);
+
+        if (tickManagerState != null) {
+            List<String> actions = tickManagerState.getFutureActions();
+            int y = 50;
+            for (int i = 0; i < actions.size(); i++) {
+                String actionText = "Tick +" + (i + 1) + ": " + actions.get(i);
+                g.drawString(actionText, 20, y);
+                y += 15;
+            }
+        }
     }
 
     @Override

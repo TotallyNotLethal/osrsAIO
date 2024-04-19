@@ -54,6 +54,18 @@ public class LootDropsState implements State {
                 return Calculations.random(600, 1200);
             }
         }
+        if(Inventory.isFull()){
+            GroundItem gItem = GroundItems.closest(fullItem -> fullItem != null && fullItem.canReach());
+            Item fullFood = Inventory.get(foodItem -> foodItem.hasAction("Eat"));
+            if(gItem.getItem().getLivePrice() > fullFood.getLivePrice()) {
+                fullFood.interact("Eat");
+            }
+            gItem.interact("Take");
+            Sleep.sleepUntil(() -> !gItem.exists(), 2000);
+            //if(anyItem.getItem().isTradable())
+            lootPrice += LivePrices.get(gItem.getItem()) * gItem.getAmount();
+            return Calculations.random(600, 1200);
+        }
         return Calculations.random(100, 200);
     }
 
