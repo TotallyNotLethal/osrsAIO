@@ -5,6 +5,7 @@ import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.AbstractScript;
+import org.dreambot.api.script.listener.GameTickListener;
 import org.dreambot.api.utilities.Logger;
 
 import java.awt.*;
@@ -90,7 +91,6 @@ public class StateManager extends AbstractScript {
 
     @Override
     public int onLoop() {
-
         return 600;  // Delay before next loop iteration
     }
 

@@ -3,6 +3,7 @@ package com.Anomaly.AIO.Helpers.State.Methods;
 import com.Anomaly.AIO.Helpers.Destination.Destination;
 import com.Anomaly.AIO.Helpers.State.State;
 import org.dreambot.api.methods.Calculations;
+import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
@@ -26,7 +27,7 @@ import java.util.List;
 public class WalkToState implements State {
         private final AbstractScript script;
         private final Destination destination;
-        private final Area area;
+        private Area area;
         private final Tile tile;
         private final Player player;
         private CustomWebPath customPath;
@@ -88,6 +89,7 @@ public class WalkToState implements State {
 
         if (path == null) {
             Logger.log("No path found to " + destination + ". Unable to proceed.");
+            area = player.getSurroundingArea(5);
             return;
         }
 

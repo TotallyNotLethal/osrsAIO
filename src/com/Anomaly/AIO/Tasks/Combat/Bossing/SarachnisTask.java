@@ -115,9 +115,9 @@ public class SarachnisTask extends Task {
                     if (portal != null) {
                         portal.interact("Grand Exchange");
                         Sleep.sleepUntil(() -> !settings.isInPlayerOwnedHouse(), 5000);
+                        Sleep.sleep(6000);
                     }
                 }
-
 
                 stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
                 stateManager.addState(new BankingState(script, settings, requiredItems, null, false, false));
@@ -215,7 +215,7 @@ public class SarachnisTask extends Task {
                 statesCreated = true;
 
 
-            if(!spawns.isEmpty())
+            if(!spawns.isEmpty() && Players.all(Player::exists).size() <= 1)
                 combatState.setTargets(spawns);
             else combatState.setTarget(sarachnis);
             if(player.getHealthPercent() < 70 || Skills.getBoostedLevel(Skill.PRAYER) < 30)
@@ -242,10 +242,10 @@ public class SarachnisTask extends Task {
     @Override
     public int execute() {
 
-        /*if (Players.getLocal().isMoving() && tickManagerState != null) {
+        if (tickManagerState != null && Players.getLocal().isMoving()) {
             Tile destination = Walking.getDestination();
             tickManagerState.planPlayerMove(destination);
-        }*/
+        }
 
         if (stateManager.isComplete()) {
             getToLair();

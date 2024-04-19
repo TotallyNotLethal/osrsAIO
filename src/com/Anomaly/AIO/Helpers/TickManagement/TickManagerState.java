@@ -6,6 +6,7 @@ import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.AbstractScript;
+import org.dreambot.api.script.listener.GameTickListener;
 import org.dreambot.api.utilities.Logger;
 import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.NPC;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TickManagerState implements State {
+public class TickManagerState implements State, GameTickListener {
     private int currentTick;
 
     public void setBoss(Boss boss) {
@@ -41,8 +42,8 @@ public class TickManagerState implements State {
 
     @Override
     public int execute() {
-        updateTick();
-        monitorBossAttacks();
+        //updateTick();
+        //monitorBossAttacks();
         return 0;
     }
 
@@ -52,10 +53,10 @@ public class TickManagerState implements State {
     }
 
     private void updateTick() {
-        Sleep.sleep(600);
+        /*Sleep.sleep(600);
         currentTick++;
         updateFutureActions();
-        executeBossAction();
+        executeBossAction();*/
     }
 
     private void monitorBossAttacks() {
@@ -126,5 +127,18 @@ public class TickManagerState implements State {
 
     public void endState() {
         complete = true;
+    }
+
+    @Override
+    public void onGameTick() {
+        currentTick++;
+        updateFutureActions();
+        monitorBossAttacks();
+        executeBossAction();
+    }
+
+    @Override
+    public void onPreTick() {
+        GameTickListener.super.onPreTick();
     }
 }
