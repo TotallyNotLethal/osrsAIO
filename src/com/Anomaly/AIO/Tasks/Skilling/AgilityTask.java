@@ -13,6 +13,7 @@ import com.Anomaly.AIO.Helpers.State.Methods.TeleportToState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
 import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.Main;
+import com.Anomaly.AIO.Main.SettingsManager;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.Bank;
@@ -30,6 +31,7 @@ import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
 import org.dreambot.api.wrappers.items.GroundItem;
+import org.dreambot.launcher.Settings;
 
 import java.awt.*;
 import java.util.*;
@@ -38,6 +40,7 @@ import java.util.List;
 public class AgilityTask extends Task {
     private final AbstractScript script;
     private final StateManager stateManager;
+    private final SettingsManager settings;
     private final Player player;
     private final Map<String, Integer> requiredItems = new HashMap<>();
 
@@ -59,9 +62,10 @@ public class AgilityTask extends Task {
     private GameObject lastObstacle;
     private List<GameObject> encounteredObstacles = new ArrayList<>();
     private final Main main = new Main();
-    public AgilityTask(AbstractScript script, String location, String method, int duration, int stopLevel) {
+    public AgilityTask(AbstractScript script, SettingsManager settings, String location, String method, int duration, int stopLevel) {
         this.script = script;
         this.stateManager = new StateManager(script);
+        this.settings = settings;
         this.location = Location.byDisplayName(location);
         this.method = Location.byDisplayName(method);
         this.player = Players.getLocal();
@@ -85,7 +89,7 @@ public class AgilityTask extends Task {
     private void prepareStates() {
         if (!agilityArea.contains(player)) {
             stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false, true));
+            stateManager.addState(new BankingState(script, settings, requiredItems, optionalItems, false, true));
             stateManager.addState(new EquipItemsState(script, null));
             stateManager.addState(new TeleportToState(script, agilityArea));
             stateManager.addState(new WalkToState(script, agilityArea));

@@ -19,6 +19,11 @@ public class PrayerFlickState implements State {
     private NPC npcTarget;
     private boolean activatedPrayer;
     private boolean disablePrayer;
+
+    public void setRequiredPrayer(Prayer requiredPrayer) {
+        this.requiredPrayer = requiredPrayer;
+    }
+
     private Prayer requiredPrayer;
     private final Player player;
 
@@ -70,7 +75,6 @@ public class PrayerFlickState implements State {
             if (requiredPrayer != null && !Prayers.isActive(requiredPrayer)) {
                 Logger.log("Toggling: " + requiredPrayer.toString());
                 Prayers.toggle(true, requiredPrayer);
-                Sleep.sleep(600);
                 Sleep.sleepUntil(() -> Prayers.isActive(requiredPrayer), 1000);
                 activatedPrayer = true;
             }

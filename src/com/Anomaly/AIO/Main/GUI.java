@@ -42,6 +42,7 @@ class GUI extends JFrame {
     private JCheckBox buyItemsCheckbox;
     private JCheckBox sellItemsCheckbox;
     private JCheckBox useStaminaPotionsCheckbox;
+    private JCheckBox usePOHCheckbox;
     public Task task;
     private final SkillManager skillManager = new SkillManager();
 
@@ -112,6 +113,9 @@ class GUI extends JFrame {
         useStaminaPotionsCheckbox.addActionListener(e -> {
             settingsManager.setUseStaminaPotions(useStaminaPotionsCheckbox.isSelected());
         });
+        usePOHCheckbox.addActionListener(e -> {
+            settingsManager.setUsePOH(usePOHCheckbox.isSelected());
+        });
     }
 
     private void setupSettingsPanel() {
@@ -120,7 +124,7 @@ class GUI extends JFrame {
         // Grand Exchange Panel
         JPanel grandExchangePanel = new JPanel();
         grandExchangePanel.setBorder(BorderFactory.createTitledBorder("Grand Exchange"));
-        grandExchangePanel.setLayout(new GridLayout(0, 1)); // One column, multiple rows
+        grandExchangePanel.setLayout(new GridLayout(0, 1));
 
         buyItemsCheckbox = new JCheckBox("Buy Items");
         sellItemsCheckbox = new JCheckBox("Sell Items");
@@ -128,16 +132,16 @@ class GUI extends JFrame {
         grandExchangePanel.add(buyItemsCheckbox);
         grandExchangePanel.add(sellItemsCheckbox);
 
-        // Miscellaneous Panel
         JPanel miscPanel = new JPanel();
         miscPanel.setBorder(BorderFactory.createTitledBorder("Miscellaneous"));
-        miscPanel.setLayout(new GridLayout(0, 1)); // One column, multiple rows
+        miscPanel.setLayout(new GridLayout(0, 1));
 
         useStaminaPotionsCheckbox = new JCheckBox("Use Stamina Potions");
+        usePOHCheckbox = new JCheckBox("Use Player House");
 
         miscPanel.add(useStaminaPotionsCheckbox);
+        miscPanel.add(usePOHCheckbox);
 
-        // Adding panels to settings panel
         settingsPanel.add(grandExchangePanel);
         settingsPanel.add(miscPanel);
     }
@@ -174,7 +178,7 @@ class GUI extends JFrame {
 
         for (String skill : skillIcons.keySet()) {
             JPanel skillContainer = new JPanel(new BorderLayout());
-            skillContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            skillContainer.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
             skillContainer.setBackground(backgroundColor);
 
             JLabel skillLabel = new JLabel(skillIcons.get(skill));
@@ -184,6 +188,8 @@ class GUI extends JFrame {
             levelLabel = new JLabel(String.valueOf(skillLevels.getOrDefault(skill, 1)), JLabel.CENTER);
             levelLabel.setForeground(levelColor);
             levelLabel.setFont(textFont);
+            skillLabel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.DARK_GRAY));
+
 
             skillContainer.add(skillLabel, BorderLayout.CENTER);
             //skillContainer.add(levelLabel, BorderLayout.SOUTH);

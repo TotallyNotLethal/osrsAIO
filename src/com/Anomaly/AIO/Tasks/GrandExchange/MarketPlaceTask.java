@@ -33,7 +33,7 @@ public class MarketPlaceTask extends Task {
         this.settings = settings;
         this.player = Players.getLocal();
         getInventory();
-        sellItemsState = new SellItemsState(script, itemsToSell);
+        sellItemsState = new SellItemsState(script, settings, itemsToSell);
 
         prepareStates();
     }

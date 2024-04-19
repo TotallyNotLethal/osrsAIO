@@ -3,6 +3,7 @@ package com.Anomaly.AIO.Tasks.Combat.Bossing;
 import com.Anomaly.AIO.Helpers.Locations.Teleports.Accessories.TeleportAccessory;
 import com.Anomaly.AIO.Helpers.State.Methods.*;
 import com.Anomaly.AIO.Helpers.State.StateManager;
+import com.Anomaly.AIO.Main.SettingsManager;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
@@ -12,12 +13,15 @@ import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
+import org.dreambot.api.methods.prayer.Prayer;
+import org.dreambot.api.methods.prayer.Prayers;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.Skills;
 import org.dreambot.api.methods.walking.web.node.CustomWebPath;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.utilities.Logger;
 import org.dreambot.api.utilities.Sleep;
+import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.interactive.Player;
 
@@ -30,10 +34,11 @@ import java.util.Map;
 public class SarachnisTask extends Task {
     private final AbstractScript script;
     private final StateManager stateManager;
+    private final SettingsManager settings;
     private final Map<String, Integer> requiredItems = new HashMap<>();
     private final Map<String, Integer> optionalItems = new HashMap<>();
     private NPC sarachnis;
-    private int kills = 0;
+    private int trips = 0;
     private boolean statesCreated;
     private InCombatState combatState;
     private LootDropsState lootDropsState;
@@ -45,15 +50,19 @@ public class SarachnisTask extends Task {
     private int lootPrice = 0;
     private final Area sarachnisLadder = new Area(1696, 3579, 1708, 3569);
 
-    public SarachnisTask(AbstractScript script) {
+    public SarachnisTask(AbstractScript script, SettingsManager settings) {
         this.script = script;
         this.stateManager = new StateManager(script);
+        this.settings = settings;
         sarachnisDefeated = false;
         player = Players.getLocal();
         requiredItems.put("Super combat potion(4)", 1);
         requiredItems.put("Prayer potion(4)", 2);
         requiredItems.put("Monkfish", 23);
-        requiredItems.put("Varrock teleport", 1);
+        if(this.settings.isUsePOHEnabled())
+            requiredItems.put("Teleport to house", 1);
+        else
+            requiredItems.put("Varrock teleport", 1);
         Camera.setZoom(Camera.getMaxZoom()); Camera.rotateTo(2045, 383);
         getToLair();
     }
@@ -86,8 +95,26 @@ public class SarachnisTask extends Task {
             case 0 -> {
                 Logger.log("Starting from scratch!");
                 stateManager.addState(new PrayerFlickState(script, true));
+
+                Logger.log(String.format("POH enabled: %s | In POH: %s", settings.isUsePOHEnabled(), settings.isInPlayerOwnedHouse()));
+                if(settings.isUsePOHEnabled() && settings.isInPlayerOwnedHouse())
+                {
+                    GameObject pool = GameObjects.closest(gameObject -> gameObject.getName().contains(" pool") && gameObject.hasAction("Drink"));
+                    if (pool != null) {
+                        pool.interact("Drink");
+                        Sleep.sleepUntil(() -> player.getHealthPercent() == 100, 5000);
+                    }
+
+                    GameObject portal = GameObjects.closest(gameObject -> gameObject.getName().contains("Portal")  && gameObject.hasAction("Grand Exchange"));
+                    if (portal != null) {
+                        portal.interact("Grand Exchange");
+                        Sleep.sleepUntil(() -> !settings.isInPlayerOwnedHouse(), 5000);
+                    }
+                }
+
+
                 stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
-                stateManager.addState(new BankingState(script, requiredItems, null, false, false));
+                stateManager.addState(new BankingState(script, settings, requiredItems, null, false, false));
                 stateManager.addState(new TeleportToState(script, TeleportAccessory.XERICS_GLADE.getLocation().getArea()));
                 stateManager.addState(new WalkToState(script, sarachnisLadder.getCenter()));
             }
@@ -124,14 +151,15 @@ public class SarachnisTask extends Task {
     private void fightingStates() {
         if(sarachnisLair.contains(player)) {
             sarachnis = NPCs.closest(n -> n != null && n.getName().equals("Sarachnis"));
-            if (sarachnis != null && sarachnis.exists()) {
-                if (sarachnis.getHealthPercent() == 0 && !sarachnisDefeated) {
-                    kills++;
-                    sarachnisDefeated = true;
-                    Logger.log("Sarachnis defeated! Total kills: " + kills);
-                } else if (sarachnis.getHealthPercent() > 0) {
-                    sarachnisDefeated = false;
+
+            if (sarachnis != null && !sarachnis.exists()) { // If Sarachnis no longer exists, it is defeated
+                if (!sarachnisDefeated) { // If we haven't already registered the defeat
+                    trips++; // Increment the trips counter
+                    sarachnisDefeated = true; // Set the flag to prevent re-counting
+                    Logger.log("Sarachnis defeated! Total kills: " + trips);
                 }
+            } else {
+                sarachnisDefeated = false; // Reset the flag when Sarachnis is present
             }
 
             List<NPC> spawns = NPCs.all(n -> n != null && n.getName().contains("Spawn"));
@@ -153,8 +181,15 @@ public class SarachnisTask extends Task {
             else combatState.setTarget(sarachnis);
             if(player.getHealthPercent() < 70 || Skills.getBoostedLevel(Skill.PRAYER) < 30)
                 stateManager.addState(recoverState);
-            if(sarachnis != null && sarachnis.exists() && sarachnisLair.contains(player))
-                stateManager.addState(prayerFlickState);
+            if(sarachnis != null && sarachnis.exists() && sarachnisLair.contains(player)) {
+                if (sarachnis != null && sarachnis.exists() && sarachnis.distance() <= 4.7 && sarachnis.isInteracting(player) && !sarachnis.isMoving()) {
+                    if (!Prayers.isActive(Prayer.PROTECT_FROM_MELEE)) {
+                        Prayers.toggle(true, Prayer.PROTECT_FROM_MELEE);
+                        prayerFlickState.setRequiredPrayer(Prayer.PROTECT_FROM_MELEE);
+                        Sleep.sleepUntil(() -> Prayers.isActive(Prayer.PROTECT_FROM_MELEE), 1200);
+                    }
+                } else stateManager.addState(prayerFlickState);
+            }
             if(player.getHealthPercent() < 70 && sarachnisLair.contains(player)) {
                 stateManager.addState(escapeState);
             }
@@ -182,18 +217,19 @@ public class SarachnisTask extends Task {
         if(lootDropsState != null && lootDropsState.getLootPrices() != 0)
             lootPrice += lootDropsState.getLootPrices();
 
-        return 0;
+        return 300;
     }
 
     @Override
     public void onPaint(Graphics g) {
         super.onPaint(g);
         g.setColor(Color.WHITE);
+        //g.drawString("Current State: " + stateManager.currentState(), 10, 275);
+        g.drawString("Sarachnis Health: " + (sarachnis != null ? sarachnis.getHealthPercent() + "%" : "N/A"), 10, 275);
+        g.drawString("Sarachnis Distance: " + (sarachnis != null ? sarachnis.distance() : "N/A"), 10, 290);
 
-        //g.drawString("Current State: " + stateManager.currentState(), 10, 275); // Example
-        g.drawString("Sarachnis Health: " + (sarachnis != null ? sarachnis.getHealthPercent() + "%" : "N/A"), 10, 290);
-        //g.drawString("Kills Count: " + kills, 10, 305);
-        g.drawString("Coins earned: " + lootPrice, 10, 320);
+        g.drawString(trips == 0 ? String.format("Coins earned: %d | Avg per Trip(%d)", lootPrice, lootPrice) : String.format("Coins earned: %d | Avg per Trip(%d)", lootPrice, lootPrice/ trips), 10, 305);
+        g.drawString("Trips completed: " + trips, 10, 320);
     }
 
     @Override

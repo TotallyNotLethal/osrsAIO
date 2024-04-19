@@ -13,6 +13,7 @@ import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
 import com.Anomaly.AIO.Helpers.State.Methods.TeleportToState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
 import com.Anomaly.AIO.Helpers.State.StateManager;
+import com.Anomaly.AIO.Main.SettingsManager;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -32,6 +33,7 @@ import java.util.Objects;
 
 public class FishingTask extends Task {
     private final AbstractScript script;
+    private final SettingsManager settings;
     String method, interaction;
     Location location;
     FishType fishType;
@@ -45,9 +47,10 @@ public class FishingTask extends Task {
     private final Map<String, Integer> optionalItems;
     private final StateManager stateManager;
 
-    public FishingTask(AbstractScript script, String method, String location, int duration, int stopLevel) {
+    public FishingTask(AbstractScript script, SettingsManager settings, String method, String location, int duration, int stopLevel) {
         this.script = script;
         this.method = method;
+        this.settings = settings;
         this.location = Location.byDisplayName(location);
         this.fishType = FishType.byDisplayName(method);
         this.stateManager = new StateManager(script);
@@ -99,7 +102,7 @@ public class FishingTask extends Task {
             if(!Bank.getClosestBankLocation().getArea(4).contains(player))
                 stateManager.addState(new WalkToState(script, bankingArea));
 
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox && shouldUseDepositBox(), true));
+            stateManager.addState(new BankingState(script, settings, requiredItems, optionalItems, useDepositBox && shouldUseDepositBox(), true));
 
             stateManager.addState(new EquipItemsState(script, null));
         }
@@ -147,7 +150,7 @@ public class FishingTask extends Task {
                 boolean shouldUseDepositBox = shouldUseDepositBox();
                 Area walkToArea = shouldUseDepositBox ? new Area(3044, 3237, 3050, 3233) : Bank.getClosestBankLocation().getArea(5);
                 stateManager.addState(new WalkToState(script, walkToArea));
-                stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox && shouldUseDepositBox(), false));
+                stateManager.addState(new BankingState(script, settings, requiredItems, optionalItems, useDepositBox && shouldUseDepositBox(), false));
                 stateManager.addState(new WalkToState(script, fishingArea));
                 useDepositBox = shouldUseDepositBox();
             }

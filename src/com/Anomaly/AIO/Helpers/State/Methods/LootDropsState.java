@@ -40,7 +40,8 @@ public class LootDropsState implements State {
             if (priorityItem != null && priorityItem.canReach() && lootArea.contains(priorityItem)) {
                 priorityItem.interact("Take");
                 Sleep.sleepUntil(() -> !priorityItem.exists(), 2000);
-                lootPrice += LivePrices.get(priorityItem.getItem()) * priorityItem.getAmount();
+                //if(priorityItem.getItem().isTradable())
+                    lootPrice += LivePrices.get(priorityItem.getItem()) * priorityItem.getAmount();
                 return Calculations.random(600, 1200);
             }
 
@@ -48,7 +49,8 @@ public class LootDropsState implements State {
             if (anyItem != null && anyItem.canReach() && lootArea.contains(anyItem)) {
                 anyItem.interact("Take");
                 Sleep.sleepUntil(() -> !anyItem.exists(), 2000);
-                lootPrice += LivePrices.get(anyItem.getItem()) * anyItem.getAmount();
+                //if(anyItem.getItem().isTradable())
+                    lootPrice += LivePrices.get(anyItem.getItem()) * anyItem.getAmount();
                 return Calculations.random(600, 1200);
             }
         }

@@ -7,6 +7,7 @@ import com.Anomaly.AIO.Helpers.Requirements.Woodcutting.AxeType;
 import com.Anomaly.AIO.Helpers.Requirements.Woodcutting.TreeType;
 import com.Anomaly.AIO.Helpers.State.Methods.*;
 import com.Anomaly.AIO.Helpers.State.StateManager;
+import com.Anomaly.AIO.Main.SettingsManager;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.Client;
 import org.dreambot.api.methods.Calculations;
@@ -32,6 +33,7 @@ public class WoodcuttingTask extends Task {
     private final TreeType treeType;
     private final Location location;
     private final Area woodcuttingArea;
+    private final SettingsManager settings;
     private Area bankingArea;
     private final Map<String, Integer> requiredItems;
     private final Map<String, Integer> optionalItems;
@@ -43,8 +45,9 @@ public class WoodcuttingTask extends Task {
     private int completeLevel = 1;
     private int completeTime = 1;
 
-    public WoodcuttingTask(AbstractScript script, String treeType, String location, int duration, int stopLevel) {
+    public WoodcuttingTask(AbstractScript script, SettingsManager settings, String treeType, String location, int duration, int stopLevel) {
         this.script = script;
+        this.settings = settings;
         this.treeType = TreeType.byDisplayName(treeType);
         this.location = Location.byDisplayName(location);
         this.bankingArea = Bank.getClosestBankLocation().getArea(3);
@@ -79,7 +82,7 @@ public class WoodcuttingTask extends Task {
         if (!hasAllRequiredItems(requiredItems) || Inventory.isFull()) {
 
             stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false, true));
+            stateManager.addState(new BankingState(script, settings, requiredItems, optionalItems, false, true));
             stateManager.addState(new EquipItemsState(script, null));
         }
         stateManager.addState(new TeleportToState(script, woodcuttingArea));
@@ -104,7 +107,7 @@ public class WoodcuttingTask extends Task {
         } else {
             if (Inventory.isFull()) {
                 stateManager.addState(new WalkToState(script, bankingArea));
-                stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox, true));
+                stateManager.addState(new BankingState(script, settings, requiredItems, optionalItems, useDepositBox, true));
             } else {
                 GameObject tree = GameObjects.closest(gameObject -> gameObject != null &&
                         gameObject.getName().equalsIgnoreCase(treeType.getDisplayName()) &&

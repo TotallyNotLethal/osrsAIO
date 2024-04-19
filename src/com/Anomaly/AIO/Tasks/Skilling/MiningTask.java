@@ -11,6 +11,7 @@ import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
 import com.Anomaly.AIO.Helpers.State.Methods.TeleportToState;
 import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
 import com.Anomaly.AIO.Helpers.State.StateManager;
+import com.Anomaly.AIO.Main.SettingsManager;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.Client;
 import org.dreambot.api.methods.Calculations;
@@ -36,6 +37,7 @@ public class MiningTask extends Task {
     private final OreType oreType;
     private final Location location;
     private final Area miningArea;
+    private final SettingsManager settings;
     private Area bankingArea;
     private final Map<String, Integer> requiredItems;
     private final Map<String, Integer> optionalItems;
@@ -47,8 +49,9 @@ public class MiningTask extends Task {
     private int completeTime = 1;
     private boolean useDepositBox;
 
-    public MiningTask(AbstractScript script, String treeType, String location, int duration, int stopLevel) {
+    public MiningTask(AbstractScript script, SettingsManager settings, String treeType, String location, int duration, int stopLevel) {
         this.script = script;
+        this.settings = settings;
         this.oreType = OreType.byDisplayName(treeType);
         this.location = Location.byDisplayName(location);
         this.bankingArea = Bank.getClosestBankLocation().getArea(3);
@@ -85,7 +88,7 @@ public class MiningTask extends Task {
     private void prepareStates() {
         if (!hasAllRequiredItems(requiredItems) || Inventory.isFull()) {
             stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
-            stateManager.addState(new BankingState(script, requiredItems, optionalItems, false, true));
+            stateManager.addState(new BankingState(script, settings, requiredItems, optionalItems, false, true));
             stateManager.addState(new EquipItemsState(script, null));
         }
         stateManager.addState(new TeleportToState(script, miningArea));
@@ -110,7 +113,7 @@ public class MiningTask extends Task {
         } else {
             if (Inventory.isFull()) {
                 stateManager.addState(new WalkToState(script, bankingArea));
-                stateManager.addState(new BankingState(script, requiredItems, optionalItems, useDepositBox, false));
+                stateManager.addState(new BankingState(script, settings, requiredItems, optionalItems, useDepositBox, false));
                 stateManager.addState(new WalkToState(script, miningArea));
             } else {
                 GameObject ore = GameObjects.closest(gameObject -> gameObject != null &&

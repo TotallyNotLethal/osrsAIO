@@ -1,6 +1,7 @@
 package com.Anomaly.AIO.Tasks.Skilling;
 
 import com.Anomaly.AIO.Helpers.Locations.Firemaking.FiremakingLocations;
+import com.Anomaly.AIO.Main.SettingsManager;
 import com.Anomaly.AIO.Main.Task;
 import org.dreambot.api.ClientSettings;
 import org.dreambot.api.methods.Calculations;
@@ -31,7 +32,7 @@ public class FiremakingTask extends Task implements ChatListener {
     private static Tile currentFmStartTile;
 
 
-    public FiremakingTask(AbstractScript script, String method, String location, int duration, int stopLevel) {
+    public FiremakingTask(AbstractScript script, SettingsManager settings, String method, String location, int duration, int stopLevel) {
         Player player = Players.getLocal();
         requiredItems = new HashMap<>();
 
@@ -153,7 +154,7 @@ public class FiremakingTask extends Task implements ChatListener {
                 if(Inventory.isItemSelected() && !Players.getLocal().isAnimating() && !Players.getLocal().isMoving()) {
                     Inventory.interact(logs, "Use");
                     Sleep.sleep(Calculations.random(850, 1150));
-                    Sleep.sleepUntil(() -> !Players.getLocal().isAnimating() && Inventory.isItemSelected(), 15000); //possibly remove ifitemselected
+                    Sleep.sleepUntil(() -> !Players.getLocal().isAnimating() && Inventory.isItemSelected(), 15000);
 
                 }
 

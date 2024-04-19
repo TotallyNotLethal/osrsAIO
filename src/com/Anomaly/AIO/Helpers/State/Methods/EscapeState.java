@@ -34,7 +34,7 @@ public class EscapeState implements State {
         hasPrayerPots = Inventory.contains(item -> item != null && item.getName().contains("Prayer potion"));
 
         if ((prayer == 0 && !hasPrayerPots) || (health < 70 && !hasHealingItems)) {
-                Inventory.get(item -> item != null && item.getName().contains("teleport")).interact("Break");
+                Inventory.get(item -> item != null && item.hasAction("Break")).interact("Break");
                 Sleep.sleep(6000);
             return 600;
         }

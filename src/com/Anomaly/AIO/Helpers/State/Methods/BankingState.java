@@ -1,6 +1,8 @@
 package com.Anomaly.AIO.Helpers.State.Methods;
 
+import com.Anomaly.AIO.Helpers.State.Methods.GrandExchange.BuyItemsState;
 import com.Anomaly.AIO.Helpers.State.State;
+import com.Anomaly.AIO.Main.SettingsManager;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -22,6 +24,7 @@ import java.util.Map;
 public class BankingState implements State {
     private final AbstractScript script;
     private final BankLocation bankLocation;
+    private final SettingsManager settings;
     public boolean useDepositBox = false;
     private final List<String> itemsToKeep;
     private final Map<String, Integer> itemsToWithdraw;
@@ -31,9 +34,10 @@ public class BankingState implements State {
     private boolean isComplete = false;
     private boolean justStarted = false;
 
-    public BankingState(AbstractScript script, Map<String, Integer> itemsToWithdraw,
+    public BankingState(AbstractScript script, SettingsManager settings, Map<String, Integer> itemsToWithdraw,
                         Map<String, Integer> optionalItemsToWithdraw, boolean useDepositBox, boolean justStarted, String... itemsToKeep) {
         this.script = script;
+        this.settings = settings;
         this.bankLocation = Bank.getClosestBankLocation();
         this.itemsToKeep = Arrays.asList(itemsToKeep);
         this.itemsToWithdraw = itemsToWithdraw;
@@ -74,12 +78,13 @@ public class BankingState implements State {
             else
                 depositItems();
             withdrawItems(itemsToWithdraw, true);
+            Sleep.sleepUntil(() -> Inventory.containsAll(itemsToKeep), 1000);
             if(optionalItemsToWithdraw != null)
                 withdrawItems(optionalItemsToWithdraw, false);
 
             if(itemsToBuy.size() > 0) {
                 isComplete = true;
-                script.stop();
+                //script.stop();
             }
             Bank.close();
         }
@@ -122,6 +127,8 @@ public class BankingState implements State {
                     if (isRequired) {
                         itemsToBuy.put(itemToWithdraw, totalAmountNeeded);
                     }
+                    if(settings.isBuyItemsEnabled())
+                        new BuyItemsState(script, settings, itemsToBuy).execute();
                 }
             }
         }

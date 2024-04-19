@@ -103,6 +103,6 @@ public class AntibanState implements State {
 
     @Override
     public boolean isComplete() {
-        return false;  // This state is not intended to complete on its own
+        return false;
     }
 }

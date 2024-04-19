@@ -31,7 +31,6 @@ public class WalkToState implements State {
         private final Player player;
         private CustomWebPath customPath;
 
-    // Constructor that accepts a CustomWebPath
         public WalkToState(AbstractScript script, CustomWebPath customPath) {
             this.script = script;
             this.customPath = customPath;
@@ -87,7 +86,6 @@ public class WalkToState implements State {
     private void handlePathObstacles(Tile destination) {
         GlobalPath<AbstractWebNode> path = WebFinder.getWebFinder().calculate(player.getTile(), destination);
 
-        // Check if the path is null, and if so, log and return to avoid further processing
         if (path == null) {
             Logger.log("No path found to " + destination + ". Unable to proceed.");
             return;
@@ -106,7 +104,6 @@ public class WalkToState implements State {
                         web.interact("Slash");
                         Sleep.sleepUntil(() -> !web.exists(), 3000);
                     }
-                    // Recursively handle obstacles from the current position again
                     handlePathObstacles(destination);
                     return;
                 }

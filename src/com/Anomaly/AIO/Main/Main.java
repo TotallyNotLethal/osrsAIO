@@ -2,6 +2,7 @@ package com.Anomaly.AIO.Main;
 
 import com.Anomaly.AIO.Tasks.Combat.Bossing.SarachnisTask;
 import com.Anomaly.AIO.Tasks.GrandExchange.MarketPlaceTask;
+import com.Anomaly.AIO.Tasks.MoneyMakers.CrushBirdsNestTask;
 import com.Anomaly.AIO.Tasks.Skilling.*;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.randoms.RandomSolver;
@@ -87,30 +88,33 @@ public class Main extends AbstractScript {
         //return new SarachnisTask(this);
         switch (skill) {
             case "Fishing" -> {
-                return new FishingTask(this, method, location, duration, stopLevel);
+                return new FishingTask(this, settingsManager, method, location, duration, stopLevel);
             }
             case "Firemaking" -> {
-                return new FiremakingTask(this, method, location, duration, stopLevel);
+                return new FiremakingTask(this, settingsManager, method, location, duration, stopLevel);
             }
             case "Woodcutting" -> {
-                return new WoodcuttingTask(this, method, location, duration, stopLevel);
+                return new WoodcuttingTask(this, settingsManager, method, location, duration, stopLevel);
             }
             case "Thieving" -> {
-                return new ThievingTask(this, method, location, duration, stopLevel);
+                return new ThievingTask(this, settingsManager, method, location, duration, stopLevel);
             }
             case "Agility" -> {
-                return new AgilityTask(this, method, location, duration, stopLevel);
+                return new AgilityTask(this, settingsManager, method, location, duration, stopLevel);
             }
             case "Mining" -> {
-                return new MiningTask(this, method, location, duration, stopLevel);
+                return new MiningTask(this, settingsManager, method, location, duration, stopLevel);
             }
             case "Other" -> {
                 switch(method) {
                     case "Sarachnis" -> {
-                        return new SarachnisTask(this);
+                        return new SarachnisTask(this, settingsManager);
                     }
                     case "Sell inventory" -> {
                         return new MarketPlaceTask(this, settingsManager);
+                    }
+                    case "Crush bird nests" -> {
+                        return new CrushBirdsNestTask(this, settingsManager);
                     }
                     default -> {
                         log("Unsupported skill/method: " + skill + "/" + method);
