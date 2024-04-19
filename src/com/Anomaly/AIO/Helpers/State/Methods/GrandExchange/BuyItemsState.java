@@ -49,6 +49,7 @@ public class BuyItemsState implements State {
                 return 1000;
             }
         }
+        GrandExchange.close();
 
         itemsBought = true;
         return 0;

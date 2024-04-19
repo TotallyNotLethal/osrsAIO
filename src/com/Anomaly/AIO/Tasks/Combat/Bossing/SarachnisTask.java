@@ -24,17 +24,17 @@ import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.interactive.Player;
+import org.dreambot.api.wrappers.items.Item;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class SarachnisTask extends Task {
     private final AbstractScript script;
     private final StateManager stateManager;
     private final SettingsManager settings;
+    private boolean isComplete;
     private final Map<String, Integer> requiredItems = new HashMap<>();
     private final Map<String, Integer> optionalItems = new HashMap<>();
     private NPC sarachnis;
@@ -115,8 +115,20 @@ public class SarachnisTask extends Task {
 
                 stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
                 stateManager.addState(new BankingState(script, settings, requiredItems, null, false, false));
-                stateManager.addState(new TeleportToState(script, TeleportAccessory.XERICS_GLADE.getLocation().getArea()));
-                stateManager.addState(new WalkToState(script, sarachnisLadder.getCenter()));
+                int missing = 0;
+                for (String i : requiredItems.keySet()) {
+                    if (Inventory.contains(i)) {
+                        missing++;
+                    }
+                }
+                if(missing >= 1 && missing < requiredItems.size())
+                    stateManager.addState(new BankingState(script, settings, requiredItems, null, false, false));
+                else if (!stateManager.hasStates()) isComplete = true;
+
+                if(!isComplete) {
+                    stateManager.addState(new TeleportToState(script, TeleportAccessory.XERICS_GLADE.getLocation().getArea()));
+                    stateManager.addState(new WalkToState(script, sarachnisLadder.getCenter()));
+                }
             }
             case 1 -> {
                 customPath.connectStartToClosestNode();
@@ -234,6 +246,7 @@ public class SarachnisTask extends Task {
 
     @Override
     public boolean isComplete() {
-        return false;
+        Logger.log("Completed? : " + isComplete);
+        return isComplete;
     }
 }

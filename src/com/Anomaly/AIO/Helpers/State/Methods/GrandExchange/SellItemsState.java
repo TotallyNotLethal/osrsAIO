@@ -3,6 +3,7 @@ package com.Anomaly.AIO.Helpers.State.Methods.GrandExchange;
 import com.Anomaly.AIO.Helpers.State.State;
 import com.Anomaly.AIO.Main.SettingsManager;
 import org.dreambot.api.methods.container.impl.Inventory;
+import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.grandexchange.GrandExchange;
 import org.dreambot.api.methods.grandexchange.LivePrices;
 import org.dreambot.api.methods.interactive.NPCs;
@@ -80,6 +81,8 @@ public class SellItemsState implements State {
                 }
             }
         }
+
+        GrandExchange.close();
 
         itemsSold = true;
         return 0;
