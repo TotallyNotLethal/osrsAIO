@@ -246,7 +246,6 @@ public class SarachnisTask extends Task {
 
     @Override
     public boolean isComplete() {
-        Logger.log("Completed? : " + isComplete);
         return isComplete;
     }
 }
