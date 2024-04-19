@@ -70,4 +70,65 @@ public class EquipmentSets {
             .addItem("Dragon platelegs", 1)
             .addItem("Dragon sq shield", 1);
 
+    public static EquipmentSet DHAROKS = new EquipmentSet()
+            .addItem("Dharok's helm", 1)
+            .addItem("Dharok's platebody", 1)
+            .addItem("Dharok's platelegs", 1)
+            .addItem("Dharok's greataxe", 1);
+
+    public static EquipmentSet AHRIMS = new EquipmentSet()
+            .addItem("Ahrim's hood", 1)
+            .addItem("Ahrim's robetop", 1)
+            .addItem("Ahrim's robeskirt", 1)
+            .addItem("Ahrim's staff", 1);
+
+    public static EquipmentSet KARILS = new EquipmentSet()
+            .addItem("Karil's coif", 1)
+            .addItem("Karil's top", 1)
+            .addItem("Karil's skirt", 1)
+            .addItem("Karil's crossbow", 1);
+
+    public static EquipmentSet GUTHANS = new EquipmentSet()
+            .addItem("Guthan's helm", 1)
+            .addItem("Guthan's platebody", 1)
+            .addItem("Guthan's chainskirt", 1)
+            .addItem("Guthan's warspear", 1);
+
+    public static EquipmentSet TORAGS = new EquipmentSet()
+            .addItem("Torag's helm", 1)
+            .addItem("Torag's platebody", 1)
+            .addItem("Torag's platelegs", 1)
+            .addItem("Torag's hammers", 1);
+
+    public static EquipmentSet VERACS = new EquipmentSet()
+            .addItem("Verac's helm", 1)
+            .addItem("Verac's brassard", 1)
+            .addItem("Verac's plateskirt", 1)
+            .addItem("Verac's flail", 1);
+
+    public static EquipmentSet VOID_KNIGHT = new EquipmentSet()
+            .addItem("Void knight helm", 1)
+            .addItem("Void knight top", 1)
+            .addItem("Void knight robe", 1)
+            .addItem("Void knight gloves", 1);
+
+    public static EquipmentSet ARMADYL = new EquipmentSet()
+            .addItem("Armadyl helmet", 1)
+            .addItem("Armadyl chestplate", 1)
+            .addItem("Armadyl chainskirt", 1)
+            .addItem("Armadyl crossbow", 1);
+
+    public static EquipmentSet BANDOS = new EquipmentSet()
+            .addItem("Bandos chestplate", 1)
+            .addItem("Bandos tassets", 1)
+            .addItem("Bandos boots", 1)
+            .addItem("Bandos godsword", 1);
+
+    public static EquipmentSet ANCIENT = new EquipmentSet()
+            .addItem("Ancient full helm", 1)
+            .addItem("Ancient platebody", 1)
+            .addItem("Ancient platelegs", 1)
+            .addItem("Ancient kiteshield", 1);
+
+
 }
