@@ -99,6 +99,7 @@ public class SarachnisTask extends Task {
         {
             case 0 -> {
                 Logger.log("Starting from scratch!");
+                stateManager.clearStates();
                 stateManager.addState(new PrayerFlickState(script, true));
 
                 Logger.log(String.format("POH enabled: %s | In POH: %s", settings.isUsePOHEnabled(), settings.isInPlayerOwnedHouse()));
