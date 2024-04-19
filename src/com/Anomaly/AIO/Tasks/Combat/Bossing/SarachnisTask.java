@@ -223,8 +223,6 @@ public class SarachnisTask extends Task {
 
         if (stateManager.hasStates()) {
             stateManager.executeCurrentState();
-        } else {
-            Logger.log("No states left to execute. Checking conditions...");
         }
         if(lootDropsState != null && lootDropsState.getLootPrices() != 0)
             lootPrice += lootDropsState.getLootPrices();
