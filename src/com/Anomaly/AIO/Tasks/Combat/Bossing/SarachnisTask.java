@@ -21,9 +21,11 @@ import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.Skills;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.walking.web.node.CustomWebPath;
+import org.dreambot.api.methods.worldhopper.WorldHopper;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.utilities.Logger;
 import org.dreambot.api.utilities.Sleep;
+import org.dreambot.api.wrappers.interactive.Character;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.interactive.Player;
@@ -141,10 +143,18 @@ public class SarachnisTask extends Task {
                 stateManager.addState(new WalkToState(script, customPath.getStart().getTile()));
             }
             case 2 -> {
-                //Prayers.toggle(true, Prayer.PROTECT_FROM_MISSILES);
-                GameObjects.closest("Thick Web").interact("Quick-enter");
-                Sleep.sleep(600);
-                Sleep.sleepUntil(() -> sarachnisLair.contains(player), 6000);
+                List<Player> players = Players.all(Player::exists);
+                if (players.size() > 1) {
+                    if(stateManager.isComplete())
+                        stateManager.addState(new WorldSwitchState(script, true));
+                } else {
+                    if(gate.contains(player) && stateManager.isComplete()) {
+                        Prayers.toggle(true, Prayer.PROTECT_FROM_MISSILES);
+                        GameObjects.closest("Thick Web").interact("Quick-enter");
+                        Sleep.sleep(600);
+                        Sleep.sleepUntil(() -> sarachnisLair.contains(player), 6000);
+                }
+                }
             }
             case 3 -> {
             }
@@ -181,6 +191,9 @@ public class SarachnisTask extends Task {
                 if (!sarachnisDefeated) {
                     kills++;
                     sarachnisDefeated = true;
+                    if(Prayers.getActive().length > 0)
+                        if(prayerFlickState!=null)
+                            prayerFlickState.disablePrayers();//Prayers.toggle(false, Prayers.getActive()[0]);
                     Logger.log("Sarachnis defeated! Total kills: " + kills);
                 }
             } else {
