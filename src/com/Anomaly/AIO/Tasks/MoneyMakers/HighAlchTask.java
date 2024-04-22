@@ -84,7 +84,7 @@ public class HighAlchTask extends Task {
                 }
             });
         }
-        return 300; // Loop delay
+        return 300;
     }
 
     private void withdrawItemsForAlching() {
@@ -93,7 +93,7 @@ public class HighAlchTask extends Task {
         for (Map.Entry<String, Integer> entry : itemsToAlch.entrySet()) {
             if(!Inventory.isFull()) {
                 Bank.withdraw(entry.getKey(), entry.getValue());
-                Sleep.sleep(50); // Short sleep between withdrawals
+                Sleep.sleep(50);
             }
         }
         Bank.close();

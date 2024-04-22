@@ -37,7 +37,7 @@ public class CrushBirdsNestTask extends Task {
     public int execute() {
         if (stateManager.hasStates()) {
             stateManager.executeCurrentState();
-            return 600; // Allow state execution before continuing
+            return 600;
         }
 
         prepareStates();
