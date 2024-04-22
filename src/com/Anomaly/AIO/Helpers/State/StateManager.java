@@ -40,7 +40,7 @@ public class StateManager extends AbstractScript {
             backgroundState.execute();
         }
 
-        if (states.isEmpty() || isExecuting) {
+        if (states.isEmpty() || isExecuting || states.peek() == null) {
             return;
         }
         isExecuting = true;

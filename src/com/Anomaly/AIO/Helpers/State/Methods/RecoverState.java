@@ -32,7 +32,7 @@ public class RecoverState implements State {
             } else noFood = true;
         }
 
-        if(Skills.getBoostedLevel(Skill.STRENGTH) <= Skills.getRealLevel(Skill.STRENGTH)+3) {
+        if(Skills.getBoostedLevel(Skill.STRENGTH) <= Skills.getRealLevel(Skill.STRENGTH)+7) {
             Item combatPot = Inventory.get(i -> i != null && i.isValid() && i.getName().contains("Super combat"));
             if (combatPot != null) {
                 combatPot.interact("Drink");

@@ -24,12 +24,14 @@ public class LootDropsState implements State {
     private final List<String> priorityItems;
     private final Area lootArea;
     private final Player player;
+    private final String[] ignoreItems;
     private int lootPrice = 0;
 
-    public LootDropsState(AbstractScript script, Area lootArea, List<String> priorityItems) {
+    public LootDropsState(AbstractScript script, Area lootArea, List<String> priorityItems, String... ignoreItems) {
         this.script = script;
         this.priorityItems = priorityItems;
         this.lootArea = lootArea;
+        this.ignoreItems = ignoreItems;
         this.player = Players.getLocal();
     }
 
@@ -45,7 +47,9 @@ public class LootDropsState implements State {
                 return Calculations.random(600, 1200);
             }
 
-            GroundItem anyItem = GroundItems.closest(item -> item != null && item.canReach());
+            GroundItem anyItem;
+            if(ignoreItems.length > 0) anyItem = GroundItems.closest(item -> item != null && item.canReach() && !item.getName().equalsIgnoreCase(ignoreItems[0]));
+            else anyItem = GroundItems.closest(item -> item != null && item.canReach());
             if (anyItem != null && anyItem.canReach() && lootArea.contains(anyItem)) {
                 anyItem.interact("Take");
                 Sleep.sleepUntil(() -> !anyItem.exists(), 2000);
@@ -55,7 +59,9 @@ public class LootDropsState implements State {
             }
         }
         if(Inventory.isFull()){
-            GroundItem gItem = GroundItems.closest(fullItem -> fullItem != null && fullItem.canReach());
+            GroundItem gItem;
+            if(ignoreItems.length > 0) gItem = GroundItems.closest(fullItem -> fullItem != null && fullItem.canReach() && !fullItem.getName().equalsIgnoreCase(ignoreItems[0]));
+            else gItem = GroundItems.closest(fullItem -> fullItem != null && fullItem.canReach());
             Item fullFood = Inventory.get(foodItem -> foodItem.hasAction("Eat"));
             if(gItem.getItem().getLivePrice() > fullFood.getLivePrice()) {
                 fullFood.interact("Eat");

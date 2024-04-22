@@ -44,6 +44,7 @@ public enum Location {
     MOS_LE_HARMLESS("Mos le harmless",false),
     LLETYA("Lletya",false),
     NEITIZNOT("Netiznot",false),
+    MISCELLANIA("Miscellania", true),
     JATIZSO("Jatizso",false),
     DAGANNOTH_KINGS("Dagannoth kings",false),
     SMOKE_DUNGEON("Smoke dungeon",false),

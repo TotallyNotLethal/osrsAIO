@@ -18,10 +18,10 @@ public enum TeleportAccessory {
     FORTIS_COLOSSEUM("Ring of dueling", new TeleportLocation("Fortis Colosseum", new Area(3355, 3285, 3382, 3220))), // Placeholder area
 
     // Combat Bracelet
-    WARRIORS_GUILD("Combat braclet", new TeleportLocation("Warriors' Guild", new Area(2876, 3531, 2836, 3556))),
-    CHAMPIONS_GUILD("Combat braclet", new TeleportLocation("Champions' Guild", new Area(3199, 3348, 3184, 3364))),
-    EDGEVILLE_MONASTERY("Combat braclet", new TeleportLocation("Edgeville Monastery", new Area(3062, 3480, 3041, 3509))),
-    RANGING_GUILD("Combat braclet", new TeleportLocation("Ranging Guild", new Area(2686, 3410, 2650, 3446))),
+    WARRIORS_GUILD("Combat bracelet", new TeleportLocation("Warriors' Guild", new Area(2876, 3531, 2836, 3556))),
+    CHAMPIONS_GUILD("Combat bracelet", new TeleportLocation("Champions' Guild", new Area(3199, 3348, 3184, 3364))),
+    EDGEVILLE_MONASTERY("Combat bracelet", new TeleportLocation("Edgeville Monastery", new Area(3062, 3480, 3041, 3509))),
+    RANGING_GUILD("Combat bracelet", new TeleportLocation("Ranging Guild", new Area(2686, 3410, 2650, 3446))),
 
     // Skills Necklace
     FISHING_GUILD("Skills necklace", new TeleportLocation("Fishing Guild", new Area(2623, 3394, 2579, 3425))),

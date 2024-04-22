@@ -7,10 +7,7 @@ import com.Anomaly.AIO.Helpers.Locations.Thieving.ThievingLocations;
 import com.Anomaly.AIO.Helpers.Locations.Woodcutting.WoodcuttingLocations;
 import com.Anomaly.AIO.Helpers.Requirements.Thieving.*;
 import com.Anomaly.AIO.Helpers.Requirements.Thieving.ThievingEntity;
-import com.Anomaly.AIO.Helpers.State.Methods.BankingState;
-import com.Anomaly.AIO.Helpers.State.Methods.EquipItemsState;
-import com.Anomaly.AIO.Helpers.State.Methods.TeleportToState;
-import com.Anomaly.AIO.Helpers.State.Methods.WalkToState;
+import com.Anomaly.AIO.Helpers.State.Methods.*;
 import com.Anomaly.AIO.Helpers.State.StateManager;
 import com.Anomaly.AIO.Main.SettingsManager;
 import com.Anomaly.AIO.Main.Task;
@@ -58,8 +55,11 @@ public class ThievingTask extends Task {
         this.thievableEntity = getThievableEntityByName(thievingTarget);
         this.stateManager = new StateManager(script);
         this.player = Players.getLocal();
+        requiredItems.put("Potato with cheese", 8);
         this.optionalItems.putAll(EquipmentSets.ROGUE.getItems());
         this.optionalItems.put("Dodgy necklace", 1);
+        if(Objects.equals(thievableEntity.getDisplayName(), "Master Farmer"))
+            this.optionalItems.put("Seed box", 1);
         if(Skill.THIEVING.getLevel() >= 99)
             optionalItems.put("Thieving cape", 1);
         Spot spot = ThievingLocations.getThievingSpot(this.location, this.thievableEntity);
@@ -73,7 +73,8 @@ public class ThievingTask extends Task {
             stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
             stateManager.addState(new BankingState(script, settings, requiredItems, optionalItems, false, true));
             stateManager.addState(new EquipItemsState(script, null));
-            stateManager.addState(new TeleportToState(script, thievingArea));
+            if(thievingArea.getTile().distance() > 50)
+                stateManager.addState(new TeleportToState(script, thievingArea));
             stateManager.addState(new WalkToState(script, thievingArea));
         }
     }
@@ -92,10 +93,25 @@ public class ThievingTask extends Task {
                 case CHEST, DOOR -> interactWithObject();
             }
 
+        if(player.getHealthPercent() < 50)
+            stateManager.addState(new RecoverState(script, 50));
+
         if(Inventory.isFull()){
-            stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
-            stateManager.addState(new BankingState(script, settings, requiredItems, optionalItems, useDepositBox, false));
-            stateManager.addState(new WalkToState(script, thievingArea));
+            if(Objects.equals(thievableEntity.getDisplayName(), "Master Farmer"))
+                if(Inventory.contains("Seed box"))
+                    Inventory.get("Seed box").interact("Fill");
+            Sleep.sleep(1000);
+            if(Inventory.isFull() || player.getHealthPercent() < 50) {
+                stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
+                Bank.open();
+                Sleep.sleepUntil(Bank::isOpen, 5000);
+                if(Inventory.contains("Seed box"))
+                    Inventory.interact("Empty");
+                Sleep.sleep(1000);
+                stateManager.addState(new BankingState(script, settings, requiredItems, optionalItems, useDepositBox, false));
+                stateManager.addState(new EquipItemsState(script, null));
+                stateManager.addState(new WalkToState(script, thievingArea));
+            }
         }
 
         return Calculations.random(300, 600);

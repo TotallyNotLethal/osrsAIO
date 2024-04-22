@@ -38,16 +38,18 @@ public enum SkillData {
     ),
     OTHER(
             Map.of(
-                    "Bossing", Arrays.asList("Sarachnis"),
+                    "Bossing", Arrays.asList("Sarachnis", "Giant mole"),
                     "Mini-games", Arrays.asList(""),
                     "Grand Exchange", Arrays.asList("Sell inventory"),
-                    "Money Making", Arrays.asList("Crush bird nests")
+                    "Money Making", Arrays.asList("Crush bird nests", "High alch items")
             )
     ),
     THIEVING(
             Map.of(
-            "Lumbridge", Arrays.asList("Man", "Woman")
-                            )
+            "Lumbridge", Arrays.asList("Man", "Woman"),
+                    "Draynor village", Arrays.asList("Master farmer", "Seed Stall", "Wine Stall", "Man")
+
+            )
     );
 
     private final Map<String, List<String>> locationsAndMethods;

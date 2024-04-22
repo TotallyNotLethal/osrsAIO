@@ -44,6 +44,7 @@ public class SarachnisTask extends Task {
     private final Map<String, Integer> optionalItems = new HashMap<>();
     private NPC sarachnis;
     private int kills = 0;
+    private final long startTime = System.currentTimeMillis();;
     private boolean statesCreated;
     private InCombatState combatState;
     private LootDropsState lootDropsState;
@@ -61,9 +62,9 @@ public class SarachnisTask extends Task {
         this.settings = settings;
         sarachnisDefeated = false;
         player = Players.getLocal();
-        requiredItems.put("Super combat potion(4)", 1);
+        //requiredItems.put("Super combat potion(4)", 1);
         requiredItems.put("Prayer potion(4)", 2);
-        requiredItems.put("Potato with cheese", 23);
+        requiredItems.put("Potato with cheese", 24);
         if(this.settings.isUsePOHEnabled())
             requiredItems.put("Teleport to house", 1);
         else
@@ -72,7 +73,7 @@ public class SarachnisTask extends Task {
         getToLair();
     }
 
-    Area gate = new Area(1840, 9912, 1848, 9920);
+    Area gate = new Area(1847, 9919, 1840, 9912);
     Area sixtySevenNinty = new Area(1839, 9931, 1844, 9926);
     Area sarachnisLair = new Area(1831, 9911, 1852, 9892);
     Tile[] path = {
@@ -120,6 +121,13 @@ public class SarachnisTask extends Task {
                 }
 
                 stateManager.addState(new WalkToState(script, Bank.getClosestBankLocation()));
+                Bank.open();
+                Sleep.sleepUntil(Bank::isOpen, 10000);
+                Bank.withdraw(i -> i.getName().contains("Super combat"));
+                Sleep.sleepUntil(() -> Inventory.contains(i -> i.getName().contains("Super combat")), 5000);
+                Inventory.get(i -> i.getName().contains("Super combat")).interact("Drink");
+                Bank.deposit(i -> i.getName().contains("Super combat"));
+                Sleep.sleepUntil(() -> !Inventory.contains(i -> i.getName().contains("Super combat")), 5000);
                 stateManager.addState(new BankingState(script, settings, requiredItems, null, false, false));
                 //int missing = 0;
                 //for (String i : requiredItems.keySet()) {
@@ -141,7 +149,7 @@ public class SarachnisTask extends Task {
                 customPath.attachToWeb();
                 GameObjects.closest("Ladder").interact("Climb-down");
                 Sleep.sleep(3000);
-                stateManager.addState(new WalkToState(script, customPath.getStart().getTile()));
+                stateManager.addState(new WalkToState(script, customPath.getEnd().getTile()));
             }
             case 2 -> {
                 List<Player> players = Players.all(Player::exists);
@@ -218,8 +226,10 @@ public class SarachnisTask extends Task {
             if(!spawns.isEmpty() && Players.all(Player::exists).size() <= 1)
                 combatState.setTargets(spawns);
             else combatState.setTarget(sarachnis);
-            if(player.getHealthPercent() < 70 || Skills.getBoostedLevel(Skill.PRAYER) < 30)
+            if(player.getHealthPercent() < 70 || Skills.getBoostedLevel(Skill.PRAYER) < 30) {
+                stateManager.addState(prayerFlickState);
                 stateManager.addState(recoverState);
+            }
             if(sarachnis != null && sarachnis.exists() && sarachnisLair.contains(player)) {
                 if (sarachnis != null && sarachnis.exists() && sarachnis.distance() <= 4.7 && sarachnis.isInteracting(player) && !sarachnis.isMoving()) {
                     if (!Prayers.isActive(Prayer.PROTECT_FROM_MELEE)) {
@@ -266,6 +276,19 @@ public class SarachnisTask extends Task {
     @Override
     public void onPaint(Graphics g) {
         super.onPaint(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        if (sarachnis != null && sarachnis.isOnScreen()) {
+            Rectangle sarachnisRect = sarachnis.getBoundingBox();
+            g.setColor(Color.RED);
+            g.drawRoundRect(sarachnisRect.x, sarachnisRect.y, sarachnisRect.width, sarachnisRect.height, 2, 2);
+        }
+
+        long runningTime = System.currentTimeMillis() - startTime;
+        double hours = (runningTime / 3600000.0);
+        g.drawString(String.format("Kills/Hour: %.2f", kills / hours), 10, 35);
+        g.drawString(String.format("Profit/Hour: %.2f", (lootPrice / hours)), 10, 45);
+
         g.setColor(Color.WHITE);
         g.drawString("Sarachnis Health: " + (sarachnis != null ? sarachnis.getHealthPercent() + "%" : "N/A"), 10, 290);
         g.drawString("Sarachnis Distance: " + (sarachnis != null ? sarachnis.distance() : "N/A"), 10, 305);

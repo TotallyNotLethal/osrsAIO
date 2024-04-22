@@ -7,6 +7,7 @@ import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
+import org.dreambot.api.methods.container.impl.equipment.Equipment;
 import org.dreambot.api.methods.depositbox.DepositBox;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.walking.impl.Walking;
@@ -112,23 +113,27 @@ public class BankingState implements State {
     private void withdrawItems(Map<String, Integer> items, boolean isRequired) {
         itemsToBuy = new HashMap<>();
         for (Map.Entry<String, Integer> entry : items.entrySet()) {
-            String itemToWithdraw = entry.getKey();
-            int totalAmountNeeded = entry.getValue();
-            int amountInInventory = Inventory.count(itemToWithdraw);
-            int amountToWithdraw = totalAmountNeeded - amountInInventory;
+            if(!Inventory.isFull()) {
+                String itemToWithdraw = entry.getKey();
+                int totalAmountNeeded = entry.getValue();
+                int amountInInventory = Inventory.count(itemToWithdraw);
+                int amountToWithdraw = totalAmountNeeded - amountInInventory;
 
-            if (amountToWithdraw > 0) {
-                if (Bank.contains(itemToWithdraw)) {
-                    Logger.log(String.format("Withdrawing %d %s", amountToWithdraw, itemToWithdraw));
-                    Bank.withdraw(itemToWithdraw, amountToWithdraw);
-                    Sleep.sleepUntil(() -> Inventory.count(itemToWithdraw) >= totalAmountNeeded, 1000);
-                } else {
-                    Logger.log("Bank does not have enough of (or is missing): " + itemToWithdraw);
-                    if (isRequired) {
-                        itemsToBuy.put(itemToWithdraw, totalAmountNeeded);
+                if (amountToWithdraw > 0) {
+                    if (Bank.contains(itemToWithdraw)) {
+                        if(!Equipment.contains(itemToWithdraw)) {
+                            Logger.log(String.format("Withdrawing %d %s", amountToWithdraw, itemToWithdraw));
+                            Bank.withdraw(itemToWithdraw, amountToWithdraw);
+                            Sleep.sleepUntil(() -> Inventory.count(itemToWithdraw) >= totalAmountNeeded, 1000);
+                        }
+                    } else {
+                        Logger.log("Bank does not have enough of (or is missing): " + itemToWithdraw);
+                        if (isRequired) {
+                            itemsToBuy.put(itemToWithdraw, totalAmountNeeded);
+                        }
+                        if (settings.isBuyItemsEnabled())
+                            new BuyItemsState(script, settings, itemsToBuy).execute();
                     }
-                    if(settings.isBuyItemsEnabled())
-                        new BuyItemsState(script, settings, itemsToBuy).execute();
                 }
             }
         }

@@ -1,8 +1,10 @@
 package com.Anomaly.AIO.Main;
 
+import com.Anomaly.AIO.Tasks.Combat.Bossing.GiantMoleTask;
 import com.Anomaly.AIO.Tasks.Combat.Bossing.SarachnisTask;
 import com.Anomaly.AIO.Tasks.GrandExchange.MarketPlaceTask;
 import com.Anomaly.AIO.Tasks.MoneyMakers.CrushBirdsNestTask;
+import com.Anomaly.AIO.Tasks.MoneyMakers.HighAlchTask;
 import com.Anomaly.AIO.Tasks.Skilling.*;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.randoms.RandomSolver;
@@ -85,7 +87,6 @@ public class Main extends AbstractScript {
     }
 
     public Task createTask(String skill, String method, String location, int duration, int stopLevel) {
-        //return new SarachnisTask(this);
         switch (skill) {
             case "Fishing" -> {
                 return new FishingTask(this, settingsManager, method, location, duration, stopLevel);
@@ -110,11 +111,17 @@ public class Main extends AbstractScript {
                     case "Sarachnis" -> {
                         return new SarachnisTask(this, settingsManager);
                     }
+                    case "Giant mole" -> {
+                        return new GiantMoleTask(this, settingsManager);
+                    }
                     case "Sell inventory" -> {
                         return new MarketPlaceTask(this, settingsManager);
                     }
                     case "Crush bird nests" -> {
                         return new CrushBirdsNestTask(this, settingsManager);
+                    }
+                    case "High alch items" -> {
+                        return new HighAlchTask(this, settingsManager);
                     }
                     default -> {
                         log("Unsupported skill/method: " + skill + "/" + method);
