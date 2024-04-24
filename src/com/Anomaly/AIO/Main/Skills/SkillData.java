@@ -1,64 +1,20 @@
 package com.Anomaly.AIO.Main.Skills;
 
-import com.Anomaly.AIO.Helpers.Requirements.Fishing.FishType;
-
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public enum SkillData {
-    WOODCUTTING(
-            Map.of(
-                    "Lumbridge", Arrays.asList("Tree", "Oak", "Willow", "Yew"),
-                    "Draynor village", Arrays.asList("Willow"),
-                    "Port sarim", Arrays.asList("Willow"),
-                    "Varrock", Arrays.asList("Maple", "Yew"),
-                    "Falador", Arrays.asList("Yew", "Magic")
-            )
-    ),
-    FISHING(
-            Map.of(
-                    "Lumbridge", Arrays.asList("Shrimp", "Anchovies"),
-                    "Barbarian village", Arrays.asList("Trout", "Salmon", "Rainbow fish", "Pike"),
-                    "Karamja", Arrays.asList("Lobster", "Swordfish", "Tuna", "Shrimp", "Anchovies", "Sardine", "Herring")
-            )
-    ),
-    AGILITY(
-            Map.of(
-                    "All", Arrays.asList(
-                            "Draynor village", "Al kharid", "Gnome stronghold",
-                            "Varrock", "Falador", "Pollnivneach", "Canifis",
-                            "Rellekka", "Ardougne", "Seers village", "Wilderness")
-            )
-    ),
-    MINING(
-            Map.of(
-                    "Lumbridge", Arrays.asList("Tin", "Copper")
-            )
-    ),
-    OTHER(
-            Map.of(
-                    "Bossing", Arrays.asList("Sarachnis", "Giant mole"),
-                    "Mini-games", Arrays.asList(""),
-                    "Grand Exchange", Arrays.asList("Sell inventory"),
-                    "Money Making", Arrays.asList("Crush bird nests", "High alch items")
-            )
-    ),
-    THIEVING(
-            Map.of(
-            "Lumbridge", Arrays.asList("Man", "Woman"),
-                    "Draynor village", Arrays.asList("Master farmer", "Seed Stall", "Wine Stall", "Man")
+public class SkillData {
+    private List<SkillLocation> skillLocations;
 
-            )
-    );
-
-    private final Map<String, List<String>> locationsAndMethods;
-
-    SkillData(Map<String, List<String>> locationsAndMethods) {
-        this.locationsAndMethods = locationsAndMethods;
+    public SkillData() {
+        this.skillLocations = new ArrayList<>();
     }
 
-    public Map<String, List<String>> getLocationsAndMethods() {
-        return locationsAndMethods;
+    public void addSkillLocation(String location, List<String> methods) {
+        skillLocations.add(new SkillLocation(location, methods));
     }
+
+    public List<SkillLocation> getSkillLocations() {
+        return skillLocations;
     }
+}

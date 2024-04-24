@@ -1,34 +1,39 @@
 package com.Anomaly.AIO.Main.Skills;
 
-import java.util.*;
+import org.dreambot.api.methods.skills.Skill;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SkillManager {
-    private final Map<String, Map<String, List<String>>> skillsData = new HashMap<>();
 
     public SkillManager() {
-        loadSkillsData();
     }
 
-    private void loadSkillsData() {
-        for (SkillData skillData : SkillData.values()) {
-            skillsData.put(skillData.name(), skillData.getLocationsAndMethods());
+    public List<String> getSkills() {
+        List<String> skillNames = new ArrayList<>();
+        for (Skill skill : Skill.values()) {
+            skillNames.add(skill.name());
         }
+        return skillNames;
     }
 
-    public Set<String> getSkills() {
-        return skillsData.keySet();
+    public List<String> getLocations(String skillName) {
+        GUISkill skill = GUISkill.valueOf(skillName.toUpperCase());
+        List<String> locations = new ArrayList<>();
+        for (SkillLocation location : skill.getSkillData().getSkillLocations()) {
+            locations.add(location.getLocation());
+        }
+        return locations;
     }
 
-    public List<String> getLocations(String skill) {
-        Map<String, List<String>> locationsAndMethods = skillsData.get(skill);
-        return locationsAndMethods != null ? new ArrayList<>(locationsAndMethods.keySet()) : Collections.emptyList();
-    }
-
-    public List<String> getMethods(String skill, String location) {
-        Map<String, List<String>> locationsAndMethods = skillsData.get(skill);
-        if (locationsAndMethods != null) {
-            List<String> methods = locationsAndMethods.get(location);
-            return methods != null ? methods : Collections.emptyList();
+    public List<String> getMethods(String skillName, String location) {
+        GUISkill skill = GUISkill.valueOf(skillName);
+        for (SkillLocation loc : skill.getSkillData().getSkillLocations()) {
+            if (loc.getLocation().equals(location)) {
+                return loc.getMethods();
+            }
         }
         return Collections.emptyList();
     }

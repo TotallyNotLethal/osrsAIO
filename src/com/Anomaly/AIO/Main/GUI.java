@@ -198,6 +198,8 @@ class GUI extends JFrame {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     selectedSkill = skill;
+
+                    Logger.log("SKILL: " + skill);
                     updateLocationsPanel(skill);
                     updateLevels();
 
@@ -218,7 +220,8 @@ class GUI extends JFrame {
     }
 
     private void updateLocationsPanel(String skill) {
-        List<String> locations = skillManager.getLocations(skill.toUpperCase());
+        List<String> locations = skillManager.getLocations(skill);
+        Logger.log(locations);
         Logger.log("Updating locations for skill: " + skill + " with locations: " + locations);
         locationListModel.clear();
         for (String location : locations) {
